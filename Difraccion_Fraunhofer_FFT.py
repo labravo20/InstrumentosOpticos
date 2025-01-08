@@ -3,7 +3,7 @@ print("Inicializando programa simulación Difracción Fraunhofer...")
 
 import numpy as np
 import matplotlib.pyplot as plt
-import Mascaras_Transmitancia as mascara
+import Mascaras_Transmitancia as m
 
 
 resolucion = 3000  # Número de puntos en la malla
@@ -13,10 +13,10 @@ centro = None  # El centro será el origen si es None
 
 
 # Crear la malla de puntos
-xx, yy = mascara.malla_Puntos(resolucion, longitud_Arreglo)
+xx, yy = m.malla_Puntos(resolucion, longitud_Arreglo)
 
 # Crear la máscara circular
-mascara = mascara.funcion_Circulo(radio, centro, xx, yy)
+mascara = m.funcion_Circulo(radio, centro, xx, yy)
 
 
 #Definición de longitud de onda
