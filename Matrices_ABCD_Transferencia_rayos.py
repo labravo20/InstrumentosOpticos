@@ -137,16 +137,16 @@ def curva_Refractiva(radio, n_Incidente, n_Salida):
         Matriz ABCD correspondiente a la transferencia de rayos en caso curvas refractivas.
     '''
     
-    # Se crea matriz identidad sobre la cual se calculará la matriz para refracción
+    # Se crea matriz identidad sobre la cual se calculará la matriz para curva refractiva
     matriz_curvaRefractiva = matriz_Inicial()
     
     # Se calcula la relación entre los índices de refracción de los medios en consideración
     relacion_indicesRefraccion = n_Incidente/n_Salida
 
     
-    #Se asigna el valor del negativo del poder de convergencia de la lente en la posición
-    #pre determinada para una matriz ABCD para lentes delgadas
-    matriz_curvaRefractiva[1,1] = relacion_indicesRefraccion # --> Se posiciona el valor del poder de
+    #Se asigna el valor de la relación de los índices de refracción en la posición
+    #pre determinada para una matriz ABCD para curvas refracitvas
+    matriz_curvaRefractiva[1,1] = relacion_indicesRefraccion # --> Se posiciona el valor de
                                                           # la relacion entre los indices de refraccion
                                                           # en la segunda fila segunda columna.
     
@@ -185,27 +185,26 @@ def curva_Reflectiva(radio):
         Matriz ABCD correspondiente a la transferencia de rayos en caso curvas reflectivas.
     '''
     
-    # Se crea matriz identidad sobre la cual se calculará la matriz para refracción
+    # Se crea matriz identidad sobre la cual se calculará la matriz para curvas reflectivas
     matriz_curvaReflectiva = matriz_Inicial()
     
-    #Se asigna el valor del negativo del poder de convergencia de la lente en la posición
-    #pre determinada para una matriz ABCD para lentes delgadas
+    #Se asigna el valor -1 en la posición
+    #pre determinada para una matriz ABCD para curvas reflectivas
     matriz_curvaReflectiva[1,1] = -1 # --> Se posiciona el valor -1
                                      # en la segunda fila segunda columna.
     
-    # Se calcula el término de relación entre índices de refracción considerando el radio de curvatura
+    # Se calcula el término relacionado con el aporte del radio de curvatura
     aporte_Radio = 2/determinacion_Radio(radio)
 
-    #Se asigna el valor del término de relación entre índices de refracción considerando el radio de
-    #curvatura en la posición pre determinada para una matriz ABCD para lentes delgadas
+    #Se asigna el valor del término de aporte del radio de curvatura
+    #en la posición pre determinada para una matriz ABCD para lentes delgadas
     matriz_curvaReflectiva[1,0] = aporte_Radio # --> Se posiciona el valor
-                                                          # de la relacion entre los indices de 
-                                                          # refraccion considerando la curvatura
+                                                          # del aporte de la curvatura
                                                           # en la segunda fila primera columna.
 
     '''MATRIZ RESULTANTE:
-    |                  1                                     0            | 
-    | relacion_indicesRefraccionCurvatura      relacion_indicesRefraccion |
+    |       1            0 | 
+    | aporte_Radio      -1 |
     
     '''
     return matriz_curvaReflectiva
