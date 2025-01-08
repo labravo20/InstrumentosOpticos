@@ -70,7 +70,7 @@ def propagacion_MedioHomogeneo(distancia_propagacion):
     # Se asigna el valor de la distancia de propagación en la posicion pre determinada 
     # para una matriz ABCD de propagación en medio homogéneo:
     matriz_propagacionMedioHomogeneo[0,1] = distancia_propagacion # --> Se posiciona el valor de la distancia
-                                        # de propagación en la primera fila segunda columna.
+                                                                  # de propagación en la primera fila segunda columna.
 
     ''' MATRIZ RESULTANTE:
     |1   distancia_Propagación|
@@ -83,48 +83,50 @@ def propagacion_MedioHomogeneo(distancia_propagacion):
 
 """ Creación de matriz ABCD para LENTES DELGADAS """
 
-def lente_Delgada(radio_1, radio_2, n_Incidente, n_Lente, n_Salida, tamaño_Fisico = None):
+def lente_Delgada(radio_1, radio_2, n_Incidente, n_Lente, n_Salida):
+
     '''
     Función para calcular la matriz ABCD de una lente delgada.
 
     FUNCIÓN RECIBE:
 
-        radio_1     == float si finito, str si infinito
-        radio_2     == float si finito, str si infinito
-        n_Incidente == float, por default es 1 (aire)
-        n_Lente     == float, por default es 1.5 (vidrio)
-        n_Salida    == float, por default es 1 (aire)
+        -radio entrada lente  ((Type: float) para valor establecido o (Type: str) para tendencia a infinito)
+        -radio salida lente  ((Type: float) para valor establecido o (Type: str) para tendencia a infinito)
+        -índice de refracción medio incidente (Type: float) 
+        -índice de refracción del material lente (Type: float) --> Por generalidad se puede considerar 1.5 (vidrio) 
+        -índice de refracción medio salida (Type: float)
     
     FUNCIÓN RETORNA:
         
-        Matriz ABCD correspondiente
+        Matriz ABCD correspondiente a la transferencia de rayos a través de una lente delgada.
     '''
+    
+    # Se crea matriz identidad sobre la cual se calculará la matriz para lentes delgadas
+    matriz_lentesDelgadas = matriz_Inicial()
+    
+    #Se calcula el término asociado a la ecuación del fabricante de lentes "1/f" siendo f la distancia focal de la lente
+    #Este término se asocia al PODER DE CONVERGENCIA de la lente...
 
-    ''' Definicion de valores por default para los indices de refraccion, se asume por default que la lente esta hecha de vidrio y que esta 
-    inmersa en el aire
-    Por tanto:
-    n_Incidente = 1 por default
-    n_Lente = 1.5 por default
-    n_Salida = 1 por default'''
+    ###Calculando el poder de convergencia de la superficie de entrada:
+    poder_convergenciaSuperficieEntrada = ((n_Lente - n_Incidente)/determinacion_Radio(radio_1))
+
+    ###Calculando el poder de convergencia de la superficie de salida:
+    poder_convergenciaSuperficieSalida = ((n_Salida - n_Lente)/determinacion_Radio(radio_2))
+
+    ###Calculando el poder de convergencia de la lente:
+    poder_convergenciaLente = poder_convergenciaSuperficieEntrada + poder_convergenciaSuperficieSalida
     
-    if n_Incidente is None: #establecemos un valor por default para los indices de refraccion
-        n_Incidente = 1 #si no se define, entonces el indice de refraccion es el del aire
+    #Se asigna el valor del negativo del poder de convergencia de la lente en la posición
+    #pre determinada para una matriz ABCD para lentes delgadas
+    matriz_lentesDelgadas[1,0] = -poder_convergenciaLente # --> Se posiciona el valor del poder de
+                                                          # convergencia de la lente en la segunda
+                                                          # fila primera columna.
+
+    '''MATRIZ RESULTANTE:
+    |            1                 0  | 
+    |-poder_convergenciaLente      1  |
     
-    if n_Salida is None: #Establecemos un valor por default para el indice de refraccion de salida
-        n_Salida = 1 #Si no se define, entonces el indice de refraccion de salida es el del aire
-    
-    if n_Lente is None: #establecemos un valor por default para el indice de refraccion de los lentes en caso de que se deje vacio
-        n_Lente = 1.5 #Asumimos por default que las lentes estan hechas de vidrio
-    
-    matriz = matriz_Inicial()              #Se crea matriz identidad para empezar a trabajar
-    
-    poder_Lente = ((n_Lente - n_Incidente)/determinacion_Radio(radio_1)) + ((n_Salida - n_Lente)/determinacion_Radio(radio_2)) #se calcula el poder de covergencia de la lente usando la ecuacion del fabricante de lentes
-    
-    matriz[1,0] = -poder_Lente
     '''
-    |1                0  | Poder_lente = 1/f
-    |Poder_lente      1  |
-    '''
-    return matriz
+    return matriz_lentesDelgadas
 
 
