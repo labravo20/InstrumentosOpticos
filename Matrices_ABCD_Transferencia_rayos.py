@@ -81,6 +81,44 @@ def propagacion_MedioHomogeneo(distancia_propagacion):
 
 
 
+""" Creación de matriz ABCD para REFRACCIÓN"""
+
+def refraccion(n_Incidente, n_Salida):
+
+    '''
+    Función para calcular la matriz ABCD para refracción.
+
+    FUNCIÓN RECIBE:
+
+        -índice de refracción medio incidente (Type: float) 
+        -índice de refracción medio salida (Type: float)
+    
+    FUNCIÓN RETORNA:
+        
+        Matriz ABCD correspondiente a la transferencia de rayos en caso de refracción.
+    '''
+    
+    # Se crea matriz identidad sobre la cual se calculará la matriz para refracción
+    matriz_refraccion = matriz_Inicial()
+    
+    # Se calcula la relación entre los índices de refracción de los medios en consideración
+    relacion_indicesRefraccion = n_Incidente/n_Salida
+    
+    #Se asigna el valor del negativo del poder de convergencia de la lente en la posición
+    #pre determinada para una matriz ABCD para lentes delgadas
+    matriz_refraccion[1,1] = relacion_indicesRefraccion # --> Se posiciona el valor del poder de
+                                                          # la relacion entre los indices de refraccion
+                                                          # en la segunda fila segunda columna.
+
+    '''MATRIZ RESULTANTE:
+    | 1                    0            | 
+    | 0      relacion_indicesRefraccion |
+    
+    '''
+    return matriz_refraccion
+
+
+
 """ Creación de matriz ABCD para LENTES DELGADAS """
 
 def lente_Delgada(radio_1, radio_2, n_Incidente, n_Lente, n_Salida):
