@@ -210,7 +210,7 @@ def curva_Reflectiva(radio):
 
 
 
-""" Creación de matriz ABCD para LENTES DELGADAS """
+""" Creación de matriz ABCD para LENTES DELGADAS sin conocer la distancia focal"""
 
 def lente_Delgada(radio_1, radio_2, n_Incidente, n_Lente, n_Salida):
 
@@ -260,6 +260,41 @@ def lente_Delgada(radio_1, radio_2, n_Incidente, n_Lente, n_Salida):
 
 
 
+""" Creación de matriz ABCD para LENTES DELGADAS conociendo la distancia focal"""
+
+def lente_DelgadaConociendoDistanciaFocal(distancia_focal):
+
+    '''
+    Función para calcular la matriz ABCD de una lente delgada.
+
+    FUNCIÓN RECIBE: distancia focal lente  ((Type: float) 
+    
+    FUNCIÓN RETORNA:
+        
+        Matriz ABCD correspondiente a la transferencia de rayos a través de una lente delgada.
+    '''
+    
+    # Se crea matriz identidad sobre la cual se calculará la matriz para lentes delgadas
+    matriz_lentesDelgadas = matriz_Inicial()
+    
+    #Se calcula el término asociado a la ecuación del fabricante de lentes "1/f" siendo f la distancia focal de la lente
+    #Este término se asocia al PODER DE CONVERGENCIA de la lente...
+    poder_convergenciaLente = 1/distancia_focal
+    
+    #Se asigna el valor del negativo del poder de convergencia de la lente en la posición
+    #pre determinada para una matriz ABCD para lentes delgadas
+    matriz_lentesDelgadas[1,0] = -poder_convergenciaLente # --> Se posiciona el valor del poder de
+                                                          # convergencia de la lente en la segunda
+                                                          # fila primera columna.
+
+    '''MATRIZ RESULTANTE:
+    |            1                 0  | 
+    |-poder_convergenciaLente      1  |
+    
+    '''
+    return matriz_lentesDelgadas
+
+
 """ Creación de matriz ABCD para DIFRACCIÓN """
 def matriz_ABCD_Difraccion(camino_optico_central, campo_entrada, posicion_A_matriz, posicion_B_matriz, 
                            posicion_D_matriz, xx_entrada, yy_entrada, xx_salida, yy_salida,numero_onda):
@@ -287,3 +322,17 @@ def matriz_ABCD_Difraccion(camino_optico_central, campo_entrada, posicion_A_matr
 
 
     return campo_Difractado
+
+
+""" Funcion para calcular la matriz del sistema """
+def matriz_Sistema():
+
+    return 0
+
+
+
+
+
+
+
+
