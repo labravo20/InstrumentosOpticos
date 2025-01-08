@@ -3,31 +3,7 @@ print("Inicializando entorno de programación Transformada de Fresnel...")
 
 import numpy as np
 import matplotlib.pyplot as plt
-
-''' Definicion de las difefrentes funciones de transmitancia'''
-
-def malla_Puntos_mascara_difractiva(resolucion, longitud_Arreglo):
-    ''' CREACION DE LAS MALLAS DE PUNTOS Y LOS DELTAS PARA LOS PRODUCTOS ESPACIO FRECUENCIA '''
-    x = np.linspace(-longitud_Arreglo / 2, longitud_Arreglo / 2, resolucion) #crea las mallas de puntos para el arreglo 
-    y = np.linspace(-longitud_Arreglo / 2, longitud_Arreglo / 2, resolucion) 
-    xx, yy = np.meshgrid(x, y) #crea una malla de puntos bidimensional 
-    return xx, yy #retornamos la malla de puntos
-
-def malla_Puntos_plano_medicion(resolucion, longitud_Arreglo):
-    ''' CREACION DE LAS MALLAS DE PUNTOS Y LOS DELTAS PARA LOS PRODUCTOS ESPACIO FRECUENCIA '''
-    x = np.linspace(-longitud_Arreglo / 2, longitud_Arreglo / 2, resolucion) #crea las mallas de puntos para el arreglo 
-    y = np.linspace(-longitud_Arreglo / 2, longitud_Arreglo / 2, resolucion) 
-    xx, yy = np.meshgrid(x, y) #crea una malla de puntos bidimensional 
-    return xx, yy #retornamos la malla de puntos
-
-#Se define una función con transmitancia asociada a una abertura circular
-def funcion_Circulo(radio, centro, xx, yy): #definicion de la funcion para hacer circulo transparente
-    ''' CREACCION DEL CONJUNTO DE PUNTOS DE LA MASCARA DE DFRACCION '''
-    if centro is None: # que pasa si el centro no es definido en la funcion
-        centro = (0, 0) #ubica el centro de la circunferencia en el origen
-    distancia = (xx - centro[0])**2 + (yy - centro[1])**2 #calculamos la distancia desde el centro de la circunferencia a cada punto
-    mascara = distancia <= radio**2 #los puntos de la mascara seran los puntos cuya distancia al centro es menor que el radio
-    return mascara #devolvemos los puntos que cumplen la condicion para hacer parte de la mascara
+import Mascaras_Transmitancia as mask
 
 def producto_espacio_frecuencia(longitud_onda,z,resolucion,longitud_Arreglo):
 
@@ -51,10 +27,10 @@ radio_input = 0.01 #UNIDADES: m
 centro_input = None 
 
 """ Creación de malla de puntos máscara difractiva"""
-xx,yy = malla_Puntos_mascara_difractiva(resolucion_input,longitud_arreglo_input)
+xx,yy = mask.malla_Puntos(resolucion_input,longitud_arreglo_input)
 
 """ Creación de abertura circular """
-mascara_circular = funcion_Circulo(radio_input,centro_input,xx,yy)
+mascara_circular = mask.funcion_Circulo(radio_input,centro_input,xx,yy)
 
 """ Parámetros de configuración del arreglo difractivo """
 longitud_onda_input = 533E-9 #UNIDADES: m
@@ -71,7 +47,7 @@ resolucion_medicion = resolucion_input
 longitud_arreglo_medicion = (delta_muestreo[1])*resolucion_medicion #UNIDADES: m
 
 """ Creación de malla de puntos plano de medición"""
-xx_medicion,yy_medicion = malla_Puntos_plano_medicion(resolucion_medicion,longitud_arreglo_input)
+xx_medicion,yy_medicion = mask.malla_Puntos(resolucion_medicion,longitud_arreglo_input)
 
 """ Definición de ecuación de Transformada de Fresnel"""
 
