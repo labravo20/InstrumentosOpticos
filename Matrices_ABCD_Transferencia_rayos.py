@@ -1,7 +1,7 @@
 """ Se genera un print de mensaje inicial para verificar correcto funcionamiento del entorno """
 print("Inicializando entorno de programación Matrices ABCD transferencia de rayos...")
 
-
+##PREGUNTARRRRR --> AL INGRESAR VALORES DE RADIO SE DEBE CONSIDERAR - o +????? RECORDAR CUÁL ES CUÁL
 
 """ Importando librerias necesarias para el desarrollo del código """
 import numpy as np
@@ -104,10 +104,10 @@ def refraccion(n_Incidente, n_Salida):
     # Se calcula la relación entre los índices de refracción de los medios en consideración
     relacion_indicesRefraccion = n_Incidente/n_Salida
     
-    #Se asigna el valor del negativo del poder de convergencia de la lente en la posición
-    #pre determinada para una matriz ABCD para lentes delgadas
-    matriz_refraccion[1,1] = relacion_indicesRefraccion # --> Se posiciona el valor del poder de
-                                                          # la relacion entre los indices de refraccion
+    #Se asigna el valor de la relación entre los índices de refracción en la posición
+    #pre determinada para una matriz ABCD para caso de refracción.
+    matriz_refraccion[1,1] = relacion_indicesRefraccion # --> Se posiciona el valor de la relación
+                                                          # entre los indices de refraccion
                                                           # en la segunda fila segunda columna.
 
     '''MATRIZ RESULTANTE:
@@ -116,6 +116,56 @@ def refraccion(n_Incidente, n_Salida):
     
     '''
     return matriz_refraccion
+
+
+
+""" Creación de matriz ABCD para CURVAS REFRACTIVAS"""
+
+def curva_Refractiva(radio, n_Incidente, n_Salida):
+
+    '''
+    Función para calcular la matriz ABCD para curva refractiva.
+
+    FUNCIÓN RECIBE:
+
+        -radio superficie  ((Type: float) para valor establecido o (Type: str) para tendencia a infinito)
+        -índice de refracción medio incidente (Type: float) 
+        -índice de refracción medio salida (Type: float)
+    
+    FUNCIÓN RETORNA:
+        
+        Matriz ABCD correspondiente a la transferencia de rayos en caso curvas refractivas.
+    '''
+    
+    # Se crea matriz identidad sobre la cual se calculará la matriz para refracción
+    matriz_curvaRefractiva = matriz_Inicial()
+    
+    # Se calcula la relación entre los índices de refracción de los medios en consideración
+    relacion_indicesRefraccion = n_Incidente/n_Salida
+
+    
+    #Se asigna el valor del negativo del poder de convergencia de la lente en la posición
+    #pre determinada para una matriz ABCD para lentes delgadas
+    matriz_curvaRefractiva[1,1] = relacion_indicesRefraccion # --> Se posiciona el valor del poder de
+                                                          # la relacion entre los indices de refraccion
+                                                          # en la segunda fila segunda columna.
+    
+    # Se calcula el término de relación entre índices de refracción considerando el radio de curvatura
+    relacion_indicesRefraccionCurvatura = (n_Incidente-n_Salida)/(n_Salida*determinacion_Radio(radio))
+
+    #Se asigna el valor del término de relación entre índices de refracción considerando el radio de
+    #curvatura en la posición pre determinada para una matriz ABCD para lentes delgadas
+    matriz_curvaRefractiva[1,0] = relacion_indicesRefraccionCurvatura # --> Se posiciona el valor
+                                                          # de la relacion entre los indices de 
+                                                          # refraccion considerando la curvatura
+                                                          # en la segunda fila primera columna.
+
+    '''MATRIZ RESULTANTE:
+    |                  1                                     0            | 
+    | relacion_indicesRefraccionCurvatura      relacion_indicesRefraccion |
+    
+    '''
+    return matriz_curvaRefractiva
 
 
 
