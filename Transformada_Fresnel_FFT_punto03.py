@@ -40,7 +40,7 @@ transmitancia = (1/2)*(1 + (m*np.cos((2*np.pi*xx)/L)))
 """ Definición de variables input para creación malla de puntos plano medición"""
 
 #Llamando a la función para determinar los deltas de input y output
-delta_muestreo = function.producto_espacio_frecuencia(longitud_onda_input,z_inputTransmitancia,resolucion_input,longitud_arreglo_input)
+delta_muestreo = function.producto_espacio_frecuencia_TransformadaFresnel(longitud_onda_input,z_inputTransmitancia,resolucion_input,longitud_arreglo_input)
 
 resolucion_medicion = resolucion_input 
 longitud_arreglo_medicion = (delta_muestreo[1])*resolucion_medicion #UNIDADES: m

@@ -3,7 +3,7 @@ import numpy as np
 
 """ Función producto espacio frecuencia en caso TRANSFORMADA FRESNEL """
 
-def producto_espacio_frecuencia(longitud_onda,z,resolucion,longitud_Arreglo):
+def producto_espacio_frecuencia_TransformadaFresnel(longitud_onda,z,resolucion,longitud_Arreglo):
 
     delta_input = longitud_Arreglo/resolucion #Definiendo separación entre número total de muestras
 
