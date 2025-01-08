@@ -3,22 +3,8 @@ print("Inicializando entorno de programación Transformada de Fresnel (Punto03, 
 
 import numpy as np
 import matplotlib.pyplot as plt
+import Mascaras_Transmitancia as mask
 
-''' Definicion de las difefrentes funciones de transmitancia'''
-
-def malla_Puntos_mascara_difractiva(resolucion, longitud_Arreglo):
-    ''' CREACION DE LAS MALLAS DE PUNTOS Y LOS DELTAS PARA LOS PRODUCTOS ESPACIO FRECUENCIA '''
-    x = np.linspace(-longitud_Arreglo / 2, longitud_Arreglo / 2, resolucion) #crea las mallas de puntos para el arreglo 
-    y = np.linspace(-longitud_Arreglo / 2, longitud_Arreglo / 2, resolucion) 
-    xx, yy = np.meshgrid(x, y) #crea una malla de puntos bidimensional 
-    return xx, yy #retornamos la malla de puntos
-
-def malla_Puntos_plano_medicion(resolucion, longitud_Arreglo):
-    ''' CREACION DE LAS MALLAS DE PUNTOS Y LOS DELTAS PARA LOS PRODUCTOS ESPACIO FRECUENCIA '''
-    x = np.linspace(-longitud_Arreglo / 2, longitud_Arreglo / 2, resolucion) #crea las mallas de puntos para el arreglo 
-    y = np.linspace(-longitud_Arreglo / 2, longitud_Arreglo / 2, resolucion) 
-    xx, yy = np.meshgrid(x, y) #crea una malla de puntos bidimensional 
-    return xx, yy #retornamos la malla de puntos
 
 def producto_espacio_frecuencia(longitud_onda,z,resolucion,longitud_Arreglo):
 
@@ -38,7 +24,7 @@ longitud_arreglo_input = 0.005 #UNIDADES: m
 
 
 """ Creación de malla de puntos máscara difractiva"""
-xx,yy = malla_Puntos_mascara_difractiva(resolucion_input,longitud_arreglo_input)
+xx,yy = mask.malla_Puntos(resolucion_input,longitud_arreglo_input)
 
 """ Creación de variables para definición de la transmitancia de amplitudd periódica """
 m = 1 #Se asigna este valor para garantizar que la transmitancia va a estar en el intervalo [0,1]
@@ -71,7 +57,7 @@ resolucion_medicion = resolucion_input
 longitud_arreglo_medicion = (delta_muestreo[1])*resolucion_medicion #UNIDADES: m
 
 """ Creación de malla de puntos plano de medición"""
-xx_medicion,yy_medicion = malla_Puntos_plano_medicion(resolucion_medicion,longitud_arreglo_medicion)
+xx_medicion,yy_medicion = mask.malla_Puntos(resolucion_medicion,longitud_arreglo_medicion)
 
 """ Definición de ecuación de Transformada de Fresnel"""
 
