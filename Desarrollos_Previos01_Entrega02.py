@@ -11,6 +11,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+
+""" Definiendo parámetros de máscara difractiva """
 resolucion = 3000  # Número de puntos en la malla
 longitud_Arreglo = 0.5  # Tamaño físico del área 
 radio = 0.002  # Radio del círculo 
@@ -46,10 +48,4 @@ plt.show()
 
 
 
-""" Aplicación de matrices de transmisión de rayos"""
 
-#Primer tramo del recorrido --> Propagación en distancia focal 01
-campo_propagadoMascara_lente01 = matriz.propagacion_MedioHomogeneo(distancia_focal01)*1
-
-#Segundo tramo del recorrido --> Paso a través de lente delgada
-campo_lente01 = 0
