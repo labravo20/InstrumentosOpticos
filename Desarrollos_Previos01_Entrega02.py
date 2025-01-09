@@ -14,10 +14,11 @@ import Funciones_importantes as function
 
 
 """ Definiendo parámetros de máscara difractiva """
-resolucion = 1000  # Número de puntos en la malla
+resolucion = 3000  # Número de puntos en la malla
 longitud_Arreglo = 0.2  # Tamaño físico del área 
 radio = 0.02  # Radio del círculo 
 centro = None  # El centro será el origen si es None
+
 
 
 """ Definición de distancias del arreglo """
@@ -88,7 +89,7 @@ matriz_propagacion04 = matriz.propagacion_MedioHomogeneo(distancia_focal02)
 lista_matricesABCD = [matriz_propagacion01,matriz_lente01,matriz_propagacion02,matriz_propagacion03,
                       matriz_lente02,matriz_propagacion04]
 
-
+#Se crea una lista de matrices para abordar un proceso difractivo sencillo...
 #lista_matricesABCD = [matriz_propagacion01,matriz_lente01,matriz_propagacion01]
 
 
@@ -106,11 +107,13 @@ camino_optico_central = matriz.camino_Optico(lista_matricesABCD)
 """ Calculando la malla de puntos del plano de medición """
 
 #Se llama función para determinar los deltas de muestreo
-deltas = function.producto_espacio_frecuencia_TransformadaFresnel(longitud_onda_input,camino_optico_central,
+deltas = function.producto_espacio_frecuencia_TransformadaFresnel(longitud_onda_input,matriz_Sistema[0,1],
                                                                   resolucion,longitud_Arreglo)
+
 
 #Se calcula el ancho de la ventana del plano de medición 
 ancho_VentanaPlanoMedicion = resolucion*deltas[1]
+
 
 #Se calcula la malla de puntos asociada al plano de medición
 xx_PlanoMedicion, yy_PlanoMedicion = mascaras.malla_Puntos(resolucion, ancho_VentanaPlanoMedicion)
