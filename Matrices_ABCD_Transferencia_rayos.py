@@ -347,8 +347,8 @@ def matriz_Sistema(lista_matricesArregloDifractivo):
         #Se realiza la multiplicación de las matrices para calcular la matriz del sistema 
         matriz_sistema = np.dot(matriz_sistema, matriz)
     
+    
     return matriz_sistema
-
 
 
 

@@ -14,7 +14,7 @@ import Funciones_importantes as function
 
 
 """ Definiendo parámetros de máscara difractiva """
-resolucion = 3000  # Número de puntos en la malla
+resolucion = 1000  # Número de puntos en la malla
 longitud_Arreglo = 0.2  # Tamaño físico del área 
 radio = 0.02  # Radio del círculo 
 centro = None  # El centro será el origen si es None
@@ -45,8 +45,8 @@ numero_onda_input = (2*np.pi)/longitud_onda_input
 xx_mascara, yy_mascara = mascaras.malla_Puntos(resolucion, longitud_Arreglo)
 
 # Crear la máscara circular
-mascara = mascaras.funcion_Circulo(radio, centro, xx_mascara, yy_mascara)
-
+#mascara = mascaras.funcion_Circulo(radio, centro, xx_mascara, yy_mascara)
+mascara = mascaras.funcion_Rectangulo(radio,radio,centro,xx_mascara,yy_mascara)
 
 
 """ Graficando máscara de transmitancia asignaada a abertura circular"""
@@ -87,6 +87,10 @@ matriz_propagacion04 = matriz.propagacion_MedioHomogeneo(distancia_focal02)
 #Se crea una lista de matrices para abordar todo el proceso difractivo
 lista_matricesABCD = [matriz_propagacion01,matriz_lente01,matriz_propagacion02,matriz_propagacion03,
                       matriz_lente02,matriz_propagacion04]
+
+
+#lista_matricesABCD = [matriz_propagacion01,matriz_lente01,matriz_propagacion01]
+
 
 #Se llama función para calcular la matriz del sistema
 matriz_Sistema = matriz.matriz_Sistema(lista_matricesABCD)
@@ -131,7 +135,7 @@ intensidad_campoPlanoMedicion = amplitud_campoPlanoMedicion**2
 """ Graficando la intensidad del campo de salida """
 
 plt.imshow(intensidad_campoPlanoMedicion, extent=[-ancho_VentanaPlanoMedicion/2, ancho_VentanaPlanoMedicion/2, -ancho_VentanaPlanoMedicion/2, ancho_VentanaPlanoMedicion/2], 
-           cmap='inferno')
+           cmap='gray')
 plt.title("Intensidad")
 
 plt.colorbar(label="Intensidad")

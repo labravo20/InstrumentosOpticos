@@ -22,3 +22,32 @@ def funcion_Circulo(radio, centro, xx, yy): #definicion de la funcion para hacer
     distancia = (xx - centro[0])**2 + (yy - centro[1])**2 #calculamos la distancia desde el centro de la circunferencia a cada punto
     mascara = distancia <= radio**2 #los puntos de la mascara seran los puntos cuya distancia al centro es menor que el radio
     return mascara #devolvemos los puntos que cumplen la condicion para hacer parte de la mascara
+
+
+
+
+""" Definición de función para máscara cuadrado """
+
+
+def funcion_Rectangulo(base, altura, centro, xx, yy): #funcion para realizar una funcion rectangulo
+    '''
+    Crea una máscara con un rectángulo
+    ENTRADAS:
+        base == float (Base obviamente)
+        altura == float (Altura obviamente)
+        centro == lista [X,Y]
+        xx, yy == malla de puntos en la cual se verá el rectángulo
+    RETORNO:
+        Mascara (Array 2D)    
+    '''
+    if centro is None: #que es lo que pasa si no se especifica el centro del rectangulo
+        centro = [0, 0] #el centro se ubicca por defecto en el origen
+    x_Min = centro[0] - base / 2 #calculos de las distancias limite del rectangulo
+    x_Max = centro[0] + base / 2
+    y_Min = centro[1] - altura / 2
+    y_Max = centro[1] + altura / 2
+
+    mascara = (xx <= x_Max) & (xx >= x_Min) & (yy <= y_Max) & (yy >= y_Min) #filtrado de los puntos al interior del rectangulo 
+
+    return mascara #retorno la mascara
+
