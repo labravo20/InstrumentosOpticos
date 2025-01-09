@@ -15,15 +15,17 @@ import Funciones_importantes as function
 
 """ Definiendo parámetros de máscara difractiva """
 resolucion = 3000  # Número de puntos en la malla
-longitud_Arreglo = 0.5  # Tamaño físico del área 
-radio = 0.002  # Radio del círculo 
+longitud_Arreglo = 0.2  # Tamaño físico del área 
+radio = 0.02  # Radio del círculo 
 centro = None  # El centro será el origen si es None
 
 
 """ Definición de distancias del arreglo """
-distancia_focal01 = 10
-distancia_focal02 = 10
-distancia_propagacion_d = 10
+distancia_focal01 = 0.1
+
+distancia_focal02 = 0.15
+
+distancia_propagacion_d = 0.05
 
 
 
@@ -112,6 +114,29 @@ xx_PlanoMedicion, yy_PlanoMedicion = mascaras.malla_Puntos(resolucion, ancho_Ven
 
 
 """ Se calcula el resultado del proceso difractivo """
+
+#Se calcula el campo de salida/en plano de medición --> Campo resultante de la difracción 
 campo_PlanoMedicion = matriz.matriz_ABCD_Difraccion(camino_optico_central,mascara,matriz_Sistema[0,0],
                                                     matriz_Sistema[0,1],matriz_Sistema[1,1],xx_mascara,
                                                     yy_mascara,xx_PlanoMedicion,yy_PlanoMedicion,numero_onda_input)
+
+#Se calcula la amplitud del campo de salida
+amplitud_campoPlanoMedicion = np.abs(campo_PlanoMedicion)
+
+#Se calcula la intensidad del campo de salida
+intensidad_campoPlanoMedicion = amplitud_campoPlanoMedicion**2
+
+
+
+""" Graficando la intensidad del campo de salida """
+
+plt.imshow(intensidad_campoPlanoMedicion, extent=[-ancho_VentanaPlanoMedicion/2, ancho_VentanaPlanoMedicion/2, -ancho_VentanaPlanoMedicion/2, ancho_VentanaPlanoMedicion/2], 
+           cmap='inferno')
+plt.title("Intensidad")
+
+plt.colorbar(label="Intensidad")
+
+plt.xlabel("X (m)")
+plt.ylabel("Y (m)")
+
+plt.show()
