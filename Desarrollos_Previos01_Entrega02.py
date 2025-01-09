@@ -9,6 +9,7 @@ import Mascaras_Transmitancia as mascaras
 import Matrices_ABCD_Transferencia_rayos as matriz
 import numpy as np
 import matplotlib.pyplot as plt
+import Funciones_importantes as function
 
 
 
@@ -77,8 +78,40 @@ matriz_lente02 = matriz.lente_DelgadaConociendoDistanciaFocal(distancia_focal02)
 #Sexto tramo --> Propagación a una distancia focal 02
 matriz_propagacion04 = matriz.propagacion_MedioHomogeneo(distancia_focal02)
 
-#CALCULANDO LA MATRIZ DEL SISTEMA (tiene en cuenta contribuciones de cada tramo del proceso)
 
-### Se crea una lista de matrices para abordar todo el proceso difractivo
+
+""" Calculando la matriz del sistema """
+
+#Se crea una lista de matrices para abordar todo el proceso difractivo
 lista_matricesABCD = [matriz_propagacion01,matriz_lente01,matriz_propagacion02,matriz_propagacion03,
                       matriz_lente02,matriz_propagacion04]
+
+#Se llama función para calcular la matriz del sistema
+matriz_Sistema = matriz.matriz_Sistema(lista_matricesABCD)
+
+
+
+""" Calculando el camino óptico central --> Asociado a la distancia de propagación TOTAL """
+
+camino_optico_central = matriz.camino_Optico(lista_matricesABCD)
+
+
+
+""" Calculando la malla de puntos del plano de medición """
+
+#Se llama función para determinar los deltas de muestreo
+deltas = function.producto_espacio_frecuencia_TransformadaFresnel(longitud_onda_input,camino_optico_central,
+                                                                  resolucion,longitud_Arreglo)
+
+#Se calcula el ancho de la ventana del plano de medición 
+ancho_VentanaPlanoMedicion = resolucion*deltas[1]
+
+#Se calcula la malla de puntos asociada al plano de medición
+xx_PlanoMedicion, yy_PlanoMedicion = mascaras.malla_Puntos(resolucion, ancho_VentanaPlanoMedicion)
+
+
+
+""" Se calcula el resultado del proceso difractivo """
+campo_PlanoMedicion = matriz.matriz_ABCD_Difraccion(camino_optico_central,mascara,matriz_Sistema[0,0],
+                                                    matriz_Sistema[0,1],matriz_Sistema[1,1],xx_mascara,
+                                                    yy_mascara,xx_PlanoMedicion,yy_PlanoMedicion,numero_onda_input)

@@ -299,6 +299,14 @@ def lente_DelgadaConociendoDistanciaFocal(distancia_focal):
 def matriz_ABCD_Difraccion(camino_optico_central, campo_entrada, posicion_A_matriz, posicion_B_matriz, 
                            posicion_D_matriz, xx_entrada, yy_entrada, xx_salida, yy_salida,numero_onda):
     
+    '''
+    Función para calcular ...
+
+    FUNCIÓN RECIBE: ... 
+    
+    FUNCIÓN RETORNA:...
+    '''
+    
     #Calculando término de fase constante:
     fase_constante = np.exp(1j*numero_onda*camino_optico_central)
 
@@ -325,13 +333,42 @@ def matriz_ABCD_Difraccion(camino_optico_central, campo_entrada, posicion_A_matr
 
 
 """ Funcion para calcular la matriz del sistema """
-def matriz_Sistema():
+def matriz_Sistema(lista_matricesArregloDifractivo):
 
-    return 0
+    # Inicializar el resultado con la primera matriz
+    matriz_sistema = lista_matricesArregloDifractivo[0]
+    
+    # Multiplicar las matrices en orden
+    for matriz in lista_matricesArregloDifractivo[1:]:
+
+        #Se verifica si las dimensiones de las matrices concuerdan para poder realizar operación
+        if matriz_sistema.shape[1] != matriz.shape[0]:
+            raise ValueError(f"No se pueden multiplicar las matrices con dimensiones {matriz_sistema.shape} y {matriz.shape}.")
+        
+        #Se realiza la multiplicación de las matrices para calcular la matriz del sistema 
+        matriz_sistema = np.dot(matriz_sistema, matriz)
+    
+    return matriz_sistema
 
 
 
 
+""" Función para calcular el camino óptico central """
+def camino_Optico(lista_matricesArregloDifractivo):
+
+    matriz_inicial = lista_matricesArregloDifractivo[0]
+
+    camino_optico = matriz_inicial[0,1] #Se aigna el valor del término B --> Correspondiente siempre
+                                        #a la distancia de propagación...
+    
+    # Multiplicar las matrices en orden
+    for matriz in lista_matricesArregloDifractivo[1:]:
+
+        #Se realiza la multiplicación de las matrices para calcular la matriz del sistema 
+        camino_optico = camino_optico + matriz[0,1]
+
+
+    return camino_optico
 
 
 
