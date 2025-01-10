@@ -297,7 +297,8 @@ def lente_DelgadaConociendoDistanciaFocal(distancia_focal):
 
 """ Creación de matriz ABCD para DIFRACCIÓN """
 def matriz_ABCD_Difraccion(camino_optico_central, campo_entrada, posicion_A_matriz, posicion_B_matriz, 
-                           posicion_D_matriz, xx_entrada, yy_entrada, xx_salida, yy_salida,numero_onda):
+                           posicion_D_matriz, xx_entrada, yy_entrada, xx_salida, yy_salida,numero_onda,
+                           deltas_muestreo):
     
     '''
     Función para calcular ...
@@ -326,7 +327,7 @@ def matriz_ABCD_Difraccion(camino_optico_central, campo_entrada, posicion_A_matr
     transformada_FourierFuncionEntrada = np.fft.fftshift(np.fft.fft2(funcion_Entrada))
 
     #Calculando el campo difractado
-    campo_Difractado = fase_constante*fase_parabolicaPlanoMedicion*transformada_FourierFuncionEntrada
+    campo_Difractado = deltas_muestreo[0]*deltas_muestreo[1]*fase_constante*fase_parabolicaPlanoMedicion*transformada_FourierFuncionEntrada
 
 
     return campo_Difractado
@@ -335,18 +336,15 @@ def matriz_ABCD_Difraccion(camino_optico_central, campo_entrada, posicion_A_matr
 """ Funcion para calcular la matriz del sistema """
 def matriz_Sistema(lista_matricesArregloDifractivo):
 
-    #Se invierte la lista que contiene en orden las matrices asociadas al arreglo
-    lista_invertida = lista_matricesArregloDifractivo[::-1]
     
     # Inicializar el resultado con la primera matriz
-    matriz_sistema = lista_invertida[0]
+    matriz_sistema = lista_matricesArregloDifractivo[0]
     
     # Multiplicar las matrices en orden
-    for matriz in lista_invertida[1:]:
+    for matriz in lista_matricesArregloDifractivo[1:]:
         
         #Se realiza la multiplicación de las matrices para calcular la matriz del sistema 
         matriz_sistema = np.dot(matriz_sistema, matriz)
-    
     
     return matriz_sistema
 

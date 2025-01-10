@@ -1,6 +1,10 @@
 """ Se genera un print de mensaje inicial para verificar correcto funcionamiento del entorno """
 print("Inicializando entorno de programación implementación 01 Matrices ABCD transferencia de rayos...")
 
+#LUNES SALIDA CON DANIEL :3
+""" Anotando condiciones para captura de fotografía """
+
+
 
 
 """ Importando librerias y documentos necesarios """
@@ -14,19 +18,21 @@ import Funciones_importantes as function
 
 
 """ Definiendo parámetros de máscara difractiva """
-resolucion = 3000  # Número de puntos en la malla
-longitud_Arreglo = 0.2  # Tamaño físico del área 
-radio = 0.02  # Radio del círculo 
+resolucion = 4012  # Número de puntos en la malla --> Asociado a comparación con una referencia de cámara
+longitud_Arreglo = 0.0043   #Tamaño físico del área ---> Resultado de calcular con datos de cámara... 
+                        # --> Imagen con tamaño de 0.00775 (longitud arreglo) se usa en condiciones de 
+                        # producto espacio frecuencia de transformada de Fresnel
+radio = 0.003  # Radio del círculo 
 centro = None  # El centro será el origen si es None
 
 
 
 """ Definición de distancias del arreglo """
-distancia_focal01 = 0.1
+distancia_focal01 = 0.07  #DISTANCIA FOCAL MÁXIMA 0.125 
 
 distancia_focal02 = 0.15
 
-distancia_propagacion_d = 0.05
+distancia_propagacion_d = 0.315
 
 
 
@@ -85,17 +91,18 @@ matriz_propagacion04 = matriz.propagacion_MedioHomogeneo(distancia_focal02)
 
 """ Calculando la matriz del sistema """
 
-#Se crea una lista de matrices para abordar todo el proceso difractivo
-lista_matricesABCD = [matriz_propagacion01,matriz_lente01,matriz_propagacion02,matriz_propagacion03,
-                      matriz_lente02,matriz_propagacion04]
+#NOTA IMPORTANTE: La lista de matrices se debe poner en orden inverso a su ibicación real
+#en el arreglo.
 
 #Se crea una lista de matrices para abordar un proceso difractivo sencillo...
-#lista_matricesABCD = [matriz_propagacion01,matriz_lente01,matriz_propagacion01]
+lista_matricesABCD = [matriz.propagacion_MedioHomogeneo(0.315), #Distancia Lente-imagen
+                      matriz_lente01,
+                      matriz.propagacion_MedioHomogeneo(0.09)] #Distancia objeto-lente
+
 
 
 #Se llama función para calcular la matriz del sistema
 matriz_Sistema = matriz.matriz_Sistema(lista_matricesABCD)
-
 
 
 """ Calculando el camino óptico central --> Asociado a la distancia de propagación TOTAL """
@@ -109,6 +116,7 @@ camino_optico_central = matriz.camino_Optico(lista_matricesABCD)
 #Se llama función para determinar los deltas de muestreo
 deltas = function.producto_espacio_frecuencia_TransformadaFresnel(longitud_onda_input,matriz_Sistema[0,1],
                                                                   resolucion,longitud_Arreglo)
+
 
 
 #Se calcula el ancho de la ventana del plano de medición 
@@ -125,7 +133,10 @@ xx_PlanoMedicion, yy_PlanoMedicion = mascaras.malla_Puntos(resolucion, ancho_Ven
 #Se calcula el campo de salida/en plano de medición --> Campo resultante de la difracción 
 campo_PlanoMedicion = matriz.matriz_ABCD_Difraccion(camino_optico_central,mascara,matriz_Sistema[0,0],
                                                     matriz_Sistema[0,1],matriz_Sistema[1,1],xx_mascara,
-                                                    yy_mascara,xx_PlanoMedicion,yy_PlanoMedicion,numero_onda_input)
+                                                    yy_mascara,xx_PlanoMedicion,yy_PlanoMedicion,numero_onda_input,
+                                                    deltas)
+
+print(matriz_Sistema[0,1])
 
 #Se calcula la amplitud del campo de salida
 amplitud_campoPlanoMedicion = np.abs(campo_PlanoMedicion)
