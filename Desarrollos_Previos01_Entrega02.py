@@ -1,9 +1,13 @@
 """ Se genera un print de mensaje inicial para verificar correcto funcionamiento del entorno """
 print("Inicializando entorno de programación implementación 01 Matrices ABCD transferencia de rayos...")
 
-#LUNES SALIDA CON DANIEL :3
-""" Anotando condiciones para captura de fotografía """
 
+""" Anotaciones importantes magnificación de imágenes """
+#NOTA SOBRE CÁLCULO DISTANCIA IMAGEN Y OBJETO: (1/f) = (1/I) + (1/O)
+
+#NOTA SOBRE MAGNIFICACIÓN (para calcular tamaño aproximado de imagen en función de tamaño objeto):
+
+### M = I/O --> Tamaño de imagen será: (TAMAÑO OBJETO)*M
 
 
 
