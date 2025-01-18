@@ -334,14 +334,14 @@ def matriz_ABCD_Difraccion(camino_optico_central, campo_entrada, posicion_A_matr
 
 
 """ Funcion para calcular la matriz del sistema """
-def matriz_Sistema(lista_matricesArregloDifractivo):
+def matriz_Sistema(lista_matricesArregloDifractivoInvertida):
 
     
     # Inicializar el resultado con la primera matriz
-    matriz_sistema = lista_matricesArregloDifractivo[0]
+    matriz_sistema = lista_matricesArregloDifractivoInvertida[0]
     
     # Multiplicar las matrices en orden
-    for matriz in lista_matricesArregloDifractivo[1:]:
+    for matriz in lista_matricesArregloDifractivoInvertida[1:]:
         
         #Se realiza la multiplicación de las matrices para calcular la matriz del sistema 
         matriz_sistema = np.dot(matriz_sistema, matriz)
