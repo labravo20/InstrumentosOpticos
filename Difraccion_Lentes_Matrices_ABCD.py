@@ -30,18 +30,18 @@ import Funciones_importantes as function
 
 """ Definiendo parámetros de máscara difractiva """
 
-resolucion_Input = 4012  # Número de puntos en la malla --> Asociado a comparación con una referencia de cámara
-longitud_ArregloInput = 0.0043   #Tamaño físico del área ---> Resultado de calcular con datos de cámara... 
+resolucion_Input = 3000  # Número de puntos en la malla --> Asociado a comparación con una referencia de cámara
+longitud_ArregloInput = 1  #Tamaño físico del área ---> Resultado de calcular con datos de cámara... 
                         # --> Imagen con tamaño de 0.00775 (longitud arreglo) se usa en condiciones de 
                         # producto espacio frecuencia de transformada de Fresnel
-radio = 0.003  # Radio del círculo 
+radio = 0.05  # Radio del círculo 
 centro = None  # El centro será el origen si es None
 
 
 
 """ Definiendo parámetro para el tamaño del diafragma """
 
-radio_diafragmaInput = 0.8 #Se define variable asociada al radio de la abertura circular que representará
+radio_diafragmaInput = 0.3 #Se define variable asociada al radio de la abertura circular que representará
                            # el diafragma.
 
 
@@ -50,9 +50,9 @@ radio_diafragmaInput = 0.8 #Se define variable asociada al radio de la abertura 
 
 distancia_focal = 0.07  #DISTANCIA FOCAL MÁXIMA 0.125 
 
-distancia_propagacionAribitraria = 0.315 #Se define una distancia de propagación arbitraria
+distancia_propagacionAribitraria = 0.3 #Se define una distancia de propagación arbitraria
 
-
+distancia_imagen = 0.09 #Se calcula haciendo uso de la ecuación de distancias para formación de imágenes
 
 """ Definiendo parámetros de fuente """
 
@@ -80,7 +80,7 @@ mascara = mascaras.funcion_Rectangulo(radio,radio,centro,xx_mascara,yy_mascara)
 
 #Se calcula la matriz asociada al proceso de propagación desde el plano objeto
 #hasta el plano de la lente
-matriz_propagacionPrimerTramo = matriz.propagacion_MedioHomogeneo(distancia_focal)
+matriz_propagacionPrimerTramo = matriz.propagacion_MedioHomogeneo(distancia_propagacionAribitraria)
 
 
 
@@ -89,16 +89,18 @@ matriz_propagacionPrimerTramo = matriz.propagacion_MedioHomogeneo(distancia_foca
 #NOTA IMPORTANTE: La lista de matrices se debe poner en orden inverso a su ubicación real
 #en el arreglo.
 
+#Se define la lista de matrices
+lista_matricesPrimerTramoInvertida = [matriz_propagacionPrimerTramo]
+
 #En este caso la matriz del sistema es equivalente a la única matriz presente
-matriz_SistemaPrimerTramo = matriz_propagacionPrimerTramo
+matriz_SistemaPrimerTramo = matriz.matriz_Sistema(lista_matricesPrimerTramoInvertida)
 
 
 
 """ Calculando el camino óptico central --> Asociado a la distancia de propagación TOTAL del PRIMER TRAMO """
 
-#En este caso la lista de la cual se calcula el camino óptico central se conforma por la única matriz
-#considerada para este tramo
-camino_opticoCentralPrimerTramo = matriz.camino_Optico(matriz_propagacionPrimerTramo)
+#Se calcula el camino óptico central a partir de la lista de matrices del sistema
+camino_opticoCentralPrimerTramo = matriz.camino_Optico(lista_matricesPrimerTramoInvertida)
 
 
 
@@ -155,7 +157,7 @@ matriz_lente = matriz.lente_DelgadaConociendoDistanciaFocal(distancia_focal)
 
 #Se calcula la matriz asociada al proceso de propagación desde el plano de la lente
 #hasta el plano de medición
-matriz_propagacionSegundoTramo = matriz.propagacion_MedioHomogeneo(distancia_focal)
+matriz_propagacionSegundoTramo = matriz.propagacion_MedioHomogeneo(distancia_imagen)
 
 
 
