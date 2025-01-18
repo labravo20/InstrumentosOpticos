@@ -39,11 +39,15 @@ radio_diafragmaInput = 0.3 #Se define variable asociada al radio de la abertura 
 
 """ Definición de distancias del arreglo """
 
-distancia_focal = 0.07  #DISTANCIA FOCAL MÁXIMA 0.125 
+distancia_focal01 = 0.07  #DISTANCIA FOCAL MÁXIMA 0.125 
+
+distancia_focal02 = 0.07
 
 distancia_propagacionAribitraria = 0.3 #Se define una distancia de propagación arbitraria
 
 distancia_imagen = 0.09 #Se calcula haciendo uso de la ecuación de distancias para formación de imágenes
+
+
 
 """ Definiendo parámetros de fuente """
 
@@ -67,11 +71,11 @@ mascara = mascaras.funcion_Rectangulo(radio,radio,centro,xx_mascara,yy_mascara)
 
 
 """ Se calculan las matrices necesarias para estudiar el PRIMER TRAMO del arreglo difractivo
-    OBJETO --> *Propagación* --> LENTE """
+    OBJETO --> *Propagación* --> LENTE 01"""
 
 #Se calcula la matriz asociada al proceso de propagación desde el plano objeto
 #hasta el plano de la lente
-matriz_propagacionPrimerTramo = matriz.propagacion_MedioHomogeneo(distancia_propagacionAribitraria)
+matriz_propagacionPrimerTramo = matriz.propagacion_MedioHomogeneo(distancia_focal01)
 
 
 
