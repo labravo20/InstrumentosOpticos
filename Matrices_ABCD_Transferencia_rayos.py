@@ -324,7 +324,8 @@ def matriz_ABCD_Difraccion(camino_optico_central, campo_entrada, posicion_A_matr
 
     #Calculando la transformada de Fourier de la función asociada al campo de entrada afectada por la
     #fase parabólica de entrada
-    transformada_FourierFuncionEntrada = np.fft.fftshift(np.fft.fft2(funcion_Entrada))
+    #transformada_FourierFuncionEntrada = np.fft.fftshift(np.fft.fft2(funcion_Entrada))
+    transformada_FourierFuncionEntrada = (np.fft.fft2(funcion_Entrada))
 
     #Calculando el campo difractado
     campo_Difractado = deltas_muestreo[0]*deltas_muestreo[1]*fase_constante*fase_parabolicaPlanoMedicion*transformada_FourierFuncionEntrada

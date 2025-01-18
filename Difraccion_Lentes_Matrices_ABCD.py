@@ -198,7 +198,8 @@ xx_PlanoMedicion, yy_PlanoMedicion = mascaras.malla_Puntos(resolucion_Input, anc
 """ Se calcula el resultado del proceso difractivo del SEGUNDO TRAMO """
 
 #Se calcula el campo de salida/en plano de medición --> Campo resultante de la difracción 
-campo_PlanoMedicion = matriz.matriz_ABCD_Difraccion(camino_opticoCentralSegundoTramo,mascara,
+campo_PlanoMedicion = matriz.matriz_ABCD_Difraccion(camino_opticoCentralSegundoTramo,
+                                                    campo_entradaSegundoTramo,
                                                     matriz_SistemaSegundoTramo[0,0],
                                                     matriz_SistemaSegundoTramo[0,1],
                                                     matriz_SistemaSegundoTramo[1,1],xx_PlanoLente,
