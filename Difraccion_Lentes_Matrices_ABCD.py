@@ -31,9 +31,7 @@ import Funciones_importantes as function
 """ Definiendo parámetros de máscara difractiva """
 
 resolucion_Input = 3000  # Número de puntos en la malla --> Asociado a comparación con una referencia de cámara
-longitud_ArregloInput = 1  #Tamaño físico del área ---> Resultado de calcular con datos de cámara... 
-                        # --> Imagen con tamaño de 0.00775 (longitud arreglo) se usa en condiciones de 
-                        # producto espacio frecuencia de transformada de Fresnel
+longitud_ArregloInput = 1  #Tamaño físico del área de la ventana
 radio = 0.05  # Radio del círculo 
 centro = None  # El centro será el origen si es None
 
