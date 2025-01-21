@@ -1,5 +1,21 @@
+""" DESCRIPCIÓN...
+En este documento se trabajará sobre un arreglo determinado por la siguiente estructura:
+OBJETO --> *propagación(distancia focal 01)* --> LENTE01 --> *propagación(distancia focal 01)* -->
+PUPILA --> *propagación(distancia arbitraria d)* --> LENTE02 --> *propagación(distancia focal 02)*
+--> IMAGEN
+
+Debido a la condición de planos conjugados se debe sub dividir el proceso en dos tramos:
+TRAMO 01: OBJETO --> *propagación(distancia focal 01)* --> LENTE01 --> *propagación(distancia focal 01)* -->
+PUPILA
+
+TRAMO 02: *propagación(distancia arbitraria d)* --> LENTE02 --> *propagación(distancia focal 02)*
+--> IMAGEN
+
+"""
+
 """ Se genera un print de mensaje inicial para verificar correcto funcionamiento del entorno """
 print("Inicializando entorno de programación primer punto SEGUNDA ENTREGA...")
+
 
 
 """ Anotaciones importantes magnificación de imágenes """
@@ -30,7 +46,7 @@ centro = None  # El centro será el origen si es None
 
 
 
-""" Definiendo parámetro para el tamaño del diafragma """
+""" Definiendo parámetro para el tamaño de la pupila """
 
 radio_diafragmaInput = 0.3 #Se define variable asociada al radio de la abertura circular que representará
                            # el diafragma.
@@ -39,13 +55,11 @@ radio_diafragmaInput = 0.3 #Se define variable asociada al radio de la abertura 
 
 """ Definición de distancias del arreglo """
 
-distancia_focal01 = 0.07  #DISTANCIA FOCAL MÁXIMA 0.125 
+distancia_focal01 = 0.07  #Distancia focal asociada a la lente 01
 
-distancia_focal02 = 0.07
+distancia_focal02 = 0.07 #Distancia focal asociada a la lente 02
 
-distancia_propagacionAribitraria = 0.3 #Se define una distancia de propagación arbitraria
-
-distancia_imagen = 0.09 #Se calcula haciendo uso de la ecuación de distancias para formación de imágenes
+distancia_propagacionAribitraria = 0.3 #Se define una distancia de propagación arbitraria 
 
 
 
