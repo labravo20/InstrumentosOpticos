@@ -73,7 +73,7 @@ numero_onda_input = (2*np.pi)/longitud_onda_input
 
 
 
-""" Creando máscara de transmitancia asociada a abertura circular """
+""" Creando máscara de transmitancia asociada a abertura  """
 
 # Crear la malla de puntos
 xx_mascara, yy_mascara = mascaras.malla_Puntos(resolucion_Input, longitud_ArregloInput)
@@ -85,11 +85,19 @@ mascara = mascaras.funcion_Rectangulo(radio,radio,centro,xx_mascara,yy_mascara)
 
 
 """ Se calculan las matrices necesarias para estudiar el PRIMER TRAMO del arreglo difractivo
-    OBJETO --> *Propagación* --> LENTE 01"""
+    OBJETO --> *propagación(distancia focal 01)* --> LENTE01 --> *propagación(distancia focal 01)* 
+    --> PUPILA"""
 
 #Se calcula la matriz asociada al proceso de propagación desde el plano objeto
-#hasta el plano de la lente
-matriz_propagacionPrimerTramo = matriz.propagacion_MedioHomogeneo(distancia_focal01)
+#hasta el plano de la lente01
+matriz_propagacion01PrimerTramo = matriz.propagacion_MedioHomogeneo(distancia_focal01)
+
+#Se calcula la matriz asociada a la interacción con la lente 01
+matriz_lente01 = matriz.lente_DelgadaConociendoDistanciaFocal(distancia_focal01)
+
+#Se calcula la matriz asociada al proceso de propagación desde el plano de la lente 01
+#hasta el plano de la pupila
+matriz_propagacion02PrimerTramo = matriz.propagacion_MedioHomogeneo(distancia_focal01)
 
 
 
