@@ -107,7 +107,7 @@ matriz_propagacion02PrimerTramo = matriz.propagacion_MedioHomogeneo(distancia_fo
 #en el arreglo.
 
 #Se define la lista de matrices
-lista_matricesPrimerTramoInvertida = [matriz_propagacionPrimerTramo]
+lista_matricesPrimerTramoInvertida = [matriz_propagacion02PrimerTramo,matriz_lente01,matriz_propagacion01PrimerTramo]
 
 #En este caso la matriz del sistema es equivalente a la única matriz presente
 matriz_SistemaPrimerTramo = matriz.matriz_Sistema(lista_matricesPrimerTramoInvertida)
