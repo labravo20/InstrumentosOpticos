@@ -188,7 +188,7 @@ NOTA IMPORTANTE: La lista de matrices se debe poner en orden inverso a su ubicac
 en el arreglo."""
 
 #Creando lista de matrices que describe el arreglo del SEGUNDO TRAMO
-lista_matricesSegundoTramoInvertida = [matriz_propagacionSegundoTramo,matriz_lente]
+lista_matricesSegundoTramoInvertida = [matriz_propagacion02SegundoTramo,matriz_lente02,matriz_propagacion01SegundoTramo]
 
 #Se calcula la matriz del sistema
 matriz_SistemaSegundoTramo = matriz.matriz_Sistema(lista_matricesSegundoTramoInvertida)
@@ -205,13 +205,13 @@ camino_opticoCentralSegundoTramo = matriz.camino_Optico(lista_matricesSegundoTra
 """ Calculando la malla de puntos del plano de medición """
 
 #Se llama función para determinar los deltas de muestreo asociados al SEGUNDO TRAMO
-deltas_tramoLenteMedicion = function.producto_espacio_frecuencia_TransformadaFresnel(longitud_onda_input,
+deltas_tramoPupilaMedicion = function.producto_espacio_frecuencia_TransformadaFresnel(longitud_onda_input,
                                                                                      matriz_SistemaSegundoTramo[0,1],
                                                                                      resolucion_Input,
-                                                                                     ancho_VentanaPlanoLente)
+                                                                                     ancho_VentanaPlanoPupila)
 
 #Se calcula el ancho de la ventana del plano de medición 
-ancho_VentanaPlanoMedicion = resolucion_Input*deltas_tramoLenteMedicion[1]
+ancho_VentanaPlanoMedicion = resolucion_Input*deltas_tramoPupilaMedicion[1]
 
 #Se calcula la malla de puntos asociada al plano de medición
 xx_PlanoMedicion, yy_PlanoMedicion = mascaras.malla_Puntos(resolucion_Input, ancho_VentanaPlanoMedicion)
@@ -224,9 +224,9 @@ campo_PlanoMedicion = matriz.matriz_ABCD_Difraccion(camino_opticoCentralSegundoT
                                                     campo_entradaSegundoTramo,
                                                     matriz_SistemaSegundoTramo[0,0],
                                                     matriz_SistemaSegundoTramo[0,1],
-                                                    matriz_SistemaSegundoTramo[1,1],xx_PlanoLente,
-                                                    yy_PlanoLente,xx_PlanoMedicion,yy_PlanoMedicion,
-                                                    numero_onda_input,deltas_tramoLenteMedicion)
+                                                    matriz_SistemaSegundoTramo[1,1],xx_PlanoPupila,
+                                                    yy_PlanoPupila,xx_PlanoMedicion,yy_PlanoMedicion,
+                                                    numero_onda_input,deltas_tramoPupilaMedicion)
 
 #Se calcula la amplitud del campo de salida
 amplitud_campoPlanoMedicion = np.abs(campo_PlanoMedicion)
