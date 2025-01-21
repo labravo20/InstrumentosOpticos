@@ -48,7 +48,7 @@ centro = None  # El centro será el origen si es None
 
 """ Definiendo parámetro para el tamaño de la pupila """
 
-radio_diafragmaInput = 0.3 #Se define variable asociada al radio de la abertura circular que representará
+radio_pupilaInput = 0.3 #Se define variable asociada al radio de la abertura circular que representará
                            # el diafragma.
 
 
@@ -109,7 +109,7 @@ matriz_propagacion02PrimerTramo = matriz.propagacion_MedioHomogeneo(distancia_fo
 #Se define la lista de matrices
 lista_matricesPrimerTramoInvertida = [matriz_propagacion02PrimerTramo,matriz_lente01,matriz_propagacion01PrimerTramo]
 
-#En este caso la matriz del sistema es equivalente a la única matriz presente
+#Se calcula la matriz del sistema teniendo en cuenta la lista de matrices definida anteriormente
 matriz_SistemaPrimerTramo = matriz.matriz_Sistema(lista_matricesPrimerTramoInvertida)
 
 
@@ -121,60 +121,65 @@ camino_opticoCentralPrimerTramo = matriz.camino_Optico(lista_matricesPrimerTramo
 
 
 
-""" Creando malla de puntos plano lente (en este PRIMER TRAMO se asocia al plano de medición)"""
+""" Creando malla de puntos plano pupila (en este PRIMER TRAMO se asocia al plano de medición)"""
 
 #Se llama función para determinar los deltas de muestreo del tramo
-deltas_tramoObjetoLente = function.producto_espacio_frecuencia_TransformadaFresnel(longitud_onda_input,
+deltas_tramoObjetoPupila = function.producto_espacio_frecuencia_TransformadaFresnel(longitud_onda_input,
                                                                                    matriz_SistemaPrimerTramo[0,1],
                                                                                    resolucion_Input,
                                                                                    longitud_ArregloInput)
 
-#Se calcula el ancho de la ventana del plano de la lente
-ancho_VentanaPlanoLente = resolucion_Input*deltas_tramoObjetoLente[1]
+#Se calcula el ancho de la ventana del plano de la pupila
+ancho_VentanaPlanoPupila = resolucion_Input*deltas_tramoObjetoPupila[1]
 
-#Se calcula la malla de puntos asociada al plano de la lente
-xx_PlanoLente, yy_PlanoLente = mascaras.malla_Puntos(resolucion_Input, ancho_VentanaPlanoLente)
+#Se calcula la malla de puntos asociada al plano de la pupila
+xx_PlanoPupila, yy_PlanoPupila = mascaras.malla_Puntos(resolucion_Input, ancho_VentanaPlanoPupila)
 
 
 
 """ Se calcula el resultado del proceso difractivo del PRIMER TRAMO"""
 
-#Se calcula el campo de salida/en plano de la lente --> Campo resultante del primer tramo 
-campo_PlanoLente = matriz.matriz_ABCD_Difraccion(camino_opticoCentralPrimerTramo,mascara,
+#Se calcula el campo de salida/en plano de la pupila --> Campo resultante del primer tramo 
+campo_PlanoPupila = matriz.matriz_ABCD_Difraccion(camino_opticoCentralPrimerTramo,mascara,
                                                  matriz_SistemaPrimerTramo[0,0],
                                                  matriz_SistemaPrimerTramo[0,1],
                                                  matriz_SistemaPrimerTramo[1,1],xx_mascara,yy_mascara,
-                                                 xx_PlanoLente,yy_PlanoLente,numero_onda_input,
-                                                 deltas_tramoObjetoLente)
+                                                 xx_PlanoPupila,yy_PlanoPupila,numero_onda_input,
+                                                 deltas_tramoObjetoPupila)
 
 
 
-""" Se crea diafragma para delimitar dominio del arreglo asociado a lentes FINITAS
-NOTA: El diafragma va a construirse a partir de la malla de puntos asociada al plano de la Lente."""
+""" Se crea pupila para delimitar dominio del arreglo asociado a lentes FINITAS
+NOTA: La pupila va a construirse a partir de la malla de puntos asociada al plano de la pupila."""
 
 #Creación de máscara circular que representará el diafragma 
-diafragma = mascaras.funcion_Circulo(radio_diafragmaInput, centro, xx_PlanoLente, yy_PlanoLente)
+pupila = mascaras.funcion_Circulo(radio_pupilaInput, centro, xx_PlanoPupila, yy_PlanoPupila)
 
 
 
 """ Se calcula el campo de entrada para el SEGUNDO TRAMO del arreglo 
-NOTA: El campo que llega a la lente e interactua con la máscara asociada al diafragma
+NOTA: El campo que llega a la pupila e interactua con la máscara asociada a la pupila
 será el campo de entrada para el segundo tramo."""
 
 #Calculando el campo de entrada al SEGUNDO TRAMO del arreglo
-campo_entradaSegundoTramo = campo_PlanoLente*diafragma
+campo_entradaSegundoTramo = campo_PlanoPupila*pupila
 
 
 
 """ Se calculan las matrices necesarias para estudiar el SEGUNDO TRAMO del arreglo difractivo
-    LENTE --> *Efecto Lente* --> *Propagación* --> MEDICIÓN """
+    PUPILA--> *propagación(distancia arbitraria d)* --> LENTE02 --> *propagación(distancia focal 02)*
+    --> IMAGEN """
 
-#Se calcula la matriz asociada a la interacción con la lente
-matriz_lente = matriz.lente_DelgadaConociendoDistanciaFocal(distancia_focal)
+#Se calcula la matriz asociada al proceso de propagación desde el plano de la pupila 
+# hasta el plano de la lente 02
+matriz_propagacion01SegundoTramo = matriz.propagacion_MedioHomogeneo(distancia_propagacionAribitraria)
 
-#Se calcula la matriz asociada al proceso de propagación desde el plano de la lente
+#Se calcula la matriz asociada a la interacción con la lente 02
+matriz_lente02 = matriz.lente_DelgadaConociendoDistanciaFocal(distancia_focal02)
+
+#Se calcula la matriz asociada al proceso de propagación desde el plano de la lente 02
 #hasta el plano de medición
-matriz_propagacionSegundoTramo = matriz.propagacion_MedioHomogeneo(distancia_imagen)
+matriz_propagacion02SegundoTramo = matriz.propagacion_MedioHomogeneo(distancia_focal02)
 
 
 
