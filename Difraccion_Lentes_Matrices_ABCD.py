@@ -5,6 +5,8 @@ consta de un plano del objeto, una lente convergente delgada (y también un diaf
 el trabajo en un dominio finito) y un plano de medición asociado 
 a la imagen resultante. """
 
+
+
 """ Se genera un print de mensaje inicial para verificar correcto funcionamiento del entorno """
 print("Inicializando entorno de programación Matrices ABCD transferencia de rayos...")
 
@@ -46,11 +48,13 @@ radio_diafragmaInput = 0.3 #Se define variable asociada al radio de la abertura 
 
 """ Definición de distancias del arreglo """
 
-distancia_focal = 0.07  #DISTANCIA FOCAL MÁXIMA 0.125 
+distancia_focal = 0.07   
 
 distancia_propagacionAribitraria = 0.3 #Se define una distancia de propagación arbitraria
 
 distancia_imagen = 0.09 #Se calcula haciendo uso de la ecuación de distancias para formación de imágenes
+
+
 
 """ Definiendo parámetros de fuente """
 
