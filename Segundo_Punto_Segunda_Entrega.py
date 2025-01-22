@@ -40,15 +40,15 @@ import Funciones_importantes as function
 """ Definiendo parámetros de máscara difractiva """
 
 resolucion_Input = 3000  # Número de puntos en la malla --> Asociado a comparación con una referencia de cámara
-longitud_ArregloInput = 1  #Tamaño físico del área de la ventana
-radio = 0.05  # Radio del círculo 
+longitud_ArregloInput = 0.2  #Tamaño físico del área de la ventana
+radio = 0.05  #Radio del círculo 
 centro = None  # El centro será el origen si es None
 
 
 
 """ Definiendo parámetro para el tamaño de la pupila """
 
-radio_pupilaInput = 0.3 #Se define variable asociada al radio de la abertura circular que representará
+radio_pupilaInput = 0.5 #Se define variable asociada al radio de la abertura circular que representará
                            # el diafragma.
 
 
@@ -57,9 +57,9 @@ radio_pupilaInput = 0.3 #Se define variable asociada al radio de la abertura cir
 
 distancia_focal01 = 0.07  #Distancia focal asociada a la lente 01
 
-distancia_focal02 = 0.07 #Distancia focal asociada a la lente 02
+distancia_focal02 = 0.05 #Distancia focal asociada a la lente 02
 
-distancia_propagacionAribitraria = 0.3 #Se define una distancia de propagación arbitraria 
+distancia_propagacionAribitraria = 0.1 #Se define una distancia de propagación arbitraria 
 
 
 
@@ -164,6 +164,7 @@ será el campo de entrada para el segundo tramo."""
 #Calculando el campo de entrada al SEGUNDO TRAMO del arreglo
 campo_entradaSegundoTramo = campo_PlanoPupila*pupila
 
+amplitud_campoEntradaSegundoTramo = np.abs(campo_entradaSegundoTramo)
 
 
 """ Se calculan las matrices necesarias para estudiar el SEGUNDO TRAMO del arreglo difractivo
@@ -220,7 +221,7 @@ xx_PlanoMedicion, yy_PlanoMedicion = mascaras.malla_Puntos(resolucion_Input, anc
 """ Se calcula el resultado del proceso difractivo del SEGUNDO TRAMO """
 
 #Se calcula el campo de salida/en plano de medición --> Campo resultante de la difracción 
-campo_PlanoMedicion = matriz.matriz_ABCD_Difraccion(camino_opticoCentralSegundoTramo,
+campo_PlanoMedicion = matriz.matriz_ABCD_Difraccion_Shift(camino_opticoCentralSegundoTramo,
                                                     campo_entradaSegundoTramo,
                                                     matriz_SistemaSegundoTramo[0,0],
                                                     matriz_SistemaSegundoTramo[0,1],
@@ -249,13 +250,27 @@ plt.show()
 
 
 
+""" Graficando máscara de transmitancia asignada a abertura circular"""
+
+plt.imshow(amplitud_campoEntradaSegundoTramo, 
+           extent=[-ancho_VentanaPlanoPupila/2, ancho_VentanaPlanoPupila/2,
+                -ancho_VentanaPlanoPupila/2, ancho_VentanaPlanoPupila/2], 
+            cmap='gray',
+            vmax= 0.01*np.max(amplitud_campoEntradaSegundoTramo))
+plt.title("Campo PUPILA")
+plt.colorbar(label="Amplitud")
+plt.xlabel("X (m)")
+plt.ylabel("Y (m)")
+plt.show()
+
+
 """ Graficando la intensidad del campo de salida """
 
 plt.imshow(intensidad_campoPlanoMedicion, extent=[-ancho_VentanaPlanoMedicion/2, 
                                                   ancho_VentanaPlanoMedicion/2, 
                                                   -ancho_VentanaPlanoMedicion/2, 
                                                   ancho_VentanaPlanoMedicion/2], 
-           cmap='gray')
+           cmap='gray',)
 plt.title("Intensidad")
 plt.colorbar(label="Intensidad")
 plt.xlabel("X (m)")

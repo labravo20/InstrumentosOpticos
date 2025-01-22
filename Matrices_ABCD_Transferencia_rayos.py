@@ -324,7 +324,45 @@ def matriz_ABCD_Difraccion(camino_optico_central, campo_entrada, posicion_A_matr
 
     #Calculando la transformada de Fourier de la función asociada al campo de entrada afectada por la
     #fase parabólica de entrada
-    #transformada_FourierFuncionEntrada = np.fft.fftshift(np.fft.fft2(funcion_Entrada))
+    transformada_FourierFuncionEntrada = np.fft.fftshift(np.fft.fft2(funcion_Entrada))
+    #transformada_FourierFuncionEntrada = (np.fft.fft2(funcion_Entrada))
+
+    #Calculando el campo difractado
+    campo_Difractado = deltas_muestreo[0]*deltas_muestreo[1]*fase_constante*fase_parabolicaPlanoMedicion*transformada_FourierFuncionEntrada
+
+
+    return campo_Difractado
+
+
+""" Creación de matriz ABCD para DIFRACCIÓN para caso default shifteo """
+def matriz_ABCD_Difraccion_Shift(camino_optico_central, campo_entrada, posicion_A_matriz, posicion_B_matriz, 
+                           posicion_D_matriz, xx_entrada, yy_entrada, xx_salida, yy_salida,numero_onda,
+                           deltas_muestreo):
+    
+    '''
+    Función para calcular ...
+
+    FUNCIÓN RECIBE: ... 
+    
+    FUNCIÓN RETORNA:...
+    '''
+    
+    #Calculando término de fase constante:
+    fase_constante = np.exp(1j*numero_onda*camino_optico_central)
+
+    #Calculando término de fase parabólica plano medición
+    fase_parabolicaPlanoMedicion = np.exp(1j*(numero_onda/(2*posicion_B_matriz))*
+                                          posicion_D_matriz*((xx_salida**2)+(yy_salida**2))) 
+    
+    #Calculando término de fase parabólica plano máscara difractiva
+    fase_parabolicaPlanoMascara = np.exp(1j*(numero_onda/(2*posicion_B_matriz))*
+                                          posicion_A_matriz*((xx_entrada**2)+(yy_entrada**2))) 
+    
+    #Calculando función de contribución campo entrada y fase parabólica entrada
+    funcion_Entrada = campo_entrada*fase_parabolicaPlanoMascara
+
+    #Calculando la transformada de Fourier de la función asociada al campo de entrada afectada por la
+    #fase parabólica de entrada
     transformada_FourierFuncionEntrada = (np.fft.fft2(funcion_Entrada))
 
     #Calculando el campo difractado
