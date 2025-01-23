@@ -328,7 +328,7 @@ def matriz_ABCD_Difraccion(camino_optico_central, campo_entrada, posicion_A_matr
     #transformada_FourierFuncionEntrada = (np.fft.fft2(funcion_Entrada))
 
     #Calculando el campo difractado
-    campo_Difractado = deltas_muestreo[0]*deltas_muestreo[1]*fase_constante*fase_parabolicaPlanoMedicion*transformada_FourierFuncionEntrada
+    campo_Difractado = (deltas_muestreo[1]**2)*fase_constante*fase_parabolicaPlanoMedicion*transformada_FourierFuncionEntrada
 
 
     return campo_Difractado
@@ -366,7 +366,7 @@ def matriz_ABCD_Difraccion_Shift(camino_optico_central, campo_entrada, posicion_
     transformada_FourierFuncionEntrada = (np.fft.fft2(funcion_Entrada))
 
     #Calculando el campo difractado
-    campo_Difractado = deltas_muestreo[0]*deltas_muestreo[1]*fase_constante*fase_parabolicaPlanoMedicion*transformada_FourierFuncionEntrada
+    campo_Difractado = (deltas_muestreo[1]**2)*fase_constante*fase_parabolicaPlanoMedicion*transformada_FourierFuncionEntrada
 
 
     return campo_Difractado

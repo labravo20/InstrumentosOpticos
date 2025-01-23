@@ -40,7 +40,7 @@ import Funciones_importantes as function
 """ Definiendo parámetros de máscara difractiva """
 
 resolucion_Input = 3000  # Número de puntos en la malla --> Asociado a comparación con una referencia de cámara
-longitud_ArregloInput = 0.2  #Tamaño físico del área de la ventana
+longitud_ArregloInput = 4   #Tamaño físico del área de la ventana
 radio = 0.05  #Radio del círculo 
 centro = None  # El centro será el origen si es None
 
@@ -48,7 +48,7 @@ centro = None  # El centro será el origen si es None
 
 """ Definiendo parámetro para el tamaño de la pupila """
 
-radio_pupilaInput = 0.5 #Se define variable asociada al radio de la abertura circular que representará
+radio_pupilaInput = 7E-6 #Se define variable asociada al radio de la abertura circular que representará
                            # el diafragma.
 
 
@@ -59,7 +59,7 @@ distancia_focal01 = 0.07  #Distancia focal asociada a la lente 01
 
 distancia_focal02 = 0.05 #Distancia focal asociada a la lente 02
 
-distancia_propagacionAribitraria = 0.1 #Se define una distancia de propagación arbitraria 
+distancia_propagacionAribitraria = 0.01 #Se define una distancia de propagación arbitraria 
 
 
 
@@ -164,7 +164,7 @@ será el campo de entrada para el segundo tramo."""
 #Calculando el campo de entrada al SEGUNDO TRAMO del arreglo
 campo_entradaSegundoTramo = campo_PlanoPupila*pupila
 
-amplitud_campoEntradaSegundoTramo = np.abs(campo_entradaSegundoTramo)
+intensidad_campoEntradaSegundoTramo = np.abs(campo_entradaSegundoTramo)**2
 
 
 """ Se calculan las matrices necesarias para estudiar el SEGUNDO TRAMO del arreglo difractivo
@@ -242,7 +242,7 @@ intensidad_campoPlanoMedicion = amplitud_campoPlanoMedicion**2
 plt.imshow(mascara, extent=[-longitud_ArregloInput/2, longitud_ArregloInput/2,
                              -longitud_ArregloInput/2, longitud_ArregloInput/2], 
                              cmap='gray')
-plt.title("Máscara Circular")
+plt.title("Máscara")
 plt.colorbar(label="Transmitancia")
 plt.xlabel("X (m)")
 plt.ylabel("Y (m)")
@@ -252,11 +252,11 @@ plt.show()
 
 """ Graficando máscara de transmitancia asignada a abertura circular"""
 
-plt.imshow(amplitud_campoEntradaSegundoTramo, 
+plt.imshow(intensidad_campoEntradaSegundoTramo, 
            extent=[-ancho_VentanaPlanoPupila/2, ancho_VentanaPlanoPupila/2,
                 -ancho_VentanaPlanoPupila/2, ancho_VentanaPlanoPupila/2], 
             cmap='gray',
-            vmax= 0.01*np.max(amplitud_campoEntradaSegundoTramo))
+            vmax= 0.01*np.max(intensidad_campoEntradaSegundoTramo))
 plt.title("Campo PUPILA")
 plt.colorbar(label="Amplitud")
 plt.xlabel("X (m)")
@@ -270,7 +270,8 @@ plt.imshow(intensidad_campoPlanoMedicion, extent=[-ancho_VentanaPlanoMedicion/2,
                                                   ancho_VentanaPlanoMedicion/2, 
                                                   -ancho_VentanaPlanoMedicion/2, 
                                                   ancho_VentanaPlanoMedicion/2], 
-           cmap='gray',)
+           cmap='gray',
+           vmax = 0.001*(np.max(intensidad_campoPlanoMedicion)))
 plt.title("Intensidad")
 plt.colorbar(label="Intensidad")
 plt.xlabel("X (m)")
