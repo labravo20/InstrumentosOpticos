@@ -14,7 +14,7 @@ TRAMO 02: *propagación(distancia arbitraria d)* --> LENTE02 --> *propagación(d
 """
 
 """ Se genera un print de mensaje inicial para verificar correcto funcionamiento del entorno """
-print("Inicializando entorno de programación primer punto SEGUNDA ENTREGA...")
+print("Inicializando entorno de programación segundo punto SEGUNDA ENTREGA...")
 
 
 
