@@ -59,11 +59,11 @@ alto_SensorInput = resolucion_altoSensorInput*tamaño_PixelSensorInput
 """ Definiendo parámetros de máscara difractiva """
 
 #Radio del círculo asociado a la máscara circular
-radio = 0.05 
+radio = 0.00005 
 
 #Lados asociados a la máscara rectangular 
-lado_Rectangulo01 = 0.05
-lado_Rectangulo02 = 0.05
+lado_Rectangulo01 = 5E-5
+lado_Rectangulo02 = 5E-5
 
 # Se define el centro u origen para la configuración de la máscara 
 centro = None  
@@ -72,7 +72,7 @@ centro = None
 
 """ Definiendo parámetro para el tamaño de la pupila """
 
-radio_pupilaInput = 7E-6 #Se define variable asociada al radio de la abertura circular que representará
+radio_pupilaInput = 7E-4 #Se define variable asociada al radio de la abertura circular que representará
                            # el diafragma.
 
 
@@ -318,7 +318,7 @@ plt.title("Campo PUPILA")
 plt.colorbar(label="Amplitud")
 plt.xlabel("X (m)")
 plt.ylabel("Y (m)")
-#plt.show()
+plt.show()
 
 
 """ Graficando la intensidad del campo de salida del arreglo """
@@ -328,9 +328,9 @@ plt.imshow(intensidad_campoPlanoMedicion, extent=[-ancho_SensorInput/2,
                                                   -alto_SensorInput/2, 
                                                   alto_SensorInput/2], 
            cmap='gray',
-           vmax = 0.001*(np.max(intensidad_campoPlanoMedicion)))
+           vmax = 0.01*(np.max(intensidad_campoPlanoMedicion)))
 plt.title("Intensidad")
 plt.colorbar(label="Intensidad")
 plt.xlabel("X (m)")
 plt.ylabel("Y (m)")
-#plt.show()
+plt.show()
