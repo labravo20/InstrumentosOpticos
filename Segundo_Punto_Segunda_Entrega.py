@@ -80,7 +80,8 @@ xx_mascara, yy_mascara = mascaras.malla_Puntos(resolucion_Input, longitud_Arregl
 
 # Crear la máscara circular
 #mascara = mascaras.funcion_Circulo(radio, centro, xx_mascara, yy_mascara)
-mascara = mascaras.funcion_Rectangulo(radio,radio,centro,xx_mascara,yy_mascara)
+#mascara = mascaras.funcion_Rectangulo(radio,radio,centro,xx_mascara,yy_mascara)
+mascara = mascaras.funcion_Corazon(centro,xx_mascara,yy_mascara,radio)
 
 
 
