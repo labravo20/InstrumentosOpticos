@@ -39,7 +39,7 @@ import Funciones_importantes as function
 
 """ Definiendo parámetros de máscara difractiva """
 
-resolucion_Input = 3000  # Número de puntos en la malla --> Asociado a comparación con una referencia de cámara
+resolucion_Input = 3000  # Número de puntos en la malla 
 longitud_ArregloInput = 4   #Tamaño físico del área de la ventana
 radio = 0.05  #Radio del círculo 
 centro = None  # El centro será el origen si es None

@@ -11,9 +11,9 @@ def malla_Puntos(resolucion_Ancho, ancho_Arreglo, resolucion_Alto = None, alto_A
     FUNCION RECIBE:
 
         resolucion_Ancho = Cantidad de muestras/puntos en el ancho de la ventana
-        resolucion_Alto  = Cantidad de muestras/puntos en el alto de la ventana
-        ancho_Arreglo (OPCIONAL)   = longitud física del ancho de la ventana
-        alto_Arreglo  (OPCIONAL)   = longitud física del alto de la ventana
+        ancho_Arreglo    = Longitud física del ancho de la ventana
+        resolucion_Alto (OPCIONAL) = Cantidad de muestras/puntos en el alto de la ventana
+        alto_Arreglo  (OPCIONAL)   = Longitud física del alto de la ventana
     
     FUNCIÓN RETORNA:
         xx, yy = malla de puntos bidimensional
@@ -47,7 +47,7 @@ def malla_Puntos(resolucion_Ancho, ancho_Arreglo, resolucion_Alto = None, alto_A
 
 ''' Definicion de función para máscara circular '''
 
-def funcion_Circulo(radio, centro, xx, yy): #definicion de la funcion para hacer circulo transparente
+def funcion_Circulo(radio, centro, xx, yy): 
     '''
       Crea una máscara con un círculo
     
