@@ -111,3 +111,30 @@ def funcion_Rectangulo(base, altura, centro, xx, yy):
     return mascara_rectangular
  
 
+
+""" Definición de función para máscara corazón """
+
+def funcion_Corazon(centro, xx, yy, escala=1):
+    '''
+      Crea una máscara con un corazón
+    
+    FUNCIÓN RECIBE:
+        centro == type(list) --> [X, Y]
+        xx, yy == malla de puntos en la cual se verá el corazón
+        escala == float --> Tamaño del corazón (por defecto 1)
+    
+    FUNCIÓN RETORNA: Máscara con forma de corazón
+    '''
+    
+    # Si no se especifica el centro, se posiciona en el origen por defecto
+    if centro is None:
+        centro = (0, 0)
+    
+    # Reescalamos la malla a las coordenadas ajustadas al centro y la escala
+    x = (xx - centro[0]) / escala
+    y = (yy - centro[1]) / escala
+    
+    # Ecuación del corazón: (x^2 + y^2 - 1)^3 - x^2*y^3 <= 0
+    mascara_corazon = (x**2 + y**2 - 1)**3 - x**2 * y**3 <= 0
+    
+    return mascara_corazon

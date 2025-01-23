@@ -73,8 +73,8 @@ xx_mascara, yy_mascara = mascaras.malla_Puntos(resolucion_Input, longitud_Arregl
 
 # Crear la máscara circular
 #mascara = mascaras.funcion_Circulo(radio, centro, xx_mascara, yy_mascara)
-mascara = mascaras.funcion_Rectangulo(radio,radio,centro,xx_mascara,yy_mascara)
-
+#mascara = mascaras.funcion_Rectangulo(radio,radio,centro,xx_mascara,yy_mascara)
+mascara = mascaras.funcion_Corazon(centro,xx_mascara,yy_mascara,radio)
 
 
 """ Se calculan las matrices necesarias para estudiar el PRIMER TRAMO del arreglo difractivo
@@ -200,7 +200,7 @@ xx_PlanoMedicion, yy_PlanoMedicion = mascaras.malla_Puntos(resolucion_Input, anc
 """ Se calcula el resultado del proceso difractivo del SEGUNDO TRAMO """
 
 #Se calcula el campo de salida/en plano de medición --> Campo resultante de la difracción 
-campo_PlanoMedicion = matriz.matriz_ABCD_Difraccion(camino_opticoCentralSegundoTramo,
+campo_PlanoMedicion = matriz.matriz_ABCD_Difraccion_Shift(camino_opticoCentralSegundoTramo,
                                                     campo_entradaSegundoTramo,
                                                     matriz_SistemaSegundoTramo[0,0],
                                                     matriz_SistemaSegundoTramo[0,1],
@@ -221,7 +221,7 @@ intensidad_campoPlanoMedicion = amplitud_campoPlanoMedicion**2
 plt.imshow(mascara, extent=[-longitud_ArregloInput/2, longitud_ArregloInput/2,
                              -longitud_ArregloInput/2, longitud_ArregloInput/2], 
                              cmap='gray')
-plt.title("Máscara Circular")
+plt.title("Máscara")
 plt.colorbar(label="Transmitancia")
 plt.xlabel("X (m)")
 plt.ylabel("Y (m)")

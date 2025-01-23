@@ -80,3 +80,4 @@ def producto_espacio_frecuencia_TransformadaFresnel_Sensor(resolucion_AnchoSenso
 
     return muestreo_Entrada
     
+
