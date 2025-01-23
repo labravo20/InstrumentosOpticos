@@ -59,7 +59,7 @@ alto_SensorInput = resolucion_altoSensorInput*tamaño_PixelSensorInput
 """ Definiendo parámetros de máscara difractiva """
 
 #Radio del círculo asociado a la máscara circular
-radio = 0.00005 
+radio = 0.0005 
 
 #Lados asociados a la máscara rectangular 
 lado_Rectangulo01 = 5E-5
@@ -72,7 +72,7 @@ centro = None
 
 """ Definiendo parámetro para el tamaño de la pupila """
 
-radio_pupilaInput = 7E-4 #Se define variable asociada al radio de la abertura circular que representará
+radio_pupilaInput = 7E-3 #Se define variable asociada al radio de la abertura circular que representará
                            # el diafragma.
 
 
@@ -236,9 +236,10 @@ xx_PlanoMascara, yy_PlanoMascara = mascaras.malla_Puntos(resolucion_anchoSensorI
 #mascara = mascaras.funcion_Circulo(radio, centro, xx_mascara, yy_mascara)
 
 #Creación de una máscara rectangular de transmitancia
-mascara = mascaras.funcion_Rectangulo(lado_Rectangulo01,lado_Rectangulo02,centro,xx_PlanoMascara,yy_PlanoMascara)
+#mascara = mascaras.funcion_Rectangulo(lado_Rectangulo01,lado_Rectangulo02,centro,xx_PlanoMascara,yy_PlanoMascara)
 
-
+#Creación de una máscara con un corazón de transmitancia
+mascara = mascaras.funcion_Corazon(centro,xx_PlanoMascara,yy_PlanoMascara,radio)
 
 """ ------ EMPIEZA SECCIÓN DE CÁLCULO RESULTADO DIFRACTIVO DE CADA TRAMO ------ """
 
