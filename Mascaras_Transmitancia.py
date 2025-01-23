@@ -4,50 +4,111 @@ import numpy as np
 
 ''' Definicion de función para crear malla de puntos'''
 
-def malla_Puntos(resolucion, longitud_Arreglo):
-    ''' CREACION DE LAS MALLAS DE PUNTOS Y LOS DELTAS PARA LOS PRODUCTOS ESPACIO FRECUENCIA '''
-    x = np.linspace(-longitud_Arreglo / 2, longitud_Arreglo / 2, resolucion) #crea las mallas de puntos para el arreglo 
-    y = np.linspace(-longitud_Arreglo / 2, longitud_Arreglo / 2, resolucion) 
-    xx, yy = np.meshgrid(x, y) #crea una malla de puntos bidimensional 
-    return xx, yy #retornamos la malla de puntos
+def malla_Puntos(resolucion_Ancho, ancho_Arreglo, resolucion_Alto = None, alto_Arreglo=None):
 
+    ''' Crea mallas de puntos
+
+    FUNCION RECIBE:
+
+        resolucion_Ancho = Cantidad de muestras/puntos en el ancho de la ventana
+        resolucion_Alto  = Cantidad de muestras/puntos en el alto de la ventana
+        ancho_Arreglo (OPCIONAL)   = longitud física del ancho de la ventana
+        alto_Arreglo  (OPCIONAL)   = longitud física del alto de la ventana
+    
+    FUNCIÓN RETORNA:
+        xx, yy = malla de puntos bidimensional
+        
+        '''
+    
+
+    #Se verifica si se ingresó el alto del arreglo
+    if alto_Arreglo is None:
+
+        #En caso de no ser ingresado se establece por default que sea igual al ancho del arreglo
+        alto_Arreglo = ancho_Arreglo
+
+    #Se verifica si se ingresó la resolución asociada al alto del arreglo
+    if resolucion_Alto is None:
+
+        #En caso de no ser ingresado se establece por default que sea igual a la resolución del ancho del arreglo 
+        resolucion_Alto = resolucion_Ancho
+    
+    
+    #Creando malla de puntos considerando condiciones de ancho y alto del arreglo
+    x = np.linspace(-ancho_Arreglo / 2, ancho_Arreglo / 2, resolucion_Ancho) 
+    y = np.linspace(-alto_Arreglo / 2, alto_Arreglo / 2, resolucion_Alto) 
+
+    #Creación de malla de puntos bidimensional
+    xx, yy = np.meshgrid(x, y)  
+
+    return xx, yy 
 
 
 ''' Definicion de función para máscara circular '''
 
 def funcion_Circulo(radio, centro, xx, yy): #definicion de la funcion para hacer circulo transparente
-    ''' CREACCION DEL CONJUNTO DE PUNTOS DE LA MASCARA DE DFRACCION '''
-    if centro is None: # que pasa si el centro no es definido en la funcion
-        centro = (0, 0) #ubica el centro de la circunferencia en el origen
-    distancia = (xx - centro[0])**2 + (yy - centro[1])**2 #calculamos la distancia desde el centro de la circunferencia a cada punto
-    mascara = distancia <= radio**2 #los puntos de la mascara seran los puntos cuya distancia al centro es menor que el radio
-    return mascara #devolvemos los puntos que cumplen la condicion para hacer parte de la mascara
-
-
-
-
-""" Definición de función para máscara cuadrado """
-
-
-def funcion_Rectangulo(base, altura, centro, xx, yy): #funcion para realizar una funcion rectangulo
     '''
-    Crea una máscara con un rectángulo
-    ENTRADAS:
-        base == float (Base obviamente)
-        altura == float (Altura obviamente)
-        centro == lista [X,Y]
-        xx, yy == malla de puntos en la cual se verá el rectángulo
-    RETORNO:
-        Mascara (Array 2D)    
+      Crea una máscara con un círculo
+    
+    FUNCIÓN RECIBE:
+
+        radio  == float 
+        centro == type(list) --> [X,Y]
+        xx, yy == malla de puntos en la cual se verá el circulo
+    
+    FUNCIÓN RETORNA:  Máscara circular
+
     '''
-    if centro is None: #que es lo que pasa si no se especifica el centro del rectangulo
-        centro = [0, 0] #el centro se ubicca por defecto en el origen
-    x_Min = centro[0] - base / 2 #calculos de las distancias limite del rectangulo
+
+    #Se verifica si se especificó la posición del centro del rectángulo
+    if centro is None: 
+
+        #En caso de no ser especificada se ubica el centro en el origen por defecto
+        centro = (0, 0)
+
+    #Se calcula la distancia desde el centro de la circunferencia a cada punto
+    distancia = (xx - centro[0])**2 + (yy - centro[1])**2 
+
+    #Se ubica las dimensiones del circulo dentro de la malla de puntos predeterminada
+    mascara_circular = distancia <= radio**2 
+
+    return mascara_circular 
+
+
+
+
+""" Definición de función para máscara rectangular """
+
+
+def funcion_Rectangulo(base, altura, centro, xx, yy): 
+    '''
+    Crea una máscara con un rectángulo 
+    
+    FUNCIÓN RECIBE:
+
+        base   == float 
+        altura == float 
+        centro == type(list) --> [X,Y]
+        xx, yy == malla de puntos de salida en la cuál se encontrará el rectángulo
+    
+    FUNCIÓN RETORNA:  Máscara rectangular
+    '''
+    
+    #Se verifica si se especificó la posición del centro del rectángulo
+    if centro is None:
+
+        #En caso de no ser especificada se ubica el centro en el origen por defecto 
+        centro = [0, 0] 
+
+    #A continuación se calculan las distancias asociadas a los límites del rectangulo
+    x_Min = centro[0] - base / 2
     x_Max = centro[0] + base / 2
     y_Min = centro[1] - altura / 2
     y_Max = centro[1] + altura / 2
 
-    mascara = (xx <= x_Max) & (xx >= x_Min) & (yy <= y_Max) & (yy >= y_Min) #filtrado de los puntos al interior del rectangulo 
+    #Se ubica las dimensiones del rectángulo dentro de la malla de puntos predeterminada
+    mascara_rectangular = (xx <= x_Max) & (xx >= x_Min) & (yy <= y_Max) & (yy >= y_Min)  
 
-    return mascara #retorno la mascara
+    return mascara_rectangular
+ 
 
