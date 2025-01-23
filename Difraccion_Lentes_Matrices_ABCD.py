@@ -27,7 +27,7 @@ import Matrices_ABCD_Transferencia_rayos as matriz
 import numpy as np
 import matplotlib.pyplot as plt
 import Funciones_importantes as function
-
+from PIL import Image
 
 
 """ Definiendo parámetros de máscara difractiva """
@@ -238,6 +238,21 @@ plt.imshow(intensidad_campoPlanoMedicion, extent=[-ancho_VentanaPlanoMedicion/2,
            cmap='gray')
 plt.title("Intensidad")
 plt.colorbar(label="Intensidad")
+plt.xlabel("X (m)")
+plt.ylabel("Y (m)")
+plt.show()
+
+
+# Cargar la imagen PNG como máscara de transmitancia
+ruta_imagen_png = "/home/labravo/Downloads/Ruido_E03.png"  # Especifica la ruta de tu imagen
+mascara = function.cargar_imagen_png(ruta_imagen_png, resolucion_Input, longitud_ArregloInput)
+
+# Graficar la máscara cargada
+plt.imshow(mascara, extent=[-longitud_ArregloInput/2, longitud_ArregloInput/2,
+                             -longitud_ArregloInput/2, longitud_ArregloInput/2], 
+                             cmap='gray')
+plt.title("Máscara de Transmitancia (Imagen PNG)")
+plt.colorbar(label="Transmitancia")
 plt.xlabel("X (m)")
 plt.ylabel("Y (m)")
 plt.show()

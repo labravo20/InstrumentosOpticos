@@ -1,5 +1,5 @@
 import numpy as np
-
+from PIL import Image
 
 """ Función producto espacio frecuencia en caso TRANSFORMADA FRESNEL """
 
@@ -81,3 +81,28 @@ def producto_espacio_frecuencia_TransformadaFresnel_Sensor(resolucion_AnchoSenso
     return muestreo_Entrada
     
 
+
+""" Función para cargar la imagen PNG y ajustarla al tamaño de la malla """
+
+def cargar_imagen_png(ruta_imagen, resolucion, longitud_ventana):
+    """
+    Carga una imagen PNG y la ajusta a las dimensiones de la malla.
+
+    Args:
+        ruta_imagen (str): Ruta de la imagen PNG.
+        resolucion (int): Resolución de la malla (número de puntos).
+        longitud_ventana (float): Tamaño físico del área de la ventana.
+
+    Returns:
+        numpy.ndarray: Imagen escalada a la resolución de la malla.
+    """
+    # Cargar la imagen en escala de grises
+    imagen = Image.open(ruta_imagen).convert("L")
+    
+    # Redimensionar la imagen a la resolución deseada
+    imagen = imagen.resize((resolucion, resolucion), Image.Resampling.LANCZOS)
+    
+    # Normalizar los valores a un rango de 0 a 1
+    imagen_normalizada = np.array(imagen) / 255.0
+    
+    return imagen_normalizada

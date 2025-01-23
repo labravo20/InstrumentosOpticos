@@ -72,14 +72,14 @@ centro = None
 
 """ Definiendo parámetro para el tamaño de la pupila """
 
-radio_pupilaInput = 7E-3 #Se define variable asociada al radio de la abertura circular que representará
+radio_pupilaInput = 0.1 #Se define variable asociada al radio de la abertura circular que representará
                            # el diafragma.
 
 
 
 """ Definición de distancias del arreglo """
 
-distancia_focal01 = 0.07  #Distancia focal asociada a la lente 01
+distancia_focal01 = 0.5  #Distancia focal asociada a la lente 01
 
 distancia_focal02 = 0.05 #Distancia focal asociada a la lente 02
 
@@ -233,13 +233,15 @@ xx_PlanoMascara, yy_PlanoMascara = mascaras.malla_Puntos(resolucion_anchoSensorI
 """ Creando máscara de transmitancia asociada al objeto de estudio en el arreglo """
 
 #Creación de una máscara circular de transmitancia
-#mascara = mascaras.funcion_Circulo(radio, centro, xx_mascara, yy_mascara)
+#mascara = mascaras.funcion_Circulo(radio, centro, xx_PlanoMascara, yy_PlanoMascara)
 
 #Creación de una máscara rectangular de transmitancia
 #mascara = mascaras.funcion_Rectangulo(lado_Rectangulo01,lado_Rectangulo02,centro,xx_PlanoMascara,yy_PlanoMascara)
 
 #Creación de una máscara con un corazón de transmitancia
 mascara = mascaras.funcion_Corazon(centro,xx_PlanoMascara,yy_PlanoMascara,radio)
+
+
 
 """ ------ EMPIEZA SECCIÓN DE CÁLCULO RESULTADO DIFRACTIVO DE CADA TRAMO ------ """
 
