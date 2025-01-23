@@ -72,14 +72,14 @@ centro = None
 
 """ Definiendo parámetro para el tamaño de la pupila """
 
-radio_pupilaInput = 0.1 #Se define variable asociada al radio de la abertura circular que representará
+radio_pupilaInput = 0.07 #Se define variable asociada al radio de la abertura circular que representará
                            # el diafragma.
 
 
 
 """ Definición de distancias del arreglo """
 
-distancia_focal01 = 0.5  #Distancia focal asociada a la lente 01
+distancia_focal01 = 0.01  #Distancia focal asociada a la lente 01
 
 distancia_focal02 = 0.05 #Distancia focal asociada a la lente 02
 
