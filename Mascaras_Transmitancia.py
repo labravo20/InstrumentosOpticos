@@ -44,6 +44,7 @@ def malla_Puntos(resolucion_Ancho, ancho_Arreglo, resolucion_Alto = None, alto_A
     return xx, yy 
 
 
+
 ''' Definicion de función para máscara circular '''
 
 def funcion_Circulo(radio, centro, xx, yy): #definicion de la funcion para hacer circulo transparente
@@ -76,9 +77,7 @@ def funcion_Circulo(radio, centro, xx, yy): #definicion de la funcion para hacer
 
 
 
-
 """ Definición de función para máscara rectangular """
-
 
 def funcion_Rectangulo(base, altura, centro, xx, yy): 
     '''
