@@ -74,8 +74,11 @@ xx_mascara, yy_mascara = mascaras.malla_Puntos(resolucion_Input, longitud_Arregl
 # Crear la máscara circular
 #mascara = mascaras.funcion_Circulo(radio, centro, xx_mascara, yy_mascara)
 #mascara = mascaras.funcion_Rectangulo(radio,radio,centro,xx_mascara,yy_mascara)
-mascara = mascaras.funcion_Corazon(centro,xx_mascara,yy_mascara,radio)
+#mascara = mascaras.funcion_Corazon(centro,xx_mascara,yy_mascara,radio)
 
+# Cargar la imagen PNG como máscara de transmitancia
+ruta_imagen_png = "/home/labravo/Downloads/Ruido_E03.png"  # Especifica la ruta de tu imagen
+mascara = function.cargar_imagen_png(ruta_imagen_png, resolucion_Input, longitud_ArregloInput)
 
 """ Se calculan las matrices necesarias para estudiar el PRIMER TRAMO del arreglo difractivo
     OBJETO --> *Propagación* --> LENTE """
@@ -242,17 +245,3 @@ plt.xlabel("X (m)")
 plt.ylabel("Y (m)")
 plt.show()
 
-
-# Cargar la imagen PNG como máscara de transmitancia
-ruta_imagen_png = "/home/labravo/Downloads/Ruido_E03.png"  # Especifica la ruta de tu imagen
-mascara = function.cargar_imagen_png(ruta_imagen_png, resolucion_Input, longitud_ArregloInput)
-
-# Graficar la máscara cargada
-plt.imshow(mascara, extent=[-longitud_ArregloInput/2, longitud_ArregloInput/2,
-                             -longitud_ArregloInput/2, longitud_ArregloInput/2], 
-                             cmap='gray')
-plt.title("Máscara de Transmitancia (Imagen PNG)")
-plt.colorbar(label="Transmitancia")
-plt.xlabel("X (m)")
-plt.ylabel("Y (m)")
-plt.show()

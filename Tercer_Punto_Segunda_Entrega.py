@@ -241,6 +241,10 @@ xx_PlanoMascara, yy_PlanoMascara = mascaras.malla_Puntos(resolucion_anchoSensorI
 #Creación de una máscara con un corazón de transmitancia
 mascara = mascaras.funcion_Corazon(centro,xx_PlanoMascara,yy_PlanoMascara,radio)
 
+# Cargar la imagen PNG como máscara de transmitancia
+ruta_imagen_png = "/home/labravo/Downloads/Ruido_E03.png"  # Especifica la ruta de tu imagen
+mascara = function.cargar_imagen_png(ruta_imagen_png, resolucion_anchoSensorInput,resolucion_altoSensorInput)
+
 
 
 """ ------ EMPIEZA SECCIÓN DE CÁLCULO RESULTADO DIFRACTIVO DE CADA TRAMO ------ """
@@ -331,7 +335,7 @@ plt.imshow(intensidad_campoPlanoMedicion, extent=[-ancho_SensorInput/2,
                                                   -alto_SensorInput/2, 
                                                   alto_SensorInput/2], 
            cmap='gray',
-           vmax = 0.01*(np.max(intensidad_campoPlanoMedicion)))
+           vmax = 1*(np.max(intensidad_campoPlanoMedicion)))
 plt.title("Intensidad")
 plt.colorbar(label="Intensidad")
 plt.xlabel("X (m)")

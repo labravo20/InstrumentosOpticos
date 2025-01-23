@@ -81,7 +81,11 @@ xx_mascara, yy_mascara = mascaras.malla_Puntos(resolucion_Input, longitud_Arregl
 # Crear la máscara circular
 #mascara = mascaras.funcion_Circulo(radio, centro, xx_mascara, yy_mascara)
 #mascara = mascaras.funcion_Rectangulo(radio,radio,centro,xx_mascara,yy_mascara)
-mascara = mascaras.funcion_Corazon(centro,xx_mascara,yy_mascara,radio)
+#mascara = mascaras.funcion_Corazon(centro,xx_mascara,yy_mascara,radio)
+
+# Cargar la imagen PNG como máscara de transmitancia
+ruta_imagen_png = "/home/labravo/Downloads/Ruido_E03.png"  # Especifica la ruta de tu imagen
+mascara = function.cargar_imagen_png(ruta_imagen_png, resolucion_Input)
 
 
 
@@ -272,7 +276,7 @@ plt.imshow(intensidad_campoPlanoMedicion, extent=[-ancho_VentanaPlanoMedicion/2,
                                                   -ancho_VentanaPlanoMedicion/2, 
                                                   ancho_VentanaPlanoMedicion/2], 
            cmap='gray',
-           vmax = 0.001*(np.max(intensidad_campoPlanoMedicion)))
+           vmax = 1*(np.max(intensidad_campoPlanoMedicion)))
 plt.title("Intensidad")
 plt.colorbar(label="Intensidad")
 plt.xlabel("X (m)")

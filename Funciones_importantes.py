@@ -84,7 +84,7 @@ def producto_espacio_frecuencia_TransformadaFresnel_Sensor(resolucion_AnchoSenso
 
 """ Función para cargar la imagen PNG y ajustarla al tamaño de la malla """
 
-def cargar_imagen_png(ruta_imagen, resolucion, longitud_ventana):
+def cargar_imagen_png(ruta_imagen, resolucion_ancho, resolucion_alto = None):
     """
     Carga una imagen PNG y la ajusta a las dimensiones de la malla.
 
@@ -96,11 +96,18 @@ def cargar_imagen_png(ruta_imagen, resolucion, longitud_ventana):
     Returns:
         numpy.ndarray: Imagen escalada a la resolución de la malla.
     """
+
+    #Inicialmente se verifica si si incluyó información sobre la resolución del alto de la imagen
+    if resolucion_alto == None:
+
+        #En caso de NO recibir información se define por caso default una resolución cuadrada
+        resolucion_alto = resolucion_ancho
+
     # Cargar la imagen en escala de grises
     imagen = Image.open(ruta_imagen).convert("L")
     
     # Redimensionar la imagen a la resolución deseada
-    imagen = imagen.resize((resolucion, resolucion), Image.Resampling.LANCZOS)
+    imagen = imagen.resize((resolucion_ancho, resolucion_alto), Image.Resampling.LANCZOS)
     
     # Normalizar los valores a un rango de 0 a 1
     imagen_normalizada = np.array(imagen) / 255.0
