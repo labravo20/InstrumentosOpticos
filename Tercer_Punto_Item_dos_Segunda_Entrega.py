@@ -59,7 +59,7 @@ alto_SensorInput = resolucion_altoSensorInput*tamaño_PixelSensorInput
 """ Definiendo parámetros de máscara para procesamiento de imagen  """
 
 #Radio del círculo asociado a la máscara circular
-radio = 0.3E-4
+radio = 0.6E-4
 
 # Se define el centro u origen para la configuración de la máscara 
 centro = None  
@@ -278,7 +278,8 @@ intensidad_campoSalidaPupila = np.abs(campo_salidaPupila)**2
 proveniente de la fuente monocromática con la cual se eliminó la muestra """
 
 #Creación de una máscara rectangular de transmitancia para eliminar el aporte proviniente de la fuente monocromática
-mascara_procesamiento = mascaras.funcion_CirculoInvertida(radio,centro,xx_PlanoPupila,yy_PlanoPupila)
+#mascara_procesamiento = mascaras.funcion_CirculoInvertida(radio,centro,xx_PlanoPupila,yy_PlanoPupila)
+mascara_procesamiento = mascaras.funcion_CirculoInvertidoGaussian(radio,centro,xx_PlanoPupila,yy_PlanoPupila)
 
 #Calculando el campo de entrada al SEGUNDO TRAMO del arreglo
 campo_entradaSegundoTramo = campo_salidaPupila*mascara_procesamiento
@@ -345,7 +346,8 @@ plt.show()
 
 plt.imshow(intensidad_campoEntradaSegundoTramo, extent=[-anchoX_VentanaPlanoPupila/2, anchoX_VentanaPlanoPupila/2,
                               -altoY_VentanaPlanoPupila/2, altoY_VentanaPlanoPupila/2], 
-                              cmap='gray')
+                              cmap='gray',
+                              vmax= 0.001*np.max(intensidad_campoEntradaSegundoTramo))
 plt.title("Campo después de aplicar procesamiento")
 plt.colorbar(label="Intensidad")
 plt.xlabel("X (m)")
