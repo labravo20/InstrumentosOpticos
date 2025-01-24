@@ -1,6 +1,7 @@
 import numpy as np
 from PIL import Image
-import pandas as pd
+#import pandas as pd
+from scipy.ndimage import zoom
 
 """ Función producto espacio frecuencia en caso TRANSFORMADA FRESNEL """
 
@@ -115,23 +116,23 @@ def cargar_imagen_png(ruta_imagen, resolucion_ancho, resolucion_alto = None):
     return imagen_normalizada
 
 
-""" Función para cargar documento tipo CSV """
+# """ Función para cargar documento tipo CSV """
 
-def cargar_documento_csv(ruta_documento_csv):
+# def cargar_documento_csv(ruta_documento_csv):
 
-    # Cargar el archivo CSV en un DataFrame
-    df = pd.read_csv(ruta_documento_csv)
+#     # Cargar el archivo CSV en un DataFrame
+#     df = pd.read_csv(ruta_documento_csv)
     
-    # Si el CSV tiene datos en columnas o filas que representan la malla de puntos, convertir a un array de NumPy
-    # Suponiendo que los datos estén en una forma 2D en el archivo CSV (como una imagen en escala de grises)
-    mascara = df.to_numpy()
+#     # Si el CSV tiene datos en columnas o filas que representan la malla de puntos, convertir a un array de NumPy
+#     # Suponiendo que los datos estén en una forma 2D en el archivo CSV (como una imagen en escala de grises)
+#     mascara = df.to_numpy()
     
-    # Asegúrate de que la máscara esté en la forma correcta (2D)
-    dimensiones_documento = mascara.shape  # Verifica las dimensiones
+#     # Asegúrate de que la máscara esté en la forma correcta (2D)
+#     dimensiones_documento = mascara.shape  # Verifica las dimensiones
 
-    #impresión para verificación
-    #print(dimensiones_documento)
+#     #impresión para verificación
+#     print(dimensiones_documento)
 
-ruta = "/home/labravo/Downloads/MuestraBio_E03.csv"
+# ruta = "/home/labravo/Downloads/MuestraBio_E03.csv"
 
-cargar_documento_csv(ruta)
+# cargar_documento_csv(ruta)

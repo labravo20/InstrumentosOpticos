@@ -241,13 +241,38 @@ xx_PlanoMascara, yy_PlanoMascara = mascaras.malla_Puntos(resolucion_anchoSensorI
 #mascara = mascaras.funcion_Rectangulo(lado_Rectangulo01,lado_Rectangulo02,centro,xx_PlanoMascara,yy_PlanoMascara)
 
 #Creación de una máscara con un corazón de transmitancia
-mascara = mascaras.funcion_Corazon(centro,xx_PlanoMascara,yy_PlanoMascara,radio)
+#mascara = mascaras.funcion_Corazon(centro,xx_PlanoMascara,yy_PlanoMascara,radio)
 
 # Cargar la imagen PNG como máscara de transmitancia
 ruta_imagen_png = "/home/labravo/Downloads/Ruido_E03.png"  # Especifica la ruta de tu imagen
-mascara = function.cargar_imagen_png(ruta_imagen_png, resolucion_anchoSensorInput,resolucion_altoSensorInput)
+#mascara = function.cargar_imagen_png(ruta_imagen_png, resolucion_anchoSensorInput,resolucion_altoSensorInput)
+
+from scipy.ndimage import zoom
+
+# Cargar el archivo CSV
+ruta_csv = "/home/labravo/Downloads/MuestraBio_E03.csv"  # Reemplaza con la ruta de tu archivo
+
+# Leer el archivo y reemplazar 'i' con 'j'
+with open("/home/labravo/Downloads/MuestraBio_E03.csv", "r") as file:
+    contenido = file.read().replace("i", "j")
+
+# Guardar el archivo actualizado
+with open("/home/labravo/Downloads/MuestraBio_E03.csv", "w") as file:
+    file.write(contenido)
+
+datos_csv = np.genfromtxt(ruta_csv, delimiter=',', dtype=complex)
+resolucion_x_csv, resolucion_y_csv = datos_csv.shape
+
+# Factores de escala para ajustar a las dimensiones del plano de la máscara
+factor_x = resolucion_anchoSensorInput / resolucion_x_csv
+factor_y = resolucion_altoSensorInput / resolucion_y_csv
+
+# Interpolar el CSV para ajustar su tamaño
+datos_csv_ajustados = zoom(datos_csv, (factor_y, factor_x), order=1)  #
 
 
+# Asignar la máscara ajustada
+mascara = datos_csv_ajustados
 
 """ ------ EMPIEZA SECCIÓN DE CÁLCULO RESULTADO DIFRACTIVO DE CADA TRAMO ------ """
 
@@ -305,16 +330,30 @@ intensidad_campoPlanoMedicion = amplitud_campoPlanoMedicion**2
 
 """ Graficando máscara de transmitancia asignada a abertura circular"""
 
-plt.imshow(mascara, extent=[-anchoX_VentanaPlanoMascara/2, anchoX_VentanaPlanoMascara/2,
-                             -altoY_VentanaPlanoMascara/2, altoY_VentanaPlanoMascara/2], 
-                             cmap='gray')
-plt.title("Máscara")
+# plt.imshow(mascara, extent=[-anchoX_VentanaPlanoMascara/2, anchoX_VentanaPlanoMascara/2,
+#                              -altoY_VentanaPlanoMascara/2, altoY_VentanaPlanoMascara/2], 
+#                              cmap='gray')
+# plt.title("Máscara")
+# plt.colorbar(label="Transmitancia")
+# plt.xlabel("X (m)")
+# plt.ylabel("Y (m)")
+# plt.show()
+
+# Visualizar la máscara ajustada
+plt.imshow(
+    np.abs(datos_csv_ajustados),
+    extent=[
+        -anchoX_VentanaPlanoMascara / 2, anchoX_VentanaPlanoMascara / 2,
+        -altoY_VentanaPlanoMascara / 2, altoY_VentanaPlanoMascara / 2
+    ],
+    cmap="gray",
+    vmin = 1.9*(np.min(np.abs(datos_csv_ajustados))))
+
+plt.title("Máscara ajustada desde CSV")
 plt.colorbar(label="Transmitancia")
 plt.xlabel("X (m)")
 plt.ylabel("Y (m)")
 plt.show()
-
-
 
 """ Graficando intensidad del campo que entra al SEGUNDO TRAMO del arreglo"""
 
@@ -322,7 +361,7 @@ plt.imshow(intensidad_campoEntradaSegundoTramo,
            extent=[-anchoX_VentanaPlanoPupila/2, anchoX_VentanaPlanoPupila/2,
                 -altoY_VentanaPlanoPupila/2, altoY_VentanaPlanoPupila/2], 
             cmap='gray',
-            vmax= 0.01*np.max(intensidad_campoEntradaSegundoTramo))
+            vmax= 0.001*np.max(intensidad_campoEntradaSegundoTramo))
 plt.title("Campo PUPILA")
 plt.colorbar(label="Amplitud")
 plt.xlabel("X (m)")
@@ -337,9 +376,13 @@ plt.imshow(intensidad_campoPlanoMedicion, extent=[-ancho_SensorInput/2,
                                                   -alto_SensorInput/2, 
                                                   alto_SensorInput/2], 
            cmap='gray',
-           vmax = 1*(np.max(intensidad_campoPlanoMedicion)))
+           vmax = 1*(np.max(intensidad_campoPlanoMedicion)),
+           vmin = 1.85*(np.min(intensidad_campoPlanoMedicion)))
 plt.title("Intensidad")
 plt.colorbar(label="Intensidad")
 plt.xlabel("X (m)")
 plt.ylabel("Y (m)")
 plt.show()
+
+
+
