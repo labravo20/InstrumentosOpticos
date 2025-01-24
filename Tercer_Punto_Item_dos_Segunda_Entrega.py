@@ -237,6 +237,11 @@ ruta_imagen_png = "/home/labravo/Downloads/Ruido_E03.png"  # Especifica la ruta 
 ruta_csv = "/home/labravo/Downloads/MuestraBio_E03.csv"  # Reemplaza con la ruta de tu archivo
 mascara = function.cargar_documento_csv(ruta_csv,resolucion_anchoSensorInput,resolucion_altoSensorInput)
 
+#Se calcula la intensidad asociada al campo de entrada
+Intensidad_mascara = np.abs(mascara)**2
+
+#Se calcula la fase asociada al campo de entrada
+mascara_fase = np.angle(mascara)
 
 
 """ ------ EMPIEZA SECCIÓN DE CÁLCULO RESULTADO DIFRACTIVO DE CADA TRAMO ------ """
@@ -299,6 +304,9 @@ campo_PlanoMedicion = matriz.matriz_ABCD_Difraccion_Sensor_Shift(camino_opticoCe
                                                     matriz_SistemaSegundoTramo[1,1],xx_PlanoPupila,
                                                     yy_PlanoPupila,xx_PlanoMedicion,yy_PlanoMedicion,
                                                     numero_onda_input,deltas_Sensor)
+
+#Se calcula la fase asociada al campo en el plano de medición
+campo_PlanoMedicionFase = np.angle(campo_PlanoMedicion)
 
 #Se calcula la amplitud del campo de salida
 amplitud_campoPlanoMedicion = np.abs(campo_PlanoMedicion)
@@ -371,4 +379,32 @@ plt.xlabel("X (m)")
 plt.ylabel("Y (m)")
 plt.show()
 
+
+
+""" Graficando diagrama de fase del campo de entrada """
+
+plt.imshow(mascara_fase, 
+           extent=[-anchoX_VentanaPlanoMascara/2, anchoX_VentanaPlanoMascara/2,
+                -altoY_VentanaPlanoMascara/2, altoY_VentanaPlanoMascara/2], 
+            cmap='gray')
+
+plt.title("Fase campo de entrada")
+plt.colorbar(label="Fase")
+plt.xlabel("X (m)")
+plt.ylabel("Y (m)")
+plt.show()
+
+
+
+""" Graficando diagrama de fase del campo de salida """
+
+# plt.imshow(campo_PlanoMedicionFase, 
+#            extent=[-ancho_SensorInput/2, ancho_SensorInput/2,
+#                 -alto_SensorInput/2, alto_SensorInput/2], 
+#             cmap='gray')
+# plt.title("Fase campo de salida")
+# plt.colorbar(label="Fase")
+# plt.xlabel("X (m)")
+# plt.ylabel("Y (m)")
+# plt.show()
 
