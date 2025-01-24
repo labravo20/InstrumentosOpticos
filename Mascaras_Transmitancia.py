@@ -79,6 +79,39 @@ def funcion_CirculoInvertida(radio, centro, xx, yy):
     return mascara_circularInvertida 
 
 
+""" Definición de función para crear máscara invertida con distribución de transmitancia gaussiana """
+
+def funcion_CirculoGaussian(radio, centro, xx, yy): 
+    '''
+      Crea una distribución gaussiana circular
+    
+    FUNCIÓN RECIBE:
+
+        radio  == float (define la desviación estándar de la gaussiana)
+        centro == list o tuple [X, Y]
+        xx, yy == malla de puntos en la cual se verá la distribución gaussiana
+    
+    FUNCIÓN RETORNA:  Máscara circular con distribución gaussiana
+
+    '''
+    
+    # Se verifica si se especificó la posición del centro
+    if centro is None: 
+        # En caso de no ser especificada, se ubica el centro en el origen por defecto
+        centro = (0, 0)
+
+    # Calculamos la distancia al cuadrado desde el centro (ecuación gaussiana)
+    distancia_cuadrada = (xx - centro[0])**2 + (yy - centro[1])**2
+
+    # Calculamos la desviación estándar (sigma) a partir del radio
+    sigma = radio / 2  # Relación ajustable entre radio y sigma
+
+    # Generamos la distribución gaussiana
+    mascara_gaussiana = np.exp(-distancia_cuadrada / (2 * sigma**2))
+
+    return mascara_gaussiana
+
+
 ''' Definicion de función para máscara circular '''
 
 def funcion_Circulo(radio, centro, xx, yy): 

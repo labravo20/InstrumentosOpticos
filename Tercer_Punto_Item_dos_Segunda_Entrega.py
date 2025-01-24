@@ -59,7 +59,7 @@ alto_SensorInput = resolucion_altoSensorInput*tamaño_PixelSensorInput
 """ Definiendo parámetros de máscara para procesamiento de imagen  """
 
 #Radio del círculo asociado a la máscara circular
-radio = 0.7E-4
+radio = 0.3E-4
 
 # Se define el centro u origen para la configuración de la máscara 
 centro = None  
@@ -361,8 +361,8 @@ plt.imshow(intensidad_campoPlanoMedicion, extent=[-ancho_SensorInput/2,
                                                   -alto_SensorInput/2, 
                                                   alto_SensorInput/2], 
            cmap='gray',
-           vmax = 1*(np.max(intensidad_campoPlanoMedicion)),
-           vmin = 1*(np.min(intensidad_campoPlanoMedicion)))
+           vmax = 0.7*(np.max(intensidad_campoPlanoMedicion)),
+           vmin = 1.2*(np.min(intensidad_campoPlanoMedicion)))
 plt.title("Intensidad")
 plt.colorbar(label="Intensidad")
 plt.xlabel("X (m)")
