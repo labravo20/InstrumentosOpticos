@@ -47,6 +47,40 @@ def malla_Puntos(resolucion_Ancho, ancho_Arreglo, resolucion_Alto = None, alto_A
 
 ''' Definicion de función para máscara circular '''
 
+def funcion_CirculoInvertida(radio, centro, xx, yy): 
+    '''
+      Crea una máscara invertida con un círculo
+    
+    FUNCIÓN RECIBE:
+
+        radio  == float 
+        centro == type(list) --> [X,Y]
+        xx, yy == malla de puntos en la cual se verá el circulo
+    
+    FUNCIÓN RETORNA:  Máscara circular invertida
+
+    '''
+
+    #Se verifica si se especificó la posición del centro del rectángulo
+    if centro is None: 
+
+        #En caso de no ser especificada se ubica el centro en el origen por defecto
+        centro = (0, 0)
+
+    #Se calcula la distancia desde el centro de la circunferencia a cada punto
+    distancia = (xx - centro[0])**2 + (yy - centro[1])**2 
+
+    #Se ubica las dimensiones del circulo dentro de la malla de puntos predeterminada
+    mascara_circular = distancia <= radio**2 
+
+    #Se invierte la máscara para poder generar la máscara circular invertido
+    mascara_circularInvertida = ~mascara_circular
+
+    return mascara_circularInvertida 
+
+
+''' Definicion de función para máscara circular '''
+
 def funcion_Circulo(radio, centro, xx, yy): 
     '''
       Crea una máscara con un círculo

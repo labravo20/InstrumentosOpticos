@@ -56,14 +56,10 @@ alto_SensorInput = resolucion_altoSensorInput*tamaño_PixelSensorInput
 
 
 
-""" Definiendo parámetros de máscara difractiva """
+""" Definiendo parámetros de máscara para procesamiento de imagen  """
 
 #Radio del círculo asociado a la máscara circular
-radio = 0.0005 
-
-#Lados asociados a la máscara rectangular 
-lado_Rectangulo01 = 5E-5
-lado_Rectangulo02 = 5E-5
+radio = 0.7E-4
 
 # Se define el centro u origen para la configuración de la máscara 
 centro = None  
@@ -72,16 +68,16 @@ centro = None
 
 """ Definiendo parámetro para el tamaño de la pupila """
 
-radio_pupilaInput = 0.035 #Se define variable asociada al radio de la abertura circular que representará
+radio_pupilaInput = 0.0035 #Se define variable asociada al radio de la abertura circular que representará
                            # el diafragma.
 
 
 
 """ Definición de distancias del arreglo """
 
-distancia_focal01 = 0.01  #Distancia focal asociada a la lente 01
+distancia_focal01 = 0.01  # Distancia focal asociada a la lente 01
 
-distancia_focal02 = 0.565 #Distancia focal asociada a la lente 02--> CALCULADA PARA LOGRAR 
+distancia_focal02 = 0.565 # Distancia focal asociada a la lente 02--> CALCULADA PARA LOGRAR 
 #ANCHO DE VENTANA MÁSCARA DE 125E-6 m
 
 distancia_propagacionAribitraria = 0.01 #Se define una distancia de propagación arbitraria 
@@ -233,15 +229,6 @@ xx_PlanoMascara, yy_PlanoMascara = mascaras.malla_Puntos(resolucion_anchoSensorI
 
 """ Creando máscara de transmitancia asociada al objeto de estudio en el arreglo """
 
-#Creación de una máscara circular de transmitancia
-#mascara = mascaras.funcion_Circulo(radio, centro, xx_PlanoMascara, yy_PlanoMascara)
-
-#Creación de una máscara rectangular de transmitancia
-#mascara = mascaras.funcion_Rectangulo(lado_Rectangulo01,lado_Rectangulo02,centro,xx_PlanoMascara,yy_PlanoMascara)
-
-#Creación de una máscara con un corazón de transmitancia
-#mascara = mascaras.funcion_Corazon(centro,xx_PlanoMascara,yy_PlanoMascara,radio)
-
 # Cargar la imagen PNG como máscara de transmitancia
 ruta_imagen_png = "/home/labravo/Downloads/Ruido_E03.png"  # Especifica la ruta de tu imagen
 #mascara = function.cargar_imagen_png(ruta_imagen_png, resolucion_anchoSensorInput,resolucion_altoSensorInput)
@@ -279,8 +266,22 @@ pupila = mascaras.funcion_Circulo(radio_pupilaInput, centro, xx_PlanoPupila, yy_
 NOTA: El campo que llega a la pupila e interactua con la máscara asociada a la pupila
 será el campo de entrada para el segundo tramo."""
 
+#Calculando el campo que sale después de la interacción con la pupila
+campo_salidaPupila = campo_PlanoPupila*pupila
+
+#Calculando la intensidad del campo de entrada al SEGUNDO TRAMO del arreglo
+intensidad_campoSalidaPupila = np.abs(campo_salidaPupila)**2
+
+
+
+""" Se crea e implementa una 'máscara' adicional para procesar la imagen y eliminar el aporte 
+proveniente de la fuente monocromática con la cual se eliminó la muestra """
+
+#Creación de una máscara rectangular de transmitancia para eliminar el aporte proviniente de la fuente monocromática
+mascara_procesamiento = mascaras.funcion_CirculoInvertida(radio,centro,xx_PlanoPupila,yy_PlanoPupila)
+
 #Calculando el campo de entrada al SEGUNDO TRAMO del arreglo
-campo_entradaSegundoTramo = campo_PlanoPupila*pupila
+campo_entradaSegundoTramo = campo_salidaPupila*mascara_procesamiento
 
 #Calculando la intensidad del campo de entrada al SEGUNDO TRAMO del arreglo
 intensidad_campoEntradaSegundoTramo = np.abs(campo_entradaSegundoTramo)**2
@@ -306,18 +307,8 @@ intensidad_campoPlanoMedicion = amplitud_campoPlanoMedicion**2
 
 
 
-""" Graficando máscara de transmitancia asignada a abertura circular"""
+""" Graficando máscara de transmitancia asignada al campo de enrada """
 
-# plt.imshow(mascara, extent=[-anchoX_VentanaPlanoMascara/2, anchoX_VentanaPlanoMascara/2,
-#                              -altoY_VentanaPlanoMascara/2, altoY_VentanaPlanoMascara/2], 
-#                              cmap='gray')
-# plt.title("Máscara")
-# plt.colorbar(label="Transmitancia")
-# plt.xlabel("X (m)")
-# plt.ylabel("Y (m)")
-# plt.show()
-
-# Visualizar la máscara ajustada
 plt.imshow(
     (np.abs(mascara)**2),
     extent=[
@@ -328,23 +319,39 @@ plt.imshow(
     vmin = 1.8*(np.min((np.abs(mascara))**2)))
 
 plt.title("Máscara ajustada desde CSV")
-plt.colorbar(label="Transmitancia")
+plt.colorbar(label="Intensidad")
 plt.xlabel("X (m)")
 plt.ylabel("Y (m)")
 plt.show()
 
-""" Graficando intensidad del campo que entra al SEGUNDO TRAMO del arreglo"""
 
-plt.imshow(intensidad_campoEntradaSegundoTramo, 
+
+""" Graficando intensidad del campo de salida de la PUPILA """
+
+plt.imshow(intensidad_campoSalidaPupila, 
            extent=[-anchoX_VentanaPlanoPupila/2, anchoX_VentanaPlanoPupila/2,
                 -altoY_VentanaPlanoPupila/2, altoY_VentanaPlanoPupila/2], 
             cmap='gray',
-            vmax= 0.001*np.max(intensidad_campoEntradaSegundoTramo))
+            vmax= 0.001*np.max(intensidad_campoSalidaPupila))
 plt.title("Campo PUPILA")
-plt.colorbar(label="Amplitud")
+plt.colorbar(label="Intensidad")
 plt.xlabel("X (m)")
 plt.ylabel("Y (m)")
 plt.show()
+
+
+
+""" Graficando la intensidad del campo de ENTRADA AL SEGUNDO TRAMO"""
+
+plt.imshow(intensidad_campoEntradaSegundoTramo, extent=[-anchoX_VentanaPlanoPupila/2, anchoX_VentanaPlanoPupila/2,
+                              -altoY_VentanaPlanoPupila/2, altoY_VentanaPlanoPupila/2], 
+                              cmap='gray')
+plt.title("Campo después de aplicar procesamiento")
+plt.colorbar(label="Intensidad")
+plt.xlabel("X (m)")
+plt.ylabel("Y (m)")
+plt.show()
+
 
 
 """ Graficando la intensidad del campo de salida del arreglo """
@@ -355,12 +362,11 @@ plt.imshow(intensidad_campoPlanoMedicion, extent=[-ancho_SensorInput/2,
                                                   alto_SensorInput/2], 
            cmap='gray',
            vmax = 1*(np.max(intensidad_campoPlanoMedicion)),
-           vmin = 1.8*(np.min(intensidad_campoPlanoMedicion)))
+           vmin = 1*(np.min(intensidad_campoPlanoMedicion)))
 plt.title("Intensidad")
 plt.colorbar(label="Intensidad")
 plt.xlabel("X (m)")
 plt.ylabel("Y (m)")
 plt.show()
-
 
 

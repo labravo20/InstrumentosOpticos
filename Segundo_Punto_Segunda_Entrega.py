@@ -169,6 +169,8 @@ será el campo de entrada para el segundo tramo."""
 #Calculando el campo de entrada al SEGUNDO TRAMO del arreglo
 campo_entradaSegundoTramo = campo_PlanoPupila*pupila
 
+calculo_logaritmico = np.abs(np.log(campo_PlanoPupila))
+
 intensidad_campoEntradaSegundoTramo = np.abs(campo_entradaSegundoTramo)**2
 
 
@@ -237,6 +239,7 @@ campo_PlanoMedicion = matriz.matriz_ABCD_Difraccion_Shift(camino_opticoCentralSe
 #Se calcula la amplitud del campo de salida
 amplitud_campoPlanoMedicion = np.abs(campo_PlanoMedicion)
 
+
 #Se calcula la intensidad del campo de salida
 intensidad_campoPlanoMedicion = amplitud_campoPlanoMedicion**2
 
@@ -257,11 +260,11 @@ plt.show()
 
 """ Graficando máscara de transmitancia asignada a abertura circular"""
 
-plt.imshow(intensidad_campoEntradaSegundoTramo, 
+plt.imshow(calculo_logaritmico, 
            extent=[-ancho_VentanaPlanoPupila/2, ancho_VentanaPlanoPupila/2,
                 -ancho_VentanaPlanoPupila/2, ancho_VentanaPlanoPupila/2], 
             cmap='gray',
-            vmax= 0.01*np.max(intensidad_campoEntradaSegundoTramo))
+            vmin= 1*np.min(calculo_logaritmico))
 plt.title("Campo PUPILA")
 plt.colorbar(label="Amplitud")
 plt.xlabel("X (m)")
