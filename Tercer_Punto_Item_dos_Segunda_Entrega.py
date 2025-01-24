@@ -221,8 +221,10 @@ deltas_tramoMascaraPupila = function.producto_espacio_frecuencia_TransformadaFre
                                                                                             altoY_VentanaPlanoPupila)
 
 #Se calcula el ancho de la ventana del plano de la máscara u objeto de entrada
-anchoX_VentanaPlanoMascara = resolucion_anchoSensorInput*deltas_tramoMascaraPupila[0]
-altoY_VentanaPlanoMascara = resolucion_altoSensorInput*deltas_tramoMascaraPupila[1]
+# anchoX_VentanaPlanoMascara = resolucion_anchoSensorInput*deltas_tramoMascaraPupila[0]
+# altoY_VentanaPlanoMascara = resolucion_altoSensorInput*deltas_tramoMascaraPupila[1]
+anchoX_VentanaPlanoMascara = 125E-6
+altoY_VentanaPlanoMascara = 125E-6
 
 #Se calcula la malla de puntos asociada al plano de la pupila
 xx_PlanoMascara, yy_PlanoMascara = mascaras.malla_Puntos(resolucion_anchoSensorInput,anchoX_VentanaPlanoPupila,

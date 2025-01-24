@@ -326,7 +326,6 @@ def matriz_ABCD_Difraccion(camino_optico_central, campo_entrada, posicion_A_matr
     #Calculando la transformada de Fourier de la función asociada al campo de entrada afectada por la
     #fase parabólica de entrada
     transformada_FourierFuncionEntrada = np.fft.fftshift(np.fft.fft2(funcion_Entrada))
-    #transformada_FourierFuncionEntrada = (np.fft.fft2(funcion_Entrada))
 
     #Calculando el campo difractado
     campo_Difractado = (deltas_muestreo[1]**2)*fase_constante*fase_parabolicaPlanoMedicion*transformada_FourierFuncionEntrada
@@ -365,8 +364,7 @@ def matriz_ABCD_Difraccion_Shift(camino_optico_central, campo_entrada, posicion_
 
     #Calculando la transformada de Fourier de la función asociada al campo de entrada afectada por la
     #fase parabólica de entrada
-    transformada_FourierFuncionEntrada = (np.fft.fft2(funcion_Entrada))
-    #transformada_FourierFuncionEntrada = (np.fft.ifft2(funcion_Entrada))
+    transformada_FourierFuncionEntrada = (np.fft.ifft2(funcion_Entrada))
 
     #Calculando el campo difractado
     campo_Difractado = (deltas_muestreo[1]**2)*fase_constante*fase_parabolicaPlanoMedicion*transformada_FourierFuncionEntrada
@@ -406,10 +404,9 @@ def matriz_ABCD_Difraccion_Sensor(camino_optico_central, campo_entrada, posicion
     #Calculando la transformada de Fourier de la función asociada al campo de entrada afectada por la
     #fase parabólica de entrada
     transformada_FourierFuncionEntrada = np.fft.fftshift(np.fft.fft2(funcion_Entrada))
-    #transformada_FourierFuncionEntrada = (np.fft.fft2(funcion_Entrada))
 
     #Calculando el campo difractado
-    campo_Difractado = ((deltas_muestreoPlanoMedicion[0]**2)+(deltas_muestreoPlanoMedicion[1]**2))*fase_constante*fase_parabolicaPlanoMedicion*transformada_FourierFuncionEntrada
+    campo_Difractado = (deltas_muestreoPlanoMedicion[0]*deltas_muestreoPlanoMedicion[1])*fase_constante*fase_parabolicaPlanoMedicion*transformada_FourierFuncionEntrada
 
 
     return campo_Difractado
@@ -446,11 +443,10 @@ def matriz_ABCD_Difraccion_Sensor_Shift(camino_optico_central, campo_entrada, po
 
     #Calculando la transformada de Fourier de la función asociada al campo de entrada afectada por la
     #fase parabólica de entrada
-    transformada_FourierFuncionEntrada = (np.fft.fft2(funcion_Entrada))
-    #transformada_FourierFuncionEntrada = (np.fft.ifft2(funcion_Entrada))
+    transformada_FourierFuncionEntrada = (np.fft.ifft2(funcion_Entrada))
 
     #Calculando el campo difractado
-    campo_Difractado = ((deltas_muestreoPlanoMedicion[0]**2)+(deltas_muestreoPlanoMedicion[1]**2))*fase_constante*fase_parabolicaPlanoMedicion*transformada_FourierFuncionEntrada
+    campo_Difractado = (deltas_muestreoPlanoMedicion[0]*deltas_muestreoPlanoMedicion[1])*fase_constante*fase_parabolicaPlanoMedicion*transformada_FourierFuncionEntrada
 
 
     return campo_Difractado

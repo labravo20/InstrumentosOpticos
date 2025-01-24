@@ -320,7 +320,7 @@ plt.imshow(intensidad_campoEntradaSegundoTramo,
            extent=[-anchoX_VentanaPlanoPupila/2, anchoX_VentanaPlanoPupila/2,
                 -altoY_VentanaPlanoPupila/2, altoY_VentanaPlanoPupila/2], 
             cmap='gray',
-            vmax= 0.01*np.max(intensidad_campoEntradaSegundoTramo))
+            vmax= 0.001*np.max(intensidad_campoEntradaSegundoTramo))
 plt.title("Campo PUPILA")
 plt.colorbar(label="Amplitud")
 plt.xlabel("X (m)")
