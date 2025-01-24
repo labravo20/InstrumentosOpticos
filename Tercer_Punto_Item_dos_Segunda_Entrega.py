@@ -72,7 +72,7 @@ centro = None
 
 """ Definiendo parámetro para el tamaño de la pupila """
 
-radio_pupilaInput = 0.07 #Se define variable asociada al radio de la abertura circular que representará
+radio_pupilaInput = 0.035 #Se define variable asociada al radio de la abertura circular que representará
                            # el diafragma.
 
 
@@ -81,7 +81,8 @@ radio_pupilaInput = 0.07 #Se define variable asociada al radio de la abertura ci
 
 distancia_focal01 = 0.01  #Distancia focal asociada a la lente 01
 
-distancia_focal02 = 0.05 #Distancia focal asociada a la lente 02
+distancia_focal02 = 0.565 #Distancia focal asociada a la lente 02--> CALCULADA PARA LOGRAR 
+#ANCHO DE VENTANA MÁSCARA DE 125E-6 m
 
 distancia_propagacionAribitraria = 0.01 #Se define una distancia de propagación arbitraria 
 
@@ -221,10 +222,8 @@ deltas_tramoMascaraPupila = function.producto_espacio_frecuencia_TransformadaFre
                                                                                             altoY_VentanaPlanoPupila)
 
 #Se calcula el ancho de la ventana del plano de la máscara u objeto de entrada
-# anchoX_VentanaPlanoMascara = resolucion_anchoSensorInput*deltas_tramoMascaraPupila[0]
-# altoY_VentanaPlanoMascara = resolucion_altoSensorInput*deltas_tramoMascaraPupila[1]
-anchoX_VentanaPlanoMascara = 125E-6
-altoY_VentanaPlanoMascara = 125E-6
+anchoX_VentanaPlanoMascara = resolucion_anchoSensorInput*deltas_tramoMascaraPupila[0]
+altoY_VentanaPlanoMascara = resolucion_altoSensorInput*deltas_tramoMascaraPupila[1]
 
 #Se calcula la malla de puntos asociada al plano de la pupila
 xx_PlanoMascara, yy_PlanoMascara = mascaras.malla_Puntos(resolucion_anchoSensorInput,anchoX_VentanaPlanoPupila,
@@ -341,13 +340,13 @@ intensidad_campoPlanoMedicion = amplitud_campoPlanoMedicion**2
 
 # Visualizar la máscara ajustada
 plt.imshow(
-    np.abs(datos_csv_ajustados),
+    (np.abs(datos_csv_ajustados)**2),
     extent=[
         -anchoX_VentanaPlanoMascara / 2, anchoX_VentanaPlanoMascara / 2,
         -altoY_VentanaPlanoMascara / 2, altoY_VentanaPlanoMascara / 2
     ],
     cmap="gray",
-    vmin = 1.9*(np.min(np.abs(datos_csv_ajustados))))
+    vmin = 1.8*(np.min((np.abs(datos_csv_ajustados))**2)))
 
 plt.title("Máscara ajustada desde CSV")
 plt.colorbar(label="Transmitancia")
@@ -377,7 +376,7 @@ plt.imshow(intensidad_campoPlanoMedicion, extent=[-ancho_SensorInput/2,
                                                   alto_SensorInput/2], 
            cmap='gray',
            vmax = 1*(np.max(intensidad_campoPlanoMedicion)),
-           vmin = 1.85*(np.min(intensidad_campoPlanoMedicion)))
+           vmin = 1.8*(np.min(intensidad_campoPlanoMedicion)))
 plt.title("Intensidad")
 plt.colorbar(label="Intensidad")
 plt.xlabel("X (m)")
