@@ -246,32 +246,11 @@ xx_PlanoMascara, yy_PlanoMascara = mascaras.malla_Puntos(resolucion_anchoSensorI
 ruta_imagen_png = "/home/labravo/Downloads/Ruido_E03.png"  # Especifica la ruta de tu imagen
 #mascara = function.cargar_imagen_png(ruta_imagen_png, resolucion_anchoSensorInput,resolucion_altoSensorInput)
 
-from scipy.ndimage import zoom
-
 # Cargar el archivo CSV
 ruta_csv = "/home/labravo/Downloads/MuestraBio_E03.csv"  # Reemplaza con la ruta de tu archivo
-
-# Leer el archivo y reemplazar 'i' con 'j'
-with open("/home/labravo/Downloads/MuestraBio_E03.csv", "r") as file:
-    contenido = file.read().replace("i", "j")
-
-# Guardar el archivo actualizado
-with open("/home/labravo/Downloads/MuestraBio_E03.csv", "w") as file:
-    file.write(contenido)
-
-datos_csv = np.genfromtxt(ruta_csv, delimiter=',', dtype=complex)
-resolucion_x_csv, resolucion_y_csv = datos_csv.shape
-
-# Factores de escala para ajustar a las dimensiones del plano de la máscara
-factor_x = resolucion_anchoSensorInput / resolucion_x_csv
-factor_y = resolucion_altoSensorInput / resolucion_y_csv
-
-# Interpolar el CSV para ajustar su tamaño
-datos_csv_ajustados = zoom(datos_csv, (factor_y, factor_x), order=1)  #
+mascara = function.cargar_documento_csv(ruta_csv,resolucion_anchoSensorInput,resolucion_altoSensorInput)
 
 
-# Asignar la máscara ajustada
-mascara = datos_csv_ajustados
 
 """ ------ EMPIEZA SECCIÓN DE CÁLCULO RESULTADO DIFRACTIVO DE CADA TRAMO ------ """
 
@@ -340,13 +319,13 @@ intensidad_campoPlanoMedicion = amplitud_campoPlanoMedicion**2
 
 # Visualizar la máscara ajustada
 plt.imshow(
-    (np.abs(datos_csv_ajustados)**2),
+    (np.abs(mascara)**2),
     extent=[
         -anchoX_VentanaPlanoMascara / 2, anchoX_VentanaPlanoMascara / 2,
         -altoY_VentanaPlanoMascara / 2, altoY_VentanaPlanoMascara / 2
     ],
     cmap="gray",
-    vmin = 1.8*(np.min((np.abs(datos_csv_ajustados))**2)))
+    vmin = 1.8*(np.min((np.abs(mascara))**2)))
 
 plt.title("Máscara ajustada desde CSV")
 plt.colorbar(label="Transmitancia")

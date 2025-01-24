@@ -1,6 +1,5 @@
 import numpy as np
 from PIL import Image
-#import pandas as pd
 from scipy.ndimage import zoom
 
 """ Función producto espacio frecuencia en caso TRANSFORMADA FRESNEL """
@@ -116,23 +115,27 @@ def cargar_imagen_png(ruta_imagen, resolucion_ancho, resolucion_alto = None):
     return imagen_normalizada
 
 
-# """ Función para cargar documento tipo CSV """
+""" Función para cargar documento tipo CSV """
 
-# def cargar_documento_csv(ruta_documento_csv):
+def cargar_documento_csv(ruta_csv,resolucion_anchoSensorInput,resolucion_altoSensorInput):
 
-#     # Cargar el archivo CSV en un DataFrame
-#     df = pd.read_csv(ruta_documento_csv)
+    # Leer el archivo y reemplazar 'i' con 'j'
+    with open(ruta_csv, "r") as file:
+        contenido = file.read().replace("i", "j")
     
-#     # Si el CSV tiene datos en columnas o filas que representan la malla de puntos, convertir a un array de NumPy
-#     # Suponiendo que los datos estén en una forma 2D en el archivo CSV (como una imagen en escala de grises)
-#     mascara = df.to_numpy()
+    # Guardar el archivo actualizado
+    with open(ruta_csv, "w") as file:
+        file.write(contenido)
     
-#     # Asegúrate de que la máscara esté en la forma correcta (2D)
-#     dimensiones_documento = mascara.shape  # Verifica las dimensiones
+    datos_csv = np.genfromtxt(ruta_csv, delimiter=',', dtype=complex)
+    resolucion_x_csv, resolucion_y_csv = datos_csv.shape
+    
+    # Factores de escala para ajustar a las dimensiones del plano de la máscara
+    factor_x = resolucion_anchoSensorInput / resolucion_x_csv
+    factor_y = resolucion_altoSensorInput / resolucion_y_csv
+    
+    #Interpolar el CSV para ajustar su tamaño
+    datos_csv_ajustados = zoom(datos_csv, (factor_y, factor_x), order=1)  
 
-#     #impresión para verificación
-#     print(dimensiones_documento)
+    return datos_csv_ajustados
 
-# ruta = "/home/labravo/Downloads/MuestraBio_E03.csv"
-
-# cargar_documento_csv(ruta)
