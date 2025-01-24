@@ -4,7 +4,7 @@ import numpy as np
 
 """ Función para graficar irradiancias """
 
-def graficar_intensidad(campo,xx_TamañoVentana,yy_TamañoVentana,titulo,titulo_colorBar, titulo_EjeX,titulo_EjeY, valor_min = 1,valor_max = 1):
+def graficar_intensidad(campo,xx_TamañoVentana,yy_TamañoVentana,titulo, titulo_EjeX,titulo_EjeY, valor_min = 1,valor_max = 1):
     
     plt.imshow(campo,extent=[- xx_TamañoVentana/ 2, xx_TamañoVentana/ 2,
                              -yy_TamañoVentana/ 2, yy_TamañoVentana/ 2],
@@ -13,7 +13,7 @@ def graficar_intensidad(campo,xx_TamañoVentana,yy_TamañoVentana,titulo,titulo_
                              vmax = valor_max*(np.max(campo)))
     
     plt.title(titulo)
-    plt.colorbar(label=titulo_colorBar)
+    plt.colorbar(label="Intensidad")
     plt.xlabel(titulo_EjeX)
     plt.ylabel(titulo_EjeY)
     plt.show()

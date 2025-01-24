@@ -32,7 +32,7 @@ print("Inicializando entorno de programación tercer punto SEGUNDA ENTREGA...")
 import Mascaras_Transmitancia as mascaras
 import Matrices_ABCD_Transferencia_rayos as matriz
 import numpy as np
-import matplotlib.pyplot as plt
+import Funciones_Graficacion as graficar
 import Funciones_importantes as function
 
 
@@ -238,7 +238,7 @@ ruta_csv = "/home/labravo/Downloads/MuestraBio_E03.csv"  # Reemplaza con la ruta
 mascara = function.cargar_documento_csv(ruta_csv,resolucion_anchoSensorInput,resolucion_altoSensorInput)
 
 #Se calcula la intensidad asociada al campo de entrada
-Intensidad_mascara = np.abs(mascara)**2
+intensidad_mascara = np.abs(mascara)**2
 
 #Se calcula la fase asociada al campo de entrada
 mascara_fase = np.angle(mascara)
@@ -318,81 +318,44 @@ intensidad_campoPlanoMedicion = amplitud_campoPlanoMedicion**2
 
 """ Graficando máscara de transmitancia asignada al campo de enrada """
 
-plt.imshow(
-    (np.abs(mascara)**2),
-    extent=[
-        -anchoX_VentanaPlanoMascara / 2, anchoX_VentanaPlanoMascara / 2,
-        -altoY_VentanaPlanoMascara / 2, altoY_VentanaPlanoMascara / 2
-    ],
-    cmap="gray",
-    vmin = 1.8*(np.min((np.abs(mascara))**2)))
-
-plt.title("Máscara ajustada desde CSV")
-plt.colorbar(label="Intensidad")
-plt.xlabel("X (m)")
-plt.ylabel("Y (m)")
-plt.show()
+graficar.graficar_intensidad(intensidad_mascara,anchoX_VentanaPlanoMascara,altoY_VentanaPlanoMascara,
+                             "Intensidad de máscara ajustada desde CSV","X (m)","Y (m)",1.8)
 
 
 
 """ Graficando intensidad del campo de salida de la PUPILA """
 
-plt.imshow(intensidad_campoSalidaPupila, 
-           extent=[-anchoX_VentanaPlanoPupila/2, anchoX_VentanaPlanoPupila/2,
-                -altoY_VentanaPlanoPupila/2, altoY_VentanaPlanoPupila/2], 
-            cmap='gray',
-            vmax= 0.001*np.max(intensidad_campoSalidaPupila))
-plt.title("Campo PUPILA")
-plt.colorbar(label="Intensidad")
-plt.xlabel("X (m)")
-plt.ylabel("Y (m)")
-plt.show()
+graficar.graficar_intensidad(intensidad_campoSalidaPupila,anchoX_VentanaPlanoPupila,altoY_VentanaPlanoPupila,
+                             "Intensidad del campo en plano pupila","X (m)","Y (m)",1,0.001)
 
 
 
 """ Graficando la intensidad del campo de ENTRADA AL SEGUNDO TRAMO"""
 
-plt.imshow(intensidad_campoEntradaSegundoTramo, extent=[-anchoX_VentanaPlanoPupila/2, anchoX_VentanaPlanoPupila/2,
-                              -altoY_VentanaPlanoPupila/2, altoY_VentanaPlanoPupila/2], 
-                              cmap='gray',
-                              vmax= 0.001*np.max(intensidad_campoEntradaSegundoTramo))
-plt.title("Campo después de aplicar procesamiento")
-plt.colorbar(label="Intensidad")
-plt.xlabel("X (m)")
-plt.ylabel("Y (m)")
-plt.show()
+graficar.graficar_intensidad(intensidad_campoEntradaSegundoTramo,anchoX_VentanaPlanoPupila,altoY_VentanaPlanoPupila,
+                             "Intensidad del campo después de aplicar procesamiento","X (m)","Y (m)",1,0.001)
 
 
 
 """ Graficando la intensidad del campo de salida del arreglo """
 
-plt.imshow(intensidad_campoPlanoMedicion, extent=[-ancho_SensorInput/2, 
-                                                  ancho_SensorInput/2, 
-                                                  -alto_SensorInput/2, 
-                                                  alto_SensorInput/2], 
-           cmap='gray',
-           vmax = 0.7*(np.max(intensidad_campoPlanoMedicion)),
-           vmin = 1.2*(np.min(intensidad_campoPlanoMedicion)))
-plt.title("Intensidad")
-plt.colorbar(label="Intensidad")
-plt.xlabel("X (m)")
-plt.ylabel("Y (m)")
-plt.show()
+graficar.graficar_intensidad(intensidad_campoPlanoMedicion,ancho_SensorInput,ancho_SensorInput,
+                             "Intensidad del campo a la salida","X (m)","Y (m)",1.2,0.7)
 
 
 
 """ Graficando diagrama de fase del campo de entrada """
 
-plt.imshow(mascara_fase, 
-           extent=[-anchoX_VentanaPlanoMascara/2, anchoX_VentanaPlanoMascara/2,
-                -altoY_VentanaPlanoMascara/2, altoY_VentanaPlanoMascara/2], 
-            cmap='gray')
+# plt.imshow(mascara_fase, 
+#            extent=[-anchoX_VentanaPlanoMascara/2, anchoX_VentanaPlanoMascara/2,
+#                 -altoY_VentanaPlanoMascara/2, altoY_VentanaPlanoMascara/2], 
+#             cmap='gray')
 
-plt.title("Fase campo de entrada")
-plt.colorbar(label="Fase")
-plt.xlabel("X (m)")
-plt.ylabel("Y (m)")
-plt.show()
+# plt.title("Fase campo de entrada")
+# plt.colorbar(label="Fase")
+# plt.xlabel("X (m)")
+# plt.ylabel("Y (m)")
+# plt.show()
 
 
 
