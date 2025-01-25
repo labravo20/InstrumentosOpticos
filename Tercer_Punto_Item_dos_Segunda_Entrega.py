@@ -319,28 +319,28 @@ intensidad_campoPlanoMedicion = amplitud_campoPlanoMedicion**2
 """ Graficando máscara de transmitancia asignada al campo de enrada """
 
 graficar.graficar_intensidad(intensidad_mascara,anchoX_VentanaPlanoMascara,altoY_VentanaPlanoMascara,
-                             "Intensidad de máscara ajustada desde CSV","X (m)","Y (m)",1.8)
+                             "Intensidad de máscara ajustada desde CSV",1.8)
 
 
 
 """ Graficando intensidad del campo de salida de la PUPILA """
 
 graficar.graficar_intensidad(intensidad_campoSalidaPupila,anchoX_VentanaPlanoPupila,altoY_VentanaPlanoPupila,
-                             "Intensidad del campo en plano pupila","X (m)","Y (m)",1,0.001)
+                             "Intensidad del campo en plano pupila",1,0.001)
 
 
 
 """ Graficando la intensidad del campo de ENTRADA AL SEGUNDO TRAMO"""
 
 graficar.graficar_intensidad(intensidad_campoEntradaSegundoTramo,anchoX_VentanaPlanoPupila,altoY_VentanaPlanoPupila,
-                             "Intensidad del campo después de aplicar procesamiento","X (m)","Y (m)",1,0.001)
+                             "Intensidad del campo después de aplicar procesamiento",1,0.001)
 
 
 
 """ Graficando la intensidad del campo de salida del arreglo """
 
 graficar.graficar_intensidad(intensidad_campoPlanoMedicion,ancho_SensorInput,ancho_SensorInput,
-                             "Intensidad del campo a la salida","X (m)","Y (m)",1.2,0.7)
+                             "Intensidad del campo a la salida",1,0.7)
 
 
 
