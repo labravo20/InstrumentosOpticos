@@ -44,6 +44,11 @@ resolucion_anchoSensorInput = 2448
 #Numero de muestras/puntos distribuidos en el alto del sensor
 resolucion_altoSensorInput = 2048
 
+#NOTA IMPORTANTE --> En este caso para lograr una distribución de arreglo cuadrada (dada la 
+# condición de caracterización donde se solicita un arreglo de entrada asociado a 125 um x 125 um)
+# se usará unicamente el dato de menor distribución, es decir, se configurarán arreglos de 2048 x 2048, es decir:
+resolucion_anchoSensorInput = 2048 
+
 #Tamaño del pixel del sensor
 tamaño_PixelSensorInput = 3.45E-6
 
@@ -212,7 +217,7 @@ xx_PlanoPupila, yy_PlanoPupila = mascaras.malla_Puntos(resolucion_anchoSensorInp
 #Se llama función para determinar los deltas de muestreo del tramo PUPILA --> MÁSCARA
 deltas_tramoMascaraPupila = function.producto_espacio_frecuencia_TransformadaFresnel_Sensor(resolucion_anchoSensorInput,
                                                                                             anchoX_VentanaPlanoPupila,
-                                                                                            matriz_SistemaSegundoTramo[0,1],
+                                                                                            matriz_SistemaPrimerTramo[0,1],
                                                                                             longitud_onda_input,
                                                                                             resolucion_altoSensorInput,
                                                                                             altoY_VentanaPlanoPupila)
@@ -222,16 +227,12 @@ anchoX_VentanaPlanoMascara = resolucion_anchoSensorInput*deltas_tramoMascaraPupi
 altoY_VentanaPlanoMascara = resolucion_altoSensorInput*deltas_tramoMascaraPupila[1]
 
 #Se calcula la malla de puntos asociada al plano de la pupila
-xx_PlanoMascara, yy_PlanoMascara = mascaras.malla_Puntos(resolucion_anchoSensorInput,anchoX_VentanaPlanoPupila,
-                                                       resolucion_altoSensorInput,altoY_VentanaPlanoPupila)
+xx_PlanoMascara, yy_PlanoMascara = mascaras.malla_Puntos(resolucion_anchoSensorInput,anchoX_VentanaPlanoMascara,
+                                                       resolucion_altoSensorInput,altoY_VentanaPlanoMascara)
 
 
 
 """ Creando máscara de transmitancia asociada al objeto de estudio en el arreglo """
-
-# Cargar la imagen PNG como máscara de transmitancia
-ruta_imagen_png = "/home/labravo/Downloads/Ruido_E03.png"  # Especifica la ruta de tu imagen
-#mascara = function.cargar_imagen_png(ruta_imagen_png, resolucion_anchoSensorInput,resolucion_altoSensorInput)
 
 # Cargar el archivo CSV
 ruta_csv = "/home/labravo/Downloads/MuestraBio_E03.csv"  # Reemplaza con la ruta de tu archivo
@@ -323,6 +324,13 @@ graficar.graficar_intensidad(intensidad_mascara,anchoX_VentanaPlanoMascara,altoY
 
 
 
+""" Graficando diagrama de fase del campo de entrada """
+
+graficar.graficar_fase(mascara_fase,anchoX_VentanaPlanoMascara,altoY_VentanaPlanoMascara,
+                       "Fase del campo de entrada")
+
+
+
 """ Graficando intensidad del campo de salida de la PUPILA """
 
 graficar.graficar_intensidad(intensidad_campoSalidaPupila,anchoX_VentanaPlanoPupila,altoY_VentanaPlanoPupila,
@@ -339,35 +347,8 @@ graficar.graficar_intensidad(intensidad_campoEntradaSegundoTramo,anchoX_VentanaP
 
 """ Graficando la intensidad del campo de salida del arreglo """
 
-graficar.graficar_intensidad(intensidad_campoPlanoMedicion,ancho_SensorInput,ancho_SensorInput,
+graficar.graficar_intensidad(intensidad_campoPlanoMedicion,ancho_SensorInput,alto_SensorInput,
                              "Intensidad del campo a la salida",1,0.7)
 
 
-
-""" Graficando diagrama de fase del campo de entrada """
-
-# plt.imshow(mascara_fase, 
-#            extent=[-anchoX_VentanaPlanoMascara/2, anchoX_VentanaPlanoMascara/2,
-#                 -altoY_VentanaPlanoMascara/2, altoY_VentanaPlanoMascara/2], 
-#             cmap='gray')
-
-# plt.title("Fase campo de entrada")
-# plt.colorbar(label="Fase")
-# plt.xlabel("X (m)")
-# plt.ylabel("Y (m)")
-# plt.show()
-
-
-
-""" Graficando diagrama de fase del campo de salida """
-
-# plt.imshow(campo_PlanoMedicionFase, 
-#            extent=[-ancho_SensorInput/2, ancho_SensorInput/2,
-#                 -alto_SensorInput/2, alto_SensorInput/2], 
-#             cmap='gray')
-# plt.title("Fase campo de salida")
-# plt.colorbar(label="Fase")
-# plt.xlabel("X (m)")
-# plt.ylabel("Y (m)")
-# plt.show()
 
