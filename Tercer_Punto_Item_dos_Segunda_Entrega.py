@@ -70,8 +70,8 @@ radio = 0.6E-4
 centro = None  
 
 # Parámetros del anillo de fase
-radio_interno_anillo = 0.001  
-radio_externo_anillo = 0.0015  
+radio_interno_anillo = 1E-4  
+radio_externo_anillo = 1.5E-4  
 fase_anillo = np.pi / 2  # Generando retardo de π/2
 
 
@@ -288,6 +288,16 @@ intensidad_campoSalidaPupila = np.abs(campo_salidaPupila)**2
 """ Se crea e implementa una 'máscara' adicional para procesar la imagen y eliminar el aporte 
 proveniente de la fuente monocromática con la cual se eliminó la muestra """
 
+#Creación de una máscara rectangular de transmitancia para eliminar el aporte proviniente de la fuente monocromática
+mascara_procesamiento = mascaras.funcion_CirculoInvertidoGaussian(radio,centro,xx_PlanoPupila,yy_PlanoPupila)
+
+#Se calcula el campo tras la interacción con la máscara de procesamiento
+campo_salidaMascaraProcesamiento = campo_salidaPupila*mascara_procesamiento
+
+
+
+""" Se crea e implementa una máscara adicional para trabajar con contraste de fase """
+
 #NOTACIÓN IMPORTANTE --> Dado que la información asociada al campo incidente está principalmente
 #asociado a la fase es necesario pensar en otros métodos de filtrado... Propuesta --> MICROSCOPÍA
 #DE CONTRASTE DE FASE.
@@ -303,12 +313,12 @@ proveniente de la fuente monocromática con la cual se eliminó la muestra """
 #IMPLEMENTACIÓN --> Multiplicando el campo en el plano de la pupila por una máscara de transmisión 
 #que simule el perfil de un anillo de fase.
 
-#Creación de una máscara rectangular de transmitancia para eliminar el aporte proviniente de la fuente monocromática
-#mascara_procesamiento = mascaras.funcion_CirculoInvertida(radio,centro,xx_PlanoPupila,yy_PlanoPupila)
-mascara_procesamiento = mascaras.funcion_CirculoInvertidoGaussian(radio,centro,xx_PlanoPupila,yy_PlanoPupila)
+# Crear la máscara del anillo de fase
+anillo_fase = mascaras.funcion_AnilloFase(radio_interno_anillo, radio_externo_anillo, fase_anillo, xx_PlanoPupila, yy_PlanoPupila)
+
 
 #Calculando el campo de entrada al SEGUNDO TRAMO del arreglo
-campo_entradaSegundoTramo = campo_salidaPupila*mascara_procesamiento
+campo_entradaSegundoTramo = campo_salidaMascaraProcesamiento*anillo_fase
 
 #Calculando la intensidad del campo de entrada al SEGUNDO TRAMO del arreglo
 intensidad_campoEntradaSegundoTramo = np.abs(campo_entradaSegundoTramo)**2
@@ -358,6 +368,11 @@ graficar.graficar_intensidad(intensidad_campoSalidaPupila,anchoX_VentanaPlanoPup
                              "Intensidad del campo en plano pupila",1,0.001)
 
 
+
+""" Graficando anillo de fase a implementar para el procesamiento de la imagen 0"""
+
+graficar.graficar_fase(np.angle(anillo_fase),anchoX_VentanaPlanoPupila,altoY_VentanaPlanoPupila,
+                       "Anillo de fase")
 
 """ Graficando la intensidad del campo de ENTRADA AL SEGUNDO TRAMO"""
 
