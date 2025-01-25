@@ -113,7 +113,10 @@ def funcion_CirculoInvertidoGaussian(radio, centro, xx, yy):
     #Invirtiendo el valor de la máscara para que sea una transmitancia invertida
     mascara_gaussianaInvertida = 1 - mascara_gaussiana
 
-    return mascara_gaussianaInvertida
+    #Ajustando paŕametros de gaussiana para que el valor mínimo sea mayor a cero
+    mascara_gaussianaAjustada = (mascara_gaussianaInvertida*0.7) + 0.3
+
+    return mascara_gaussianaAjustada
 
 
 
@@ -237,9 +240,39 @@ def funcion_AnilloFase(radio_interno, radio_externo, fase, xx, yy):
     anillo = (r >= radio_interno) & (r <= radio_externo) 
 
     #Se aplica la fase dentro de la condición de fase del anillo 
-    anillo_fase = np.exp(1j * fase) * anillo + (1 - anillo) 
-    #anillo_fase =   anillo + (1 - anillo) 
+    anillo_fase = np.exp(1j * fase) * anillo  + (1 - anillo) 
     
     return anillo_fase
 
+
+""" Definición de función para máscara de representación Anillos de fase """
+
+def funcion_Anillo(radio_interno, radio_externo, xx, yy,transparencia):
+    
+    """
+    Crea un anillo de fase en el plano definido por las coordenadas xx, yy.
+    
+    FUNCIÓN RECIBE:
+    - radio_interno: Radio interno del anillo.
+    - radio_externo: Radio externo del anillo.
+    - fase: Retardo de fase introducido por el anillo.
+    - xx, yy: Mallas de coordenadas del plano.
+
+    FUNCIÓN RETORNA:
+    - anillo_fase: Máscara compleja con el perfil del anillo de fase.
+    """
+    
+    #Se calcula la geometría de un radio dentro de la malla de puntos deseada
+    r = np.sqrt(xx**2 + yy**2)
+
+    #Se especifica una geometría de anillo dentro de la malla de puntos
+    anillo = (r >= radio_interno) & (r <= radio_externo) 
+
+    #Se relaciona la transparencia deseada para el anillo
+    anillo = anillo * (1 - transparencia)
+
+    #Se define estructura para anillo invertido
+    anillo_invertido = 1-anillo
+
+    return anillo_invertido
 

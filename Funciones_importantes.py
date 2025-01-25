@@ -150,6 +150,8 @@ def cargar_documento_csv_OPTION02(archivo_csv):
     #Anexando los datos asociados al archivo CSV
     datos_CSV = np.loadtxt(archivo_csv, delimiter=',', dtype=str)
 
+    print(np.shape(datos_CSV))
+
     #Para buena interpretación de la información de cambian los términos apropiados para asignar 
     #al término imaginario
     datosCSV_compleja = np.vectorize(lambda x: complex(x.replace(' ', '').replace('i', 'j')))(datos_CSV)
