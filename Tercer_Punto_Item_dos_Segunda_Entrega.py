@@ -69,6 +69,11 @@ radio = 0.6E-4
 # Se define el centro u origen para la configuración de la máscara 
 centro = None  
 
+# Parámetros del anillo de fase
+radio_interno_anillo = 0.001  
+radio_externo_anillo = 0.0015  
+fase_anillo = np.pi / 2  # Generando retardo de π/2
+
 
 
 """ Definiendo parámetro para el tamaño de la pupila """

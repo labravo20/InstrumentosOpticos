@@ -233,9 +233,14 @@ def funcion_AnilloFase(radio_interno, radio_externo, fase, xx, yy):
     - anillo_fase: Máscara compleja con el perfil del anillo de fase.
     """
     
+    #Se calcula la geometría de un radio dentro de la malla de puntos deseada
     r = np.sqrt(xx**2 + yy**2)
-    anillo = (r >= radio_interno) & (r <= radio_externo)  # Región del anillo
-    anillo_fase = np.exp(1j * fase) * anillo + (1 - anillo)  # Aplicar fase dentro del anillo
+
+    #Se especifica una geometría de anillo dentro de la malla de puntos
+    anillo = (r >= radio_interno) & (r <= radio_externo) 
+
+    #Se aplica la fase dentro de la condición de fase del anillo 
+    anillo_fase = np.exp(1j * fase) * anillo + (1 - anillo) 
     
     return anillo_fase
 
