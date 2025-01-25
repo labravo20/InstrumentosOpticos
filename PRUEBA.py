@@ -62,13 +62,11 @@ alto_SensorInput = resolucion_altoSensorInput*tamaño_PixelSensorInput
 
 
 """ Definiendo parámetros de máscara para procesamiento de imagen  """
-
 #Radio del círculo asociado a la máscara circular
-radio = 0.6E-4
+radio = 0.6E-3
 
 # Se define el centro u origen para la configuración de la máscara 
 centro = None  
-
 
 
 """ Definiendo parámetro para el tamaño de la pupila """
@@ -245,6 +243,7 @@ intensidad_mascara = np.abs(mascara)**2
 mascara_fase = np.angle(mascara)
 
 
+
 """ ------ EMPIEZA SECCIÓN DE CÁLCULO RESULTADO DIFRACTIVO DE CADA TRAMO ------ """
 
 """ Se calcula el resultado del proceso difractivo del PRIMER TRAMO"""
@@ -279,6 +278,32 @@ campo_salidaPupila = campo_PlanoPupila*pupila
 intensidad_campoSalidaPupila = np.abs(campo_salidaPupila)**2
 
 
+
+""" Se crea e implementa una máscara adicional para trabajar con contraste de fase """
+
+#NOTACIÓN IMPORTANTE --> Dado que la información asociada al campo incidente está principalmente
+#asociado a la fase es necesario pensar en otros métodos de filtrado... Propuesta --> MICROSCOPÍA
+#DE CONTRASTE DE FASE.
+
+#FILTROS USADOS EN MICROSCOPIA DE CONTRASTE DE FASE: --> Anillo de fase <--
+#Este filtro selecciona un anillo específico del cono de luz, alineándolo con la placa de fase
+#en el objetivo. Cabe resaltar que diferentes configuraciones de anillos de fase se utilizan para 
+#optimizar la calidad de la imagen dependiendo de la muestra.
+
+#INTERPRETACIÓN --> Se debe introducir un retardo de fase justo después de la interacción con la
+#pupila. 
+
+#IMPLEMENTACIÓN --> Multiplicando el campo en el plano de la pupila por una máscara de transmisión 
+#que simule el perfil de un anillo de fase.
+
+# Crear la máscara del anillo de fase
+# anillo_fase = mascaras.funcion_AnilloFase(radio_interno_anillo, radio_externo_anillo, fase_anillo, xx_PlanoPupila, yy_PlanoPupila)
+
+# #Calculando el campo de entrada al SEGUNDO TRAMO del arreglo
+# campo_entradaSegundoTramo = campo_salidaPupila*anillo_fase
+
+# #Calculando la intensidad del campo de entrada al SEGUNDO TRAMO del arreglo
+# intensidad_campoEntradaSegundoTramo = np.abs(campo_entradaSegundoTramo)**2
 
 """ Se crea e implementa una 'máscara' adicional para procesar la imagen y eliminar el aporte 
 proveniente de la fuente monocromática con la cual se eliminó la muestra """
@@ -322,86 +347,30 @@ graficar.graficar_intensidad(intensidad_mascara,anchoX_VentanaPlanoMascara,altoY
 
 
 
-""" Graficando diagrama de fase del campo de entrada """
-
-# graficar.graficar_fase(mascara_fase,anchoX_VentanaPlanoMascara,altoY_VentanaPlanoMascara,
-#                        "Fase del campo de entrada")
-
-
-
 """ Graficando intensidad del campo de salida de la PUPILA """
 
-# graficar.graficar_intensidad(intensidad_campoSalidaPupila,anchoX_VentanaPlanoPupila,altoY_VentanaPlanoPupila,
-#                              "Intensidad del campo en plano pupila",1,0.001)
+graficar.graficar_intensidad(intensidad_campoSalidaPupila,anchoX_VentanaPlanoPupila,altoY_VentanaPlanoPupila,
+                              "Intensidad del campo en plano pupila",1,0.001)
+
+
+""" Graficando diagrama de fase del campo de entrada """
+
+graficar.graficar_intensidad(np.abs(mascara_procesamiento),anchoX_VentanaPlanoPupila,altoY_VentanaPlanoPupila,
+                       "Fase del campo de entrada")
+
 
 
 
 """ Graficando la intensidad del campo de ENTRADA AL SEGUNDO TRAMO"""
 
-# graficar.graficar_intensidad(intensidad_campoEntradaSegundoTramo,anchoX_VentanaPlanoPupila,altoY_VentanaPlanoPupila,
-#                              "Intensidad del campo después de aplicar procesamiento",1,0.001)
+graficar.graficar_intensidad(intensidad_campoEntradaSegundoTramo,anchoX_VentanaPlanoPupila,altoY_VentanaPlanoPupila,
+                              "Intensidad del campo después de aplicar procesamiento",1,0.001)
 
 
 
-""" Graficando la intensidad del campo de salida del arreglo """
+# """ Graficando la intensidad del campo de salida del arreglo """
 
 graficar.graficar_intensidad(intensidad_campoPlanoMedicion,ancho_SensorInput,alto_SensorInput,
-                             "Intensidad del campo a la salida",1,0.7)
+                               "Intensidad del campo a la salida",1,1)
 
 
-import matplotlib.pyplot as plt
-from matplotlib.widgets import Slider
-
-# --- Configuración inicial de la gráfica ---
-fig, ax = plt.subplots()
-plt.subplots_adjust(bottom=0.25)  # Ajustar el espacio inferior para el slider
-
-# Graficar la intensidad inicial
-intensidad_plot = ax.imshow(intensidad_campoPlanoMedicion, extent=[-ancho_SensorInput/2, ancho_SensorInput/2,
-                                                                   -alto_SensorInput/2, alto_SensorInput/2],
-                            cmap='gray', interpolation='nearest')
-ax.set_title("Intensidad del campo a la salida")
-ax.set_xlabel("X [m]")
-ax.set_ylabel("Y [m]")
-
-# Añadir barra de color
-cbar = plt.colorbar(intensidad_plot, ax=ax)
-cbar.set_label("Intensidad")
-
-# --- Configuración del slider ---
-ax_slider = plt.axes([0.2, 0.1, 0.65, 0.03])  # Ejes del slider [left, bottom, width, height]
-slider_radio = Slider(ax_slider, "Radio", 0.5E-4, 2E-4, valinit=radio, valstep=1E-5)
-
-# --- Función para actualizar la gráfica cuando se cambia el slider ---
-def actualizar_radio(val):
-    global radio, intensidad_campoPlanoMedicion
-
-    # Actualizar el valor del radio
-    radio = slider_radio.val
-
-    # Recalcular la máscara de procesamiento con el nuevo radio
-    mascara_procesamiento = mascaras.funcion_CirculoInvertidoGaussian(radio, centro, xx_PlanoPupila, yy_PlanoPupila)
-
-    # Recalcular el campo de entrada para el segundo tramo
-    campo_entradaSegundoTramo = campo_salidaPupila * mascara_procesamiento
-
-    # Recalcular la intensidad del campo en el plano de medición
-    campo_PlanoMedicion = matriz.matriz_ABCD_Difraccion_Sensor_Shift(camino_opticoCentralSegundoTramo,
-                                                                     campo_entradaSegundoTramo,
-                                                                     matriz_SistemaSegundoTramo[0, 0],
-                                                                     matriz_SistemaSegundoTramo[0, 1],
-                                                                     matriz_SistemaSegundoTramo[1, 1],
-                                                                     xx_PlanoPupila, yy_PlanoPupila,
-                                                                     xx_PlanoMedicion, yy_PlanoMedicion,
-                                                                     numero_onda_input, deltas_Sensor)
-    intensidad_campoPlanoMedicion = np.abs(campo_PlanoMedicion) ** 2
-
-    # Actualizar la imagen en la gráfica
-    intensidad_plot.set_data(intensidad_campoPlanoMedicion)
-    intensidad_plot.set_clim(vmin=0, vmax=0.7*np.max(intensidad_campoPlanoMedicion))
-    fig.canvas.draw_idle()
-
-# Conectar el slider a la función de actualización
-slider_radio.on_changed(actualizar_radio)
-
-plt.show()

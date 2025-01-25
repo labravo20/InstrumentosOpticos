@@ -139,3 +139,36 @@ def cargar_documento_csv(ruta_csv,resolucion_anchoSensorInput,resolucion_altoSen
 
     return datos_csv_ajustados
 
+
+""" Función para cargar documento tipo CSV usando padding --> NO INTERPOLACIÓN"""
+
+def cargar_documento_csv_OPTION02(archivo_csv):
+
+    #Se define las condiciones de muestreo deseadas
+    dimensiones_resolucion = (2048, 2048)
+    
+    #Anexando los datos asociados al archivo CSV
+    datos_CSV = np.loadtxt(archivo_csv, delimiter=',', dtype=str)
+
+    #Para buena interpretación de la información de cambian los términos apropiados para asignar 
+    #al término imaginario
+    datosCSV_compleja = np.vectorize(lambda x: complex(x.replace(' ', '').replace('i', 'j')))(datos_CSV)
+
+    #Se determina el ancho (COORDENADA X)
+    ancho_pad = (dimensiones_resolucion[0] - datosCSV_compleja.shape[0]) // 2
+
+    #Se determina el tamaño que se debe aumentar al arreglo original
+    ancho_pad_adicional = (dimensiones_resolucion[0] - datosCSV_compleja.shape[0]) % 2
+
+    #Se determina el alto (COORDENADA Y)
+    alto_pad = (dimensiones_resolucion[1] - datosCSV_compleja.shape[1]) // 2
+
+    #Se determina el tamaño que se debe aumentar al arreglo original
+    alto_pad_adicional = (dimensiones_resolucion[1] - datosCSV_compleja.shape[1]) % 2
+
+    #Se crea matriz con toda la información de edición del arreglo
+    array_padded = np.pad(datosCSV_compleja, ((ancho_pad, ancho_pad + ancho_pad_adicional), 
+                                              (alto_pad, alto_pad + alto_pad_adicional)),
+                                              mode='constant', constant_values=0)
+
+    return array_padded

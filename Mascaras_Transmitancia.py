@@ -113,10 +113,7 @@ def funcion_CirculoInvertidoGaussian(radio, centro, xx, yy):
     #Invirtiendo el valor de la máscara para que sea una transmitancia invertida
     mascara_gaussianaInvertida = 1 - mascara_gaussiana
 
-    # Escalamos para que el valor mínimo sea 0.1
-    mascara_gaussianaAjustada = mascara_gaussianaInvertida * (1 - 0.1) + 0.1
-
-    return mascara_gaussianaAjustada
+    return mascara_gaussianaInvertida
 
 
 
@@ -241,6 +238,7 @@ def funcion_AnilloFase(radio_interno, radio_externo, fase, xx, yy):
 
     #Se aplica la fase dentro de la condición de fase del anillo 
     anillo_fase = np.exp(1j * fase) * anillo + (1 - anillo) 
+    #anillo_fase =   anillo + (1 - anillo) 
     
     return anillo_fase
 
