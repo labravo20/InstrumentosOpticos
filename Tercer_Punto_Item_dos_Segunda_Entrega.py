@@ -283,6 +283,21 @@ intensidad_campoSalidaPupila = np.abs(campo_salidaPupila)**2
 """ Se crea e implementa una 'máscara' adicional para procesar la imagen y eliminar el aporte 
 proveniente de la fuente monocromática con la cual se eliminó la muestra """
 
+#NOTACIÓN IMPORTANTE --> Dado que la información asociada al campo incidente está principalmente
+#asociado a la fase es necesario pensar en otros métodos de filtrado... Propuesta --> MICROSCOPÍA
+#DE CONTRASTE DE FASE.
+
+#FILTROS USADOS EN MICROSCOPIA DE CONTRASTE DE FASE: --> Anillo de fase <--
+#Este filtro selecciona un anillo específico del cono de luz, alineándolo con la placa de fase
+#en el objetivo. Cabe resaltar que diferentes configuraciones de anillos de fase se utilizan para 
+#optimizar la calidad de la imagen dependiendo de la muestra.
+
+#INTERPRETACIÓN --> Se debe introducir un retardo de fase justo después de la interacción con la
+#pupila. 
+
+#IMPLEMENTACIÓN --> Multiplicando el campo en el plano de la pupila por una máscara de transmisión 
+#que simule el perfil de un anillo de fase.
+
 #Creación de una máscara rectangular de transmitancia para eliminar el aporte proviniente de la fuente monocromática
 #mascara_procesamiento = mascaras.funcion_CirculoInvertida(radio,centro,xx_PlanoPupila,yy_PlanoPupila)
 mascara_procesamiento = mascaras.funcion_CirculoInvertidoGaussian(radio,centro,xx_PlanoPupila,yy_PlanoPupila)
@@ -316,11 +331,12 @@ amplitud_campoPlanoMedicion = np.abs(campo_PlanoMedicion)
 intensidad_campoPlanoMedicion = amplitud_campoPlanoMedicion**2
 
 
+""" ------ EMPIEZA SECCIÓN DE GRAFICACIÓN ----- """
 
 """ Graficando máscara de transmitancia asignada al campo de enrada """
 
 graficar.graficar_intensidad(intensidad_mascara,anchoX_VentanaPlanoMascara,altoY_VentanaPlanoMascara,
-                             "Intensidad de máscara ajustada desde CSV",1.8)
+                             "Intensidad de máscara ajustada desde CSV",1.9)
 
 
 

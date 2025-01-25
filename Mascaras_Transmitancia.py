@@ -79,6 +79,7 @@ def funcion_CirculoInvertida(radio, centro, xx, yy):
     return mascara_circularInvertida 
 
 
+
 """ Definición de función para crear máscara invertida con distribución de transmitancia gaussiana """
 
 def funcion_CirculoInvertidoGaussian(radio, centro, xx, yy): 
@@ -116,6 +117,7 @@ def funcion_CirculoInvertidoGaussian(radio, centro, xx, yy):
     mascara_gaussianaAjustada = mascara_gaussianaInvertida * (1 - 0.1) + 0.1
 
     return mascara_gaussianaAjustada
+
 
 
 ''' Definicion de función para máscara circular '''
@@ -211,3 +213,30 @@ def funcion_Corazon(centro, xx, yy, escala=1):
     mascara_corazon = (x**2 + y**2 - 1)**3 - x**2 * y**3 <= 0
     
     return mascara_corazon
+
+
+
+""" Definición de función para máscara de representación Anillos de fase """
+
+def funcion_AnilloFase(radio_interno, radio_externo, fase, xx, yy):
+    
+    """
+    Crea un anillo de fase en el plano definido por las coordenadas xx, yy.
+    
+    FUNCIÓN RECIBE:
+    - radio_interno: Radio interno del anillo.
+    - radio_externo: Radio externo del anillo.
+    - fase: Retardo de fase introducido por el anillo.
+    - xx, yy: Mallas de coordenadas del plano.
+
+    FUNCIÓN RETORNA:
+    - anillo_fase: Máscara compleja con el perfil del anillo de fase.
+    """
+    
+    r = np.sqrt(xx**2 + yy**2)
+    anillo = (r >= radio_interno) & (r <= radio_externo)  # Región del anillo
+    anillo_fase = np.exp(1j * fase) * anillo + (1 - anillo)  # Aplicar fase dentro del anillo
+    
+    return anillo_fase
+
+
