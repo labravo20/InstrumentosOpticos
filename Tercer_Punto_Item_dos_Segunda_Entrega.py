@@ -70,8 +70,9 @@ radio = 0.6E-4
 centro = None  
 
 # Parámetros del anillo de fase
-radio_interno_anillo = 1E-4  
-radio_externo_anillo = 1.5E-4  
+radio_interno_anillo = 3E-5  
+radio_externo_anillo = 5E-5  
+
 fase_anillo = np.pi / 2  # Generando retardo de π/2
 
 
@@ -316,9 +317,8 @@ campo_salidaMascaraProcesamiento = campo_salidaPupila*mascara_procesamiento
 # Crear la máscara del anillo de fase
 anillo_fase = mascaras.funcion_AnilloFase(radio_interno_anillo, radio_externo_anillo, fase_anillo, xx_PlanoPupila, yy_PlanoPupila)
 
-
 #Calculando el campo de entrada al SEGUNDO TRAMO del arreglo
-campo_entradaSegundoTramo = campo_salidaMascaraProcesamiento*anillo_fase
+campo_entradaSegundoTramo = campo_salidaPupila*anillo_fase
 
 #Calculando la intensidad del campo de entrada al SEGUNDO TRAMO del arreglo
 intensidad_campoEntradaSegundoTramo = np.abs(campo_entradaSegundoTramo)**2
