@@ -63,7 +63,7 @@ alto_SensorInput = resolucion_altoSensorInput*tamaño_PixelSensorInput
 
 """ Definiendo parámetros de máscara para procesamiento de imagen  """
 #Radio del círculo asociado a la máscara circular
-radio = 0.6E-3
+radio = 0.6E-4
 
 # Se define el centro u origen para la configuración de la máscara 
 centro = None  
