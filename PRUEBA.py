@@ -254,6 +254,8 @@ intensidad_mascara = np.abs(mascara)**2
 #Se calcula la fase asociada al campo de entrada
 mascara_fase = np.angle(mascara)
 
+# graficar.graficar_fase(mascara_fase,anchoX_VentanaPlanoMascara,altoY_VentanaPlanoMascara,
+#                        "Fase del campo de entrada")
 
 
 """ ------ EMPIEZA SECCIÓN DE CÁLCULO RESULTADO DIFRACTIVO DE CADA TRAMO ------ """
@@ -339,91 +341,7 @@ intensidad_campoPlanoMedicion = amplitud_campoPlanoMedicion**2
 
 """ ------ EMPIEZA SECCIÓN DE GRAFICACIÓN ----- """
 
-""" Graficando máscara de transmitancia asignada al campo de enrada """
-
-#NOTA: Se decide graficar la fase asociada al campo de entrada dado que en esos datos
-#es donde se encuentra la información de la muestra, la intensidad es máxima y sin variaciones
-#en toda la distribución del arreglo asociado a la muestra.
-# graficar.graficar_fase(np.angle(mascara),anchoX_VentanaPlanoMascara,altoY_VentanaPlanoMascara,
-#                              "Fase de máscara ajustada desde CSV")
-
-
-
-# """ Graficando intensidad del campo de salida de la PUPILA """
-
-# graficar.graficar_intensidad(intensidad_campoSalidaPupila,anchoX_VentanaPlanoPupila,altoY_VentanaPlanoPupila,
-#                               "Intensidad del campo en plano pupila",1,0.001)
-
-
-# """ Graficando la máscara usada para el procesamiento de la imagen """
-# graficar.graficar_intensidad(mascara_procesamiento,anchoX_VentanaPlanoPupila,altoY_VentanaPlanoPupila,
-#                              "Máscara para procesamiento imagen",1,1)
-
-
-# """ Graficando la intensidad del campo de ENTRADA AL SEGUNDO TRAMO"""
-
-# graficar.graficar_intensidad(intensidad_campoEntradaSegundoTramo,anchoX_VentanaPlanoPupila,altoY_VentanaPlanoPupila,
-#                               "Intensidad del campo después de aplicar procesamiento",1,0.001)
-
-
-
-# """ Graficando la intensidad del campo de salida del arreglo """
-
-# graficar.graficar_intensidad(intensidad_campoPlanoMedicion,ancho_SensorInput,alto_SensorInput,
-#                                "Intensidad del campo a la salida",1,1)
-
-
-import matplotlib.pyplot as plt
-from matplotlib.widgets import Slider
-
-# # Función para actualizar la máscara y la intensidad con el nuevo valor del radio
-def actualizar_radio(val):
-    nuevo_radio = slider_radio.val
-    # Recalcular la máscara con el nuevo radio
-    nueva_mascara_procesamiento = mascaras.funcion_CirculoInvertidoGaussian(nuevo_radio, centro, xx_PlanoPupila, yy_PlanoPupila)
-
-    # Recalcular el campo de entrada al segundo tramo
-    nuevo_campo_entradaSegundoTramo = campo_salidaPupila * nueva_mascara_procesamiento
-
-    #Se calcula el campo de salida/en plano de medición --> Campo resultante de la difracción 
-    nuevo_campo_PlanoMedicion = matriz.matriz_ABCD_Difraccion_Sensor_Shift(camino_opticoCentralSegundoTramo,
-                                                    nuevo_campo_entradaSegundoTramo,
-                                                    matriz_SistemaSegundoTramo[0,0],
-                                                    matriz_SistemaSegundoTramo[0,1],
-                                                    matriz_SistemaSegundoTramo[1,1],xx_PlanoPupila,
-                                                    yy_PlanoPupila,xx_PlanoMedicion,yy_PlanoMedicion,
-                                                    numero_onda_input,deltas_Sensor)
-    
-    #Se calcula la intensidad del campo de salida
-    nuevo_intensidad_campoPlanoMedicion = (np.abs(nuevo_campo_PlanoMedicion))**2
-
-    # Actualizar el gráfico
-    img.set_data(nuevo_intensidad_campoPlanoMedicion)
-    fig.canvas.draw_idle()
-
-# Crear la figura y los ejes del gráfico
-fig, ax = plt.subplots()
-
-plt.subplots_adjust(left=0.25, bottom=0.25)
-
-# # Graficar la intensidad inicial
-intensidad_inicial = intensidad_campoPlanoMedicion
-img = ax.imshow(intensidad_inicial, extent=[-ancho_SensorInput / 2, ancho_SensorInput / 2,
-                                            -alto_SensorInput / 2, alto_SensorInput / 2],
-                cmap='gray', origin='lower')
-plt.colorbar(img, ax=ax, label="Intensidad")
-ax.set_title("Intensidad del campo salida")
-ax.set_xlabel("x [m]")
-ax.set_ylabel("y [m]")
-
-# # Crear el slider para modificar el radio
-ax_radio = plt.axes([0.25, 0.1, 0.65, 0.03])
-slider_radio = Slider(ax_radio, 'Radio', 1E-5, 3E-4, valinit=radio)
-
-# # Conectar el slider con la función de actualización
-slider_radio.on_changed(actualizar_radio)
-
-plt.show()
+graficar.graficar_fase(np.angle(mascara),anchoX_VentanaPlanoMascara,altoY_VentanaPlanoMascara,"Fase muestra")
 
 """ --- USANDO ANILLOS DE FASE ------ """
 
@@ -433,7 +351,7 @@ mascara_procesamiento = mascaras.funcion_AnilloFase(radio_internoAnillo,radio_ex
 
 #Creación de máscara para agregar término de transparencia
 mascara_transparencia = mascaras.funcion_Anillo(radio_internoAnillo,radio_externoAnillo,xx_PlanoPupila,
-                                                yy_PlanoPupila,0)
+                                                yy_PlanoPupila,0.3)
 
 
 #Se calcula el campo tras la interacción con la máscara de procesamiento
@@ -464,22 +382,6 @@ amplitud_campoPlanoMedicion = np.abs(campo_PlanoMedicion)
 intensidad_campoPlanoMedicion = amplitud_campoPlanoMedicion**2
 
 
-""" GRAFICACIÓN anillos de fase """
-
-graficar.graficar_fase(np.angle(mascara_procesamiento),anchoX_VentanaPlanoPupila,altoY_VentanaPlanoPupila,
-                       "Fase máscara procesamiento")
-
-
-graficar.graficar_intensidad(np.abs(mascara_transparencia),anchoX_VentanaPlanoPupila,altoY_VentanaPlanoPupila,
-                             "Intensidad máscara de transparencia",1,1)
-
-
-
-""" Graficando la intensidad del campo de salida del arreglo """
-
-graficar.graficar_intensidad(intensidad_campoPlanoMedicion,ancho_SensorInput,alto_SensorInput,
-                               "Intensidad del campo a la salida",1,1)
-
 
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
@@ -495,7 +397,7 @@ def actualizar_graficos(val):
     mascara_actualizada = mascaras.funcion_AnilloFase(radioInterno, radioExterno, -(np.pi)/2, 
                                                       anchoX_VentanaPlanoPupila, altoY_VentanaPlanoPupila)
     mascara_transparenciaActualizada = mascaras.funcion_Anillo(radioInterno, radioExterno, xx_PlanoPupila,
-                                                                yy_PlanoPupila, 0)
+                                                                yy_PlanoPupila, 0.3)
 
     # Recalcular el campo de entrada al segundo tramo
     nuevo_campo_entradaSegundoTramo = campo_salidaPupila * mascara_actualizada * mascara_transparenciaActualizada
@@ -532,7 +434,8 @@ plt.subplots_adjust(left=0.1, bottom=0.25, wspace=0.4)  # Ajustar espaciado hori
 intensidad_inicial = intensidad_campoPlanoMedicion
 img_salida = ax_salida.imshow(intensidad_inicial, extent=[-ancho_SensorInput / 2, ancho_SensorInput / 2,
                                                           -alto_SensorInput / 2, alto_SensorInput / 2],
-                               cmap='gray', origin='lower')
+                               cmap='gray', origin='lower',
+                               vmax = 0.8*np.max(intensidad_inicial))
 plt.colorbar(img_salida, ax=ax_salida, label="Intensidad")
 ax_salida.set_title("Intensidad del campo de salida")
 ax_salida.set_xlabel("x [m]")
@@ -551,10 +454,10 @@ ax_transformada.set_ylabel("y [m]")
 
 # Crear los sliders para modificar los radios
 ax_radio1 = plt.axes([0.1, 0.15, 0.35, 0.03])  # Slider para el primer radio
-slider_radio1 = Slider(ax_radio1, 'Radio Interno', 1E-8, 3E-5, valinit=radio_internoAnillo)
+slider_radio1 = Slider(ax_radio1, 'Radio Interno', 1E-9, 3E-6, valinit=radio_internoAnillo)
 
 ax_radio2 = plt.axes([0.55, 0.15, 0.35, 0.03])  # Slider para el segundo radio
-slider_radio2 = Slider(ax_radio2, 'Radio Externo', 1E-5, 3E-4, valinit=radio_externoAnillo)
+slider_radio2 = Slider(ax_radio2, 'Radio Externo', 1E-7, 3E-4, valinit=radio_externoAnillo)
 
 # Conectar los sliders con la función de actualización
 slider_radio1.on_changed(actualizar_graficos)
@@ -562,3 +465,121 @@ slider_radio2.on_changed(actualizar_graficos)
 
 # Mostrar la ventana con los gráficos
 plt.show()
+
+
+""" --- USANDO ANILLOS SIN FASE ------ """
+
+# #Creación de máscara para agregar término de transparencia
+# mascara_transparencia = mascaras.funcion_Anillo(radio_internoAnillo,radio_externoAnillo,xx_PlanoPupila,
+#                                                 yy_PlanoPupila,0)
+
+
+# #Se calcula el campo tras la interacción con la máscara de procesamiento
+# campo_entradaSegundoTramo = campo_salidaPupila*(1-mascara_transparencia)
+
+# intensidad_campoEntradaSegundoTramo = np.abs(campo_entradaSegundoTramo)**2
+
+
+
+# """ Se calcula el resultado del proceso difractivo del SEGUNDO TRAMO """
+
+# #Se calcula el campo de salida/en plano de medición --> Campo resultante de la difracción 
+# campo_PlanoMedicion = matriz.matriz_ABCD_Difraccion_Sensor_Shift(camino_opticoCentralSegundoTramo,
+#                                                     campo_entradaSegundoTramo,
+#                                                     matriz_SistemaSegundoTramo[0,0],
+#                                                     matriz_SistemaSegundoTramo[0,1],
+#                                                     matriz_SistemaSegundoTramo[1,1],xx_PlanoPupila,
+#                                                     yy_PlanoPupila,xx_PlanoMedicion,yy_PlanoMedicion,
+#                                                     numero_onda_input,deltas_Sensor)
+
+# #Se calcula la fase asociada al campo en el plano de medición
+# campo_PlanoMedicionFase = np.angle(campo_PlanoMedicion)
+
+# #Se calcula la amplitud del campo de salida
+# amplitud_campoPlanoMedicion = np.abs(campo_PlanoMedicion)
+
+# #Se calcula la intensidad del campo de salida
+# intensidad_campoPlanoMedicion = amplitud_campoPlanoMedicion**2
+
+
+
+# import matplotlib.pyplot as plt
+# from matplotlib.widgets import Slider
+# import numpy as np
+
+
+# # Función para actualizar las máscaras, la intensidad y la transformada de Fourier
+# def actualizar_graficos(val):
+#     radioInterno = slider_radio1.val
+#     radioExterno = slider_radio2.val
+
+#     # Recalcular la máscara de anillos
+#     mascara_transparenciaActualizada = mascaras.funcion_Anillo(radioInterno, radioExterno, xx_PlanoPupila,
+#                                                                 yy_PlanoPupila, 0)
+
+#     # Recalcular el campo de entrada al segundo tramo
+#     nuevo_campo_entradaSegundoTramo = campo_salidaPupila  * (1-mascara_transparenciaActualizada)
+
+#     # Calcular el campo de salida/en plano de medición
+#     nuevo_campo_PlanoMedicion = matriz.matriz_ABCD_Difraccion_Sensor_Shift(
+#         camino_opticoCentralSegundoTramo,
+#         nuevo_campo_entradaSegundoTramo,
+#         matriz_SistemaSegundoTramo[0, 0],
+#         matriz_SistemaSegundoTramo[0, 1],
+#         matriz_SistemaSegundoTramo[1, 1],
+#         xx_PlanoPupila, yy_PlanoPupila, xx_PlanoMedicion, yy_PlanoMedicion,
+#         numero_onda_input, deltas_Sensor
+#     )
+
+#     # Calcular la intensidad del campo de salida
+#     nuevo_intensidad_campoPlanoMedicion = (np.abs(nuevo_campo_PlanoMedicion))**2
+
+#     # Calcular la intensidad de la transformada de Fourier
+#     intensidad_transformada = (np.abs(nuevo_campo_entradaSegundoTramo))**2
+
+#     # Actualizar ambos gráficos
+#     img_salida.set_data(nuevo_intensidad_campoPlanoMedicion)
+#     img_transformada.set_data(intensidad_transformada)
+
+#     fig.canvas.draw_idle()
+
+
+# # Crear la figura con dos subgráficos (1 fila, 2 columnas)
+# fig, (ax_salida, ax_transformada) = plt.subplots(1, 2, figsize=(12, 6))
+# plt.subplots_adjust(left=0.1, bottom=0.25, wspace=0.4)  # Ajustar espaciado horizontal
+
+# # Primer gráfico: Intensidad del campo de salida
+# intensidad_inicial = intensidad_campoPlanoMedicion
+# img_salida = ax_salida.imshow(intensidad_inicial, extent=[-ancho_SensorInput / 2, ancho_SensorInput / 2,
+#                                                           -alto_SensorInput / 2, alto_SensorInput / 2],
+#                                cmap='gray', origin='lower',
+#                                vmax = 0.8*np.max(intensidad_inicial))
+# plt.colorbar(img_salida, ax=ax_salida, label="Intensidad")
+# ax_salida.set_title("Intensidad del campo de salida")
+# ax_salida.set_xlabel("x [m]")
+# ax_salida.set_ylabel("y [m]")
+
+# # Segundo gráfico: Transformada de Fourier
+# intensidad_transformada_inicial = np.abs(campo_entradaSegundoTramo)**2
+# img_transformada = ax_transformada.imshow(intensidad_transformada_inicial, extent=[-anchoX_VentanaPlanoPupila / 2, anchoX_VentanaPlanoPupila / 2,
+#                                                                                    -altoY_VentanaPlanoPupila / 2, altoY_VentanaPlanoPupila / 2],
+#                                           cmap='gray', origin='lower',
+#                                            vmax = 0.01*np.max(intensidad_transformada_inicial))
+# plt.colorbar(img_transformada, ax=ax_transformada, label="Intensidad")
+# ax_transformada.set_title("Intensidad de la Transformada de Fourier")
+# ax_transformada.set_xlabel("x [m]")
+# ax_transformada.set_ylabel("y [m]")
+
+# # Crear los sliders para modificar los radios
+# ax_radio1 = plt.axes([0.1, 0.15, 0.35, 0.03])  # Slider para el primer radio
+# slider_radio1 = Slider(ax_radio1, 'Radio Interno', 1E-9, 3E-2, valinit=radio_internoAnillo)
+
+# ax_radio2 = plt.axes([0.55, 0.15, 0.35, 0.03])  # Slider para el segundo radio
+# slider_radio2 = Slider(ax_radio2, 'Radio Externo', 1E-4, 3E-2, valinit=radio_externoAnillo)
+
+# # Conectar los sliders con la función de actualización
+# slider_radio1.on_changed(actualizar_graficos)
+# slider_radio2.on_changed(actualizar_graficos)
+
+# # Mostrar la ventana con los gráficos
+# plt.show()
