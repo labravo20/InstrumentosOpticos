@@ -3,8 +3,8 @@ print("Inicializando entorno de programación Transformada de Fresnel...")
 
 import numpy as np
 import matplotlib.pyplot as plt
-import Mascaras_Transmitancia as mask
-import Funciones_importantes as function
+import LIBRERIA_Mascaras_Transmitancia as mask
+import LIBRERIA_Funciones_importantes as function
 
 
 

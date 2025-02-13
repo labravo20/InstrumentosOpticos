@@ -22,11 +22,11 @@ print("Inicializando entorno de programación Matrices ABCD transferencia de ray
 
 """ Importando librerias y documentos necesarios """
 
-import Mascaras_Transmitancia as mascaras
+import LIBRERIA_Mascaras_Transmitancia as mascaras
 import Matrices_ABCD_Transferencia_rayos as matriz
 import numpy as np
 import matplotlib.pyplot as plt
-import Funciones_importantes as function
+import LIBRERIA_Funciones_importantes as function
 from PIL import Image
 
 
