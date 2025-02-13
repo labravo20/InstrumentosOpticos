@@ -215,7 +215,6 @@ def funcion_Corazon(centro, xx, yy, escala=1):
     return mascara_corazon
 
 
-
 """ Definición de función para máscara de representación Anillos de fase """
 
 def funcion_AnilloFase(radio_interno, radio_externo, fase, xx, yy):
@@ -245,7 +244,7 @@ def funcion_AnilloFase(radio_interno, radio_externo, fase, xx, yy):
     return anillo_fase
 
 
-""" Definición de función para máscara de representación Anillos de fase """
+""" Definición de función para máscara de representación Anillos  """
 
 def funcion_Anillo(radio_interno, radio_externo, xx, yy,transparencia):
     
