@@ -70,6 +70,7 @@ radio = 10E-5
 #Se define radio interno del anillo
 radio_internoAnillo = 1E-4
 
+
 #Se define radio externo del anillo
 radio_externoAnillo = 1.5E-4
 
@@ -291,7 +292,8 @@ campo_salidaPupila = campo_PlanoPupila*pupila
 #Calculando la intensidad del campo de entrada al SEGUNDO TRAMO del arreglo
 intensidad_campoSalidaPupila = np.abs(campo_salidaPupila)**2
 
-
+graficar.graficar_intensidad(intensidad_campoSalidaPupila,anchoX_VentanaPlanoPupila,altoY_VentanaPlanoPupila,
+"Intensidad del campo",1,0.001)
 
 """ Se crea e implementa una 'máscara' adicional para procesar la imagen y eliminar el aporte 
 proveniente de la fuente monocromática con la cual se eliminó la muestra """
@@ -457,7 +459,7 @@ ax_radio1 = plt.axes([0.1, 0.15, 0.35, 0.03])  # Slider para el primer radio
 slider_radio1 = Slider(ax_radio1, 'Radio Interno', 1E-9, 3E-6, valinit=radio_internoAnillo)
 
 ax_radio2 = plt.axes([0.55, 0.15, 0.35, 0.03])  # Slider para el segundo radio
-slider_radio2 = Slider(ax_radio2, 'Radio Externo', 1E-7, 3E-4, valinit=radio_externoAnillo)
+slider_radio2 = Slider(ax_radio2, 'Radio Externo', 1E-7, 3E-5, valinit=radio_externoAnillo)
 
 # Conectar los sliders con la función de actualización
 slider_radio1.on_changed(actualizar_graficos)
