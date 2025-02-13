@@ -227,11 +227,13 @@ xx_PlanoMascara, yy_PlanoMascara = mascaras.malla_Puntos(resolucion_anchoSensorI
 """ Creando máscara de transmitancia asociada al objeto de estudio en el arreglo """
 
 # Cargar la imagen PNG como máscara de transmitancia
-#ruta_imagen_png = "/home/labravo/Downloads/Ruido_E03.png"  # Especifica la ruta de tu imagen
-#mascara = function.cargar_imagen_png(ruta_imagen_png, resolucion_anchoSensorInput,resolucion_altoSensorInput)
+ruta_imagen_png = "/home/labravo/Downloads/USAF_3000px_cl.png"  # Especifica la ruta de imagen
+#ruta_imagen_png = "/home/labravo/Downloads/Star_2048.png"  # Especifica la ruta de imagen
+#ruta_imagen_png = "/home/labravo/Downloads/Star_2048.tif"  # Especifica la ruta de imagen
+mascara = function.cargar_imagen_png(ruta_imagen_png, resolucion_anchoSensorInput,resolucion_altoSensorInput)
 
 #Creación de una máscara con un corazón de transmitancia
-mascara = mascaras.funcion_Corazon(centro,xx_PlanoMascara,yy_PlanoMascara,radio)
+#mascara = mascaras.funcion_Corazon(centro,xx_PlanoMascara,yy_PlanoMascara,radio)
 
 
 """ ------ EMPIEZA SECCIÓN DE CÁLCULO RESULTADO DIFRACTIVO DE CADA TRAMO ------ """
@@ -309,7 +311,7 @@ plt.imshow(intensidad_campoEntradaSegundoTramo,
             cmap='gray',
             vmax= 0.001*np.max(intensidad_campoEntradaSegundoTramo))
 plt.title("Campo PUPILA")
-plt.colorbar(label="Amplitud")
+plt.colorbar(label="Intensidad")
 plt.xlabel("X (m)")
 plt.ylabel("Y (m)")
 plt.show()
