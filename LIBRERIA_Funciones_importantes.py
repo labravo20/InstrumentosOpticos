@@ -174,3 +174,5 @@ def cargar_documento_csv_OPTION02(archivo_csv):
                                               mode='constant', constant_values=0)
 
     return array_padded
+
+

@@ -32,3 +32,6 @@ def graficar_fase(campo,xx_TamañoVentana,yy_TamañoVentana,titulo):
     plt.xlabel("X (m)")
     plt.ylabel("Y (m)")
     plt.show()
+
+
+    
