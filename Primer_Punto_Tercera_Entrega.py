@@ -1,29 +1,25 @@
-""" DESCRIPCIÓN...
+""" DESCRIPCIÓN 
+--> Configuración de microscopio conjugado a infinito con iluminación coherente
+
+
 En este documento se trabajará sobre un arreglo determinado por la siguiente estructura:
-OBJETO --> *propagación(distancia focal 01)* --> LENTE01 --> *propagación(distancia focal 01)* -->
-PUPILA --> *propagación(distancia arbitraria d)* --> LENTE02 --> *propagación(distancia focal 02)*
---> IMAGEN
+OBJETO --> *propagación(distancia focal MO)* --> OBJETIVO_MICROSCOPIO --> 
+*propagación(distancia focal MO)* --> PUPILA (Determinada por la apertura del objetivo
+de microscopio en consideración) --> *propagación(distancia arbitraria d)* --> LENTE_TL 
+--> *propagación(distancia focal TL)* --> IMAGEN (Detección en cámara)
 
 Debido a la condición de planos conjugados se debe sub dividir el proceso en dos tramos:
-TRAMO 01: OBJETO --> *propagación(distancia focal 01)* --> LENTE01 --> *propagación(distancia focal 01)* -->
-PUPILA
+TRAMO 01: OBJETO --> *propagación(distancia focal MO)* --> OBJETIVO_MICROSCOPIO --> 
+*propagación(distancia focal MO)* --> PUPILA (Determinada por la apertura del objetivo
+de microscopio en consideración)
 
-TRAMO 02: *propagación(distancia arbitraria d)* --> LENTE02 --> *propagación(distancia focal 02)*
---> IMAGEN
+TRAMO 02: *propagación(distancia arbitraria d)* --> LENTE_TL 
+--> *propagación(distancia focal TL)* --> IMAGEN (Detección en cámara)
 
 """
 
 """ Se genera un print de mensaje inicial para verificar correcto funcionamiento del entorno """
-print("Inicializando entorno de programación tercer punto SEGUNDA ENTREGA...")
-
-
-
-""" Anotaciones importantes magnificación de imágenes """
-#NOTA SOBRE CÁLCULO DISTANCIA IMAGEN Y OBJETO: (1/f) = (1/I) + (1/O)
-
-#NOTA SOBRE MAGNIFICACIÓN (para calcular tamaño aproximado de imagen en función de tamaño objeto):
-
-### M = I/O --> Tamaño de imagen será: (TAMAÑO OBJETO)*M
+print("Inicializando entorno de programación primer punto TERCERA ENTREGA...")
 
 
 
@@ -36,16 +32,17 @@ import matplotlib.pyplot as plt
 import LIBRERIA_Funciones_importantes as function
 
 
-""" Definiendo parámetros de sensor  DMM 37UX250-ML """
+
+""" Definiendo parámetros de sensor  Alvium 1800-U-811m """
 
 #Numero de muestras/puntos distribuidos en el ancho del sensor
-resolucion_anchoSensorInput = 2448 
+resolucion_anchoSensorInput = 2848 
 
 #Numero de muestras/puntos distribuidos en el alto del sensor
-resolucion_altoSensorInput = 2048
+resolucion_altoSensorInput = 2848
 
 #Tamaño del pixel del sensor
-tamaño_PixelSensorInput = 3.45E-6
+tamaño_PixelSensorInput = 2.74E-6
 
 #Se crea una lista a la cual se le asigna los valores de los delta de muestreo asociados al sensor
 deltas_Sensor = [tamaño_PixelSensorInput,tamaño_PixelSensorInput]
@@ -59,11 +56,11 @@ alto_SensorInput = resolucion_altoSensorInput*tamaño_PixelSensorInput
 """ Definiendo parámetros de máscara difractiva """
 
 #Radio del círculo asociado a la máscara circular
-radio = 0.0005 
+radio = 0.0005  #UNIDADES: m
 
 #Lados asociados a la máscara rectangular 
-lado_Rectangulo01 = 5E-5
-lado_Rectangulo02 = 5E-5
+lado_Rectangulo01 = 5E-5 #UNIDADES: m
+lado_Rectangulo02 = 5E-5 #UNIDADES: m
 
 # Se define el centro u origen para la configuración de la máscara 
 centro = None  
@@ -72,18 +69,18 @@ centro = None
 
 """ Definiendo parámetro para el tamaño de la pupila """
 
-radio_pupilaInput = 0.07 #Se define variable asociada al radio de la abertura circular que representará
-                           # el diafragma.
-
+radio_pupilaInput = 5.16E-3 #Se define variable asociada al radio de la abertura que representará el
+                            #radio del objetivo de microscopio --> Este se calcula haciendo uso de la
+                            #abertura numérica y la longitud de tubo. --> #UNIDADES: m 
 
 
 """ Definición de distancias del arreglo """
 
-distancia_focal01 = 0.01  #Distancia focal asociada a la lente 01
+distancia_focalMO = 0.02  #Distancia focal asociada al objetivo de microscopio --> #UNIDADES: m
 
-distancia_focal02 = 0.05 #Distancia focal asociada a la lente 02
+distancia_focalTL = 0.2   #Distancia focal asociada a la lente de tubo --> #UNIDADES: m
 
-distancia_propagacionAribitraria = 0.01 #Se define una distancia de propagación arbitraria 
+distancia_propagacionAribitraria = 0.01 #Se define una distancia de propagación arbitraria --> #UNIDADES: m
 
 
 
@@ -105,14 +102,14 @@ numero_onda_input = (2*np.pi)/longitud_onda_input
 
 #Se calcula la matriz asociada al proceso de propagación desde el plano objeto
 #hasta el plano de la lente01
-matriz_propagacion01PrimerTramo = matriz.propagacion_MedioHomogeneo(distancia_focal01)
+matriz_propagacion01PrimerTramo = matriz.propagacion_MedioHomogeneo(distancia_focalMO)
 
 #Se calcula la matriz asociada a la interacción con la lente 01
-matriz_lente01 = matriz.lente_DelgadaConociendoDistanciaFocal(distancia_focal01)
+matriz_lente01 = matriz.lente_DelgadaConociendoDistanciaFocal(distancia_focalMO)
 
 #Se calcula la matriz asociada al proceso de propagación desde el plano de la lente 01
 #hasta el plano de la pupila
-matriz_propagacion02PrimerTramo = matriz.propagacion_MedioHomogeneo(distancia_focal01)
+matriz_propagacion02PrimerTramo = matriz.propagacion_MedioHomogeneo(distancia_focalMO)
 
 
 
@@ -147,11 +144,11 @@ camino_opticoCentralPrimerTramo = matriz.camino_Optico(lista_matricesPrimerTramo
 matriz_propagacion01SegundoTramo = matriz.propagacion_MedioHomogeneo(distancia_propagacionAribitraria)
 
 #Se calcula la matriz asociada a la interacción con la lente 02
-matriz_lente02 = matriz.lente_DelgadaConociendoDistanciaFocal(distancia_focal02)
+matriz_lente02 = matriz.lente_DelgadaConociendoDistanciaFocal(distancia_focalTL)
 
 #Se calcula la matriz asociada al proceso de propagación desde el plano de la lente 02
 #hasta el plano de medición
-matriz_propagacion02SegundoTramo = matriz.propagacion_MedioHomogeneo(distancia_focal02)
+matriz_propagacion02SegundoTramo = matriz.propagacion_MedioHomogeneo(distancia_focalTL)
 
 
 
