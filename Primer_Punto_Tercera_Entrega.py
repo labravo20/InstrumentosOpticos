@@ -53,14 +53,10 @@ alto_SensorInput = resolucion_altoSensorInput*tamaño_PixelSensorInput
 
 
 
-""" Definiendo parámetros de máscara difractiva """
+""" Definiendo parámetros de máscara difractiva --> Corazón"""
 
-#Radio del círculo asociado a la máscara circular
+#Radio del círculo asociado a la máscara
 radio = 0.0005  #UNIDADES: m
-
-#Lados asociados a la máscara rectangular 
-lado_Rectangulo01 = 5E-5 #UNIDADES: m
-lado_Rectangulo02 = 5E-5 #UNIDADES: m
 
 # Se define el centro u origen para la configuración de la máscara 
 centro = None  
@@ -97,15 +93,16 @@ numero_onda_input = (2*np.pi)/longitud_onda_input
 """ ------ EMPIEZA SECCIÓN DE CÁLCULO MATRICIAL PRIMER TRAMO ------ """
 
 """ Se calculan las matrices necesarias para estudiar el PRIMER TRAMO del arreglo difractivo
-    OBJETO --> *propagación(distancia focal 01)* --> LENTE01 --> *propagación(distancia focal 01)* 
-    --> PUPILA"""
+    OBJETO --> *propagación(distancia focal MO)* --> OBJETIVO_MICROSCOPIO --> 
+    *propagación(distancia focal MO)* --> PUPILA (Determinada por la apertura del objetivo
+    de microscopio en consideración) """
 
 #Se calcula la matriz asociada al proceso de propagación desde el plano objeto
-#hasta el plano de la lente01
+#hasta el plano de la lenteMO
 matriz_propagacion01PrimerTramo = matriz.propagacion_MedioHomogeneo(distancia_focalMO)
 
-#Se calcula la matriz asociada a la interacción con la lente 01
-matriz_lente01 = matriz.lente_DelgadaConociendoDistanciaFocal(distancia_focalMO)
+#Se calcula la matriz asociada a la interacción con la lenteMO
+matriz_lenteMO = matriz.lente_DelgadaConociendoDistanciaFocal(distancia_focalMO)
 
 #Se calcula la matriz asociada al proceso de propagación desde el plano de la lente 01
 #hasta el plano de la pupila
@@ -119,7 +116,7 @@ matriz_propagacion02PrimerTramo = matriz.propagacion_MedioHomogeneo(distancia_fo
 #en el arreglo.
 
 #Se define la lista de matrices
-lista_matricesPrimerTramoInvertida = [matriz_propagacion02PrimerTramo,matriz_lente01,matriz_propagacion01PrimerTramo]
+lista_matricesPrimerTramoInvertida = [matriz_propagacion02PrimerTramo,matriz_lenteMO,matriz_propagacion01PrimerTramo]
 
 #Se calcula la matriz del sistema teniendo en cuenta la lista de matrices definida anteriormente
 matriz_SistemaPrimerTramo = matriz.matriz_Sistema(lista_matricesPrimerTramoInvertida)
@@ -136,15 +133,15 @@ camino_opticoCentralPrimerTramo = matriz.camino_Optico(lista_matricesPrimerTramo
 """ ------ EMPIEZA SECCIÓN DE CÁLCULO MATRICIAL SEGUNDO TRAMO ------ """
 
 """ Se calculan las matrices necesarias para estudiar el SEGUNDO TRAMO del arreglo difractivo
-    PUPILA--> *propagación(distancia arbitraria d)* --> LENTE02 --> *propagación(distancia focal 02)*
-    --> IMAGEN """
+    *propagación(distancia arbitraria d)* --> LENTE_TL --> *propagación(distancia focal TL)* 
+    --> IMAGEN (Detección en cámara)"""
 
 #Se calcula la matriz asociada al proceso de propagación desde el plano de la pupila 
-# hasta el plano de la lente 02
+# hasta el plano de la lente TL
 matriz_propagacion01SegundoTramo = matriz.propagacion_MedioHomogeneo(distancia_propagacionAribitraria)
 
-#Se calcula la matriz asociada a la interacción con la lente 02
-matriz_lente02 = matriz.lente_DelgadaConociendoDistanciaFocal(distancia_focalTL)
+#Se calcula la matriz asociada a la interacción con la lente TL
+matriz_lenteTL = matriz.lente_DelgadaConociendoDistanciaFocal(distancia_focalTL)
 
 #Se calcula la matriz asociada al proceso de propagación desde el plano de la lente 02
 #hasta el plano de medición
@@ -157,7 +154,7 @@ NOTA IMPORTANTE: La lista de matrices se debe poner en orden inverso a su ubicac
 en el arreglo."""
 
 #Creando lista de matrices que describe el arreglo del SEGUNDO TRAMO
-lista_matricesSegundoTramoInvertida = [matriz_propagacion02SegundoTramo,matriz_lente02,matriz_propagacion01SegundoTramo]
+lista_matricesSegundoTramoInvertida = [matriz_propagacion02SegundoTramo,matriz_lenteTL,matriz_propagacion01SegundoTramo]
 
 #Se calcula la matriz del sistema
 matriz_SistemaSegundoTramo = matriz.matriz_Sistema(lista_matricesSegundoTramoInvertida)
@@ -229,19 +226,12 @@ xx_PlanoMascara, yy_PlanoMascara = mascaras.malla_Puntos(resolucion_anchoSensorI
 
 """ Creando máscara de transmitancia asociada al objeto de estudio en el arreglo """
 
-#Creación de una máscara circular de transmitancia
-#mascara = mascaras.funcion_Circulo(radio, centro, xx_PlanoMascara, yy_PlanoMascara)
-
-#Creación de una máscara rectangular de transmitancia
-#mascara = mascaras.funcion_Rectangulo(lado_Rectangulo01,lado_Rectangulo02,centro,xx_PlanoMascara,yy_PlanoMascara)
+# Cargar la imagen PNG como máscara de transmitancia
+#ruta_imagen_png = "/home/labravo/Downloads/Ruido_E03.png"  # Especifica la ruta de tu imagen
+#mascara = function.cargar_imagen_png(ruta_imagen_png, resolucion_anchoSensorInput,resolucion_altoSensorInput)
 
 #Creación de una máscara con un corazón de transmitancia
 mascara = mascaras.funcion_Corazon(centro,xx_PlanoMascara,yy_PlanoMascara,radio)
-
-# Cargar la imagen PNG como máscara de transmitancia
-ruta_imagen_png = "/home/labravo/Downloads/Ruido_E03.png"  # Especifica la ruta de tu imagen
-mascara = function.cargar_imagen_png(ruta_imagen_png, resolucion_anchoSensorInput,resolucion_altoSensorInput)
-
 
 
 """ ------ EMPIEZA SECCIÓN DE CÁLCULO RESULTADO DIFRACTIVO DE CADA TRAMO ------ """
@@ -298,7 +288,7 @@ intensidad_campoPlanoMedicion = amplitud_campoPlanoMedicion**2
 
 
 
-""" Graficando máscara de transmitancia asignada a abertura circular"""
+""" Graficando máscara de transmitancia """
 
 plt.imshow(mascara, extent=[-anchoX_VentanaPlanoMascara/2, anchoX_VentanaPlanoMascara/2,
                              -altoY_VentanaPlanoMascara/2, altoY_VentanaPlanoMascara/2], 
