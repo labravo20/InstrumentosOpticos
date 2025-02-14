@@ -227,9 +227,10 @@ xx_PlanoMascara, yy_PlanoMascara = mascaras.malla_Puntos(resolucion_anchoSensorI
 """ Creando máscara de transmitancia asociada al objeto de estudio en el arreglo """
 
 # Cargar la imagen PNG como máscara de transmitancia
-ruta_imagen_png = "/home/labravo/Downloads/USAF_3000px_cl.png"  # Especifica la ruta de imagen
+#ruta_imagen_png = "/home/labravo/Downloads/USAF_3000px_cl.png"  # Especifica la ruta de imagen
 #ruta_imagen_png = "/home/labravo/Downloads/Star_2048.png"  # Especifica la ruta de imagen
 #ruta_imagen_png = "/home/labravo/Downloads/Star_2048.tif"  # Especifica la ruta de imagen
+ruta_imagen_png = "/home/labravo/Downloads/USAF_T-20.jpg"  # Especifica la ruta de imagen
 mascara = function.cargar_imagen_png(ruta_imagen_png, resolucion_anchoSensorInput,resolucion_altoSensorInput)
 
 #Creación de una máscara con un corazón de transmitancia
