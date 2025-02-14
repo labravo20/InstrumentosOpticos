@@ -237,14 +237,23 @@ NOTA: La pupila va a construirse a partir de la malla de puntos asociada al plan
 #Creación de máscara circular que representará el diafragma 
 pupila = mascaras.funcion_Circulo(radio_pupilaInput, None, xx_PlanoPupila, yy_PlanoPupila)
 
-
+#Se crea máscara para filtrar el espectro de Fourier y obtener imágen real
+#mascara_Filtrado = mascaras.funcion_Circulo(0.0005,[-0.0027,0.002],xx_PlanoMascara,yy_PlanoMascara)
+mascara_Filtrado = mascaras.funcion_CirculoInvertida(0.001,[-0.0026,0.002],xx_PlanoMascara,yy_PlanoMascara)
+#mascara_Filtrado = mascaras.funcion_Rectangulo(0.0008,0.0008,[-0.0026,0.002],xx_PlanoMascara,yy_PlanoMascara)
 
 """ Se calcula el campo de entrada para el SEGUNDO TRAMO del arreglo 
 NOTA: El campo que llega a la pupila e interactua con la máscara asociada a la pupila
 será el campo de entrada para el segundo tramo."""
 
+#Calculando el campo de entrada al SEGUNDO TRAMO del arreglo antes de filtrar
+campo_entradaSegundoTramo_SinFiltro = campo_PlanoPupila*pupila
+
+#Calculando la intensidad del campo de entrada al SEGUNDO TRAMO del arreglo
+intensidad_campoEntradaSegundoTramo_SinFiltro = np.abs(campo_entradaSegundoTramo_SinFiltro)**2
+
 #Calculando el campo de entrada al SEGUNDO TRAMO del arreglo
-campo_entradaSegundoTramo = campo_PlanoPupila*pupila
+campo_entradaSegundoTramo = campo_PlanoPupila*pupila*mascara_Filtrado
 
 #Calculando la intensidad del campo de entrada al SEGUNDO TRAMO del arreglo
 intensidad_campoEntradaSegundoTramo = np.abs(campo_entradaSegundoTramo)**2
@@ -271,7 +280,6 @@ intensidad_campoPlanoMedicion = amplitud_campoPlanoMedicion**2
 
 
 """ Graficando máscara de transmitancia asignada a abertura circular"""
-
 plt.imshow(mascara, extent=[-anchoX_VentanaPlanoMascara/2, anchoX_VentanaPlanoMascara/2,
                              -altoY_VentanaPlanoMascara/2, altoY_VentanaPlanoMascara/2], 
                              cmap='gray')
@@ -284,11 +292,13 @@ plt.show()
 
 
 """ Graficando intensidad del campo que entra al SEGUNDO TRAMO del arreglo"""
-
-graph.graficar_intensidad(intensidad_campoEntradaSegundoTramo,anchoX_VentanaPlanoPupila,
+graph.graficar_intensidad(intensidad_campoEntradaSegundoTramo_SinFiltro,anchoX_VentanaPlanoPupila,
                              altoY_VentanaPlanoPupila,"Transformada de Fourier del objeto",1,0.00001)
 
 
+""" Graficando campo asociado a transformada de Fourier filtrado para encontrar imágen real """
+graph.graficar_intensidad(intensidad_campoEntradaSegundoTramo,anchoX_VentanaPlanoPupila,
+                             altoY_VentanaPlanoPupila,"Transformada de Fourier del objeto",1,0.001)
 
 
 """ Graficando la intensidad del campo de salida del arreglo """
