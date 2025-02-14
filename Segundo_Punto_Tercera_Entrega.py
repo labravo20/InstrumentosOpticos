@@ -14,16 +14,7 @@ TRAMO 02: *propagación(distancia arbitraria d)* --> LENTE02 --> *propagación(d
 """
 
 """ Se genera un print de mensaje inicial para verificar correcto funcionamiento del entorno """
-print("Inicializando entorno de programación tercer punto SEGUNDA ENTREGA...")
-
-
-
-""" Anotaciones importantes magnificación de imágenes """
-#NOTA SOBRE CÁLCULO DISTANCIA IMAGEN Y OBJETO: (1/f) = (1/I) + (1/O)
-
-#NOTA SOBRE MAGNIFICACIÓN (para calcular tamaño aproximado de imagen en función de tamaño objeto):
-
-### M = I/O --> Tamaño de imagen será: (TAMAÑO OBJETO)*M
+print("Inicializando entorno de programación segundo punto TECERA ENTREGA...")
 
 
 
@@ -34,6 +25,7 @@ import LIBRERIA_Matrices_ABCD_Transferencia_rayos as matriz
 import numpy as np
 import matplotlib.pyplot as plt
 import LIBRERIA_Funciones_importantes as function
+import LIBRERIA_Funciones_Graficacion as graph
 
 
 """ Definiendo parámetros de sensor  DMM 37UX250-ML """
@@ -53,20 +45,6 @@ deltas_Sensor = [tamaño_PixelSensorInput,tamaño_PixelSensorInput]
 #Usando los datos anteriores se calcula el ancho y alto físicos del sensor
 ancho_SensorInput = resolucion_anchoSensorInput*tamaño_PixelSensorInput
 alto_SensorInput = resolucion_altoSensorInput*tamaño_PixelSensorInput
-
-
-
-""" Definiendo parámetros de máscara difractiva """
-
-#Radio del círculo asociado a la máscara circular
-radio = 0.0005 
-
-#Lados asociados a la máscara rectangular 
-lado_Rectangulo01 = 5E-5
-lado_Rectangulo02 = 5E-5
-
-# Se define el centro u origen para la configuración de la máscara 
-centro = None  
 
 
 
@@ -90,7 +68,7 @@ distancia_propagacionAribitraria = 0.01 #Se define una distancia de propagación
 """ Definiendo parámetros de fuente """
 
 #Definiendo la longitud de onda asociada a la fuente en consideración
-longitud_onda_input = 533E-9 #UNIDADES: m
+longitud_onda_input = 632.8E-9 #UNIDADES: m
 
 #Calculando el número de onda
 numero_onda_input = (2*np.pi)/longitud_onda_input
@@ -230,19 +208,10 @@ xx_PlanoMascara, yy_PlanoMascara = mascaras.malla_Puntos(resolucion_anchoSensorI
 
 
 
-""" Creando máscara de transmitancia asociada al objeto de estudio en el arreglo """
-
-#Creación de una máscara circular de transmitancia
-#mascara = mascaras.funcion_Circulo(radio, centro, xx_PlanoMascara, yy_PlanoMascara)
-
-#Creación de una máscara rectangular de transmitancia
-#mascara = mascaras.funcion_Rectangulo(lado_Rectangulo01,lado_Rectangulo02,centro,xx_PlanoMascara,yy_PlanoMascara)
-
-#Creación de una máscara con un corazón de transmitancia
-mascara = mascaras.funcion_Corazon(centro,xx_PlanoMascara,yy_PlanoMascara,radio)
+""" Creando máscara de transmitancia asociada al objeto de estudio en el arreglo --> HOLOGRAMA """
 
 # Cargar la imagen PNG como máscara de transmitancia
-ruta_imagen_png = "/home/labravo/Downloads/Ruido_E03.png"  # Especifica la ruta de tu imagen
+ruta_imagen_png = "/home/labravo/Downloads/Hologram.tiff"  # Especifica la ruta de tu imagen
 mascara = function.cargar_imagen_png(ruta_imagen_png, resolucion_anchoSensorInput,resolucion_altoSensorInput)
 
 
@@ -266,7 +235,7 @@ campo_PlanoPupila = matriz.matriz_ABCD_Difraccion_Sensor(camino_opticoCentralPri
 NOTA: La pupila va a construirse a partir de la malla de puntos asociada al plano de la pupila."""
 
 #Creación de máscara circular que representará el diafragma 
-pupila = mascaras.funcion_Circulo(radio_pupilaInput, centro, xx_PlanoPupila, yy_PlanoPupila)
+pupila = mascaras.funcion_Circulo(radio_pupilaInput, None, xx_PlanoPupila, yy_PlanoPupila)
 
 
 
@@ -316,16 +285,10 @@ plt.show()
 
 """ Graficando intensidad del campo que entra al SEGUNDO TRAMO del arreglo"""
 
-plt.imshow(intensidad_campoEntradaSegundoTramo, 
-           extent=[-anchoX_VentanaPlanoPupila/2, anchoX_VentanaPlanoPupila/2,
-                -altoY_VentanaPlanoPupila/2, altoY_VentanaPlanoPupila/2], 
-            cmap='gray',
-            vmax= 0.001*np.max(intensidad_campoEntradaSegundoTramo))
-plt.title("Campo PUPILA")
-plt.colorbar(label="Amplitud")
-plt.xlabel("X (m)")
-plt.ylabel("Y (m)")
-plt.show()
+graph.graficar_intensidad(intensidad_campoEntradaSegundoTramo,anchoX_VentanaPlanoPupila,
+                             altoY_VentanaPlanoPupila,"Transformada de Fourier del objeto",1,0.00001)
+
+
 
 
 """ Graficando la intensidad del campo de salida del arreglo """
