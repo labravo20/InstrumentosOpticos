@@ -300,3 +300,27 @@ graph.graficar_intensidad(intensidad_campoPlanoMedicion,ancho_SensorInput,alto_S
 
 
 
+""" ###############Guardando matriz resultante como archivo txt######################### """
+#print(campo_PlanoMedicion) #Para corroborar la información de salida
+#print(type(campo_PlanoMedicion))
+
+
+
+# Guardar la parte real e imaginaria en archivos separados
+# np.savetxt("matriz_real.txt", campo_PlanoMedicion.real, fmt="%.18e")
+# np.savetxt("matriz_imaginaria.txt", campo_PlanoMedicion.imag, fmt="%.18e")
+
+# print("Matrices guardadas correctamente en 'matriz_real.txt' y 'matriz_imaginaria.txt'.")
+
+# # import os
+# # print("Archivos guardados en:", os.path.abspath("matriz_real.txt"))
+
+# # Cargar las partes real e imaginaria
+# real_cargado = np.loadtxt("matriz_real.txt")
+# imaginario_cargado = np.loadtxt("matriz_imaginaria.txt")
+
+# # Reconstruir la matriz compleja
+# matriz_recuperada = real_cargado + 1j * imaginario_cargado
+
+print("Matriz reconstruida:")
+#print(matriz_recuperada)
