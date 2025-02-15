@@ -31,7 +31,7 @@ import LIBRERIA_Funciones_Graficacion as graph
 """ Definiendo parámetros de sensor  DMM 37UX250-ML """
 
 #Numero de muestras/puntos distribuidos en el ancho del sensor
-resolucion_anchoSensorInput = 2448 
+resolucion_anchoSensorInput = 2048 
 
 #Numero de muestras/puntos distribuidos en el alto del sensor
 resolucion_altoSensorInput = 2048
@@ -239,8 +239,8 @@ pupila = mascaras.funcion_Circulo(radio_pupilaInput, None, xx_PlanoPupila, yy_Pl
 
 #Se crea máscara para filtrar el espectro de Fourier y obtener imágen real
 #mascara_Filtrado = mascaras.funcion_Circulo(0.0005,[-0.0027,0.002],xx_PlanoMascara,yy_PlanoMascara)
-mascara_Filtrado = mascaras.funcion_CirculoInvertida(0.001,[-0.0026,0.002],xx_PlanoMascara,yy_PlanoMascara)
-#mascara_Filtrado = mascaras.funcion_Rectangulo(0.0008,0.0008,[-0.0026,0.002],xx_PlanoMascara,yy_PlanoMascara)
+#mascara_Filtrado = mascaras.funcion_Circulo(0.001,[-0.0026,0.002],xx_PlanoMascara,yy_PlanoMascara)
+mascara_Filtrado = mascaras.funcion_Rectangulo(0.00008,0.00008,[0.0026,-0.002],xx_PlanoMascara,yy_PlanoMascara)
 
 """ Se calcula el campo de entrada para el SEGUNDO TRAMO del arreglo 
 NOTA: El campo que llega a la pupila e interactua con la máscara asociada a la pupila
@@ -271,6 +271,7 @@ campo_PlanoMedicion = matriz.matriz_ABCD_Difraccion_Sensor_Shift(camino_opticoCe
                                                     yy_PlanoPupila,xx_PlanoMedicion,yy_PlanoMedicion,
                                                     numero_onda_input,deltas_Sensor)
 
+
 #Se calcula la amplitud del campo de salida
 amplitud_campoPlanoMedicion = np.abs(campo_PlanoMedicion)
 
@@ -280,15 +281,7 @@ intensidad_campoPlanoMedicion = amplitud_campoPlanoMedicion**2
 
 
 """ Graficando máscara de transmitancia asignada a abertura circular"""
-plt.imshow(mascara, extent=[-anchoX_VentanaPlanoMascara/2, anchoX_VentanaPlanoMascara/2,
-                             -altoY_VentanaPlanoMascara/2, altoY_VentanaPlanoMascara/2], 
-                             cmap='gray')
-plt.title("Máscara")
-plt.colorbar(label="Transmitancia")
-plt.xlabel("X (m)")
-plt.ylabel("Y (m)")
-plt.show()
-
+graph.graficar_transmitancia(mascara,anchoX_VentanaPlanoMascara,altoY_VentanaPlanoMascara,"Holograma")
 
 
 """ Graficando intensidad del campo que entra al SEGUNDO TRAMO del arreglo"""
@@ -302,15 +295,8 @@ graph.graficar_intensidad(intensidad_campoEntradaSegundoTramo,anchoX_VentanaPlan
 
 
 """ Graficando la intensidad del campo de salida del arreglo """
+graph.graficar_intensidad(intensidad_campoPlanoMedicion,ancho_SensorInput,alto_SensorInput,"Intensidad campo de salida")
 
-plt.imshow(intensidad_campoPlanoMedicion, extent=[-ancho_SensorInput/2, 
-                                                  ancho_SensorInput/2, 
-                                                  -alto_SensorInput/2, 
-                                                  alto_SensorInput/2], 
-           cmap='gray',
-           vmax = 1*(np.max(intensidad_campoPlanoMedicion)))
-plt.title("Intensidad")
-plt.colorbar(label="Intensidad")
-plt.xlabel("X (m)")
-plt.ylabel("Y (m)")
-plt.show()
+
+
+

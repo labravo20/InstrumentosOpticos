@@ -198,6 +198,7 @@ deltas_tramoPupilaMedicion = function.producto_espacio_frecuencia_TransformadaFr
 anchoX_VentanaPlanoPupila = resolucion_anchoSensorInput*deltas_tramoPupilaMedicion[0]
 altoY_VentanaPlanoPupila = resolucion_altoSensorInput*deltas_tramoPupilaMedicion[1]
 
+
 #Se calcula la malla de puntos asociada al plano de la pupila
 xx_PlanoPupila, yy_PlanoPupila = mascaras.malla_Puntos(resolucion_anchoSensorInput,anchoX_VentanaPlanoPupila,
                                                        resolucion_altoSensorInput,altoY_VentanaPlanoPupila)
@@ -209,7 +210,7 @@ xx_PlanoPupila, yy_PlanoPupila = mascaras.malla_Puntos(resolucion_anchoSensorInp
 #Se llama función para determinar los deltas de muestreo del tramo PUPILA --> MÁSCARA
 deltas_tramoMascaraPupila = function.producto_espacio_frecuencia_TransformadaFresnel_Sensor(resolucion_anchoSensorInput,
                                                                                             anchoX_VentanaPlanoPupila,
-                                                                                            matriz_SistemaSegundoTramo[0,1],
+                                                                                            matriz_SistemaPrimerTramo[0,1],
                                                                                             longitud_onda_input,
                                                                                             resolucion_altoSensorInput,
                                                                                             altoY_VentanaPlanoPupila)
@@ -217,6 +218,7 @@ deltas_tramoMascaraPupila = function.producto_espacio_frecuencia_TransformadaFre
 #Se calcula el ancho de la ventana del plano de la máscara u objeto de entrada
 anchoX_VentanaPlanoMascara = resolucion_anchoSensorInput*deltas_tramoMascaraPupila[0]
 altoY_VentanaPlanoMascara = resolucion_altoSensorInput*deltas_tramoMascaraPupila[1]
+
 
 #Se calcula la malla de puntos asociada al plano de la pupila
 xx_PlanoMascara, yy_PlanoMascara = mascaras.malla_Puntos(resolucion_anchoSensorInput,anchoX_VentanaPlanoPupila,
@@ -228,10 +230,9 @@ xx_PlanoMascara, yy_PlanoMascara = mascaras.malla_Puntos(resolucion_anchoSensorI
 
 # Cargar la imagen PNG como máscara de transmitancia
 #ruta_imagen_png = "/home/labravo/Downloads/USAF_3000px_cl.png"  # Especifica la ruta de imagen
-#ruta_imagen_png = "/home/labravo/Downloads/Star_2048.png"  # Especifica la ruta de imagen
-#ruta_imagen_png = "/home/labravo/Downloads/Star_2048.tif"  # Especifica la ruta de imagen
 ruta_imagen_png = "/home/labravo/Downloads/USAF_T-20.jpg"  # Especifica la ruta de imagen
 mascara = function.cargar_imagen_png(ruta_imagen_png, resolucion_anchoSensorInput,resolucion_altoSensorInput)
+
 
 #Creación de una máscara con un corazón de transmitancia
 #mascara = mascaras.funcion_Corazon(centro,xx_PlanoMascara,yy_PlanoMascara,radio)
@@ -283,8 +284,11 @@ campo_PlanoMedicion = matriz.matriz_ABCD_Difraccion_Sensor_Shift(camino_opticoCe
                                                     yy_PlanoPupila,xx_PlanoMedicion,yy_PlanoMedicion,
                                                     numero_onda_input,deltas_Sensor)
 
+
+
 #Se calcula la amplitud del campo de salida
 amplitud_campoPlanoMedicion = np.abs(campo_PlanoMedicion)
+
 
 #Se calcula la intensidad del campo de salida
 intensidad_campoPlanoMedicion = amplitud_campoPlanoMedicion**2

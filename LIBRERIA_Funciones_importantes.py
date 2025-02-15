@@ -114,6 +114,48 @@ def cargar_imagen_png(ruta_imagen, resolucion_ancho, resolucion_alto = None):
     
     return imagen_normalizada
 
+def cargar_imagen_png_recortada(ruta_imagen, resolucion_ancho, resolucion_alto=None):
+    """
+    Carga una imagen PNG de cualquier tamaño, la redimensiona a 3899x3899,
+    recorta el área central de 2848x2848 y la ajusta a la resolución deseada.
+
+    Args:
+        ruta_imagen (str): Ruta de la imagen PNG.
+        resolucion_ancho (int): Resolución final deseada en ancho.
+        resolucion_alto (int, opcional): Resolución final deseada en alto. 
+                                         Si no se especifica, se usa una imagen cuadrada.
+
+    Returns:
+        numpy.ndarray: Imagen procesada (recortada y escalada), normalizada entre 0 y 1.
+    """
+    if resolucion_alto is None:
+        resolucion_alto = resolucion_ancho
+
+    # Cargar la imagen en escala de grises
+    imagen = Image.open(ruta_imagen).convert("L")
+
+    # Redimensionar la imagen a 3899x3899
+    imagen_redimensionada = imagen.resize((3262, 3262), Image.Resampling.LANCZOS)
+
+    # Definir dimensiones del recorte (2848x2848 centrado)
+    ancho_recorte = 2848
+    alto_recorte = 2848
+    x_inicio = (3262 - ancho_recorte) // 2
+    y_inicio = (3262 - alto_recorte) // 2
+    x_fin = x_inicio + ancho_recorte
+    y_fin = y_inicio + alto_recorte
+
+    # Recortar la imagen
+    imagen_recortada = imagen_redimensionada.crop((x_inicio, y_inicio, x_fin, y_fin))
+
+    # Redimensionar la imagen a la resolución deseada
+    imagen_final = imagen_recortada.resize((resolucion_ancho, resolucion_alto), Image.Resampling.LANCZOS)
+
+    # Normalizar los valores a un rango de 0 a 1
+    imagen_normalizada = np.array(imagen_final) / 255.0
+
+    return imagen_normalizada
+
 
 """ Función para cargar documento tipo CSV """
 
