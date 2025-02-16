@@ -216,6 +216,7 @@ mascara = function.cargar_imagen_png(ruta_imagen_png, resolucion_anchoSensorInpu
 
 
 
+
 """ ------ EMPIEZA SECCIÓN DE CÁLCULO RESULTADO DIFRACTIVO DE CADA TRAMO ------ """
 
 """ Se calcula el resultado del proceso difractivo del PRIMER TRAMO"""
@@ -240,7 +241,7 @@ pupila = mascaras.funcion_Circulo(radio_pupilaInput, None, xx_PlanoPupila, yy_Pl
 #Se crea máscara para filtrar el espectro de Fourier y obtener imágen real
 #mascara_Filtrado = mascaras.funcion_Circulo(0.0005,[-0.0027,0.002],xx_PlanoMascara,yy_PlanoMascara)
 #mascara_Filtrado = mascaras.funcion_Circulo(0.001,[-0.0026,0.002],xx_PlanoMascara,yy_PlanoMascara)
-mascara_Filtrado = mascaras.funcion_Rectangulo(0.00008,0.00008,[0.0026,-0.002],xx_PlanoMascara,yy_PlanoMascara)
+mascara_Filtrado = mascaras.funcion_Rectangulo(0.0015,0.0015,[-0.0031,0.002],xx_PlanoMascara,yy_PlanoMascara)
 
 """ Se calcula el campo de entrada para el SEGUNDO TRAMO del arreglo 
 NOTA: El campo que llega a la pupila e interactua con la máscara asociada a la pupila
@@ -281,12 +282,15 @@ intensidad_campoPlanoMedicion = amplitud_campoPlanoMedicion**2
 
 
 """ Graficando máscara de transmitancia asignada a abertura circular"""
-graph.graficar_transmitancia(mascara,anchoX_VentanaPlanoMascara,altoY_VentanaPlanoMascara,"Holograma")
+#graph.graficar_transmitancia(mascara,anchoX_VentanaPlanoMascara,altoY_VentanaPlanoMascara,"Holograma")
 
 
 """ Graficando intensidad del campo que entra al SEGUNDO TRAMO del arreglo"""
 graph.graficar_intensidad(intensidad_campoEntradaSegundoTramo_SinFiltro,anchoX_VentanaPlanoPupila,
                              altoY_VentanaPlanoPupila,"Transformada de Fourier del objeto",1,0.00001)
+
+""" Graficando máscara de filtrado"""
+graph.graficar_transmitancia(mascara_Filtrado,anchoX_VentanaPlanoPupila,altoY_VentanaPlanoPupila,"Máscara de filtrado")
 
 
 """ Graficando campo asociado a transformada de Fourier filtrado para encontrar imágen real """
@@ -322,5 +326,99 @@ graph.graficar_intensidad(intensidad_campoPlanoMedicion,ancho_SensorInput,alto_S
 # # Reconstruir la matriz compleja
 # matriz_recuperada = real_cargado + 1j * imaginario_cargado
 
-print("Matriz reconstruida:")
+#print("Matriz reconstruida:")
 #print(matriz_recuperada)
+
+
+import matplotlib.image as mpimg
+from scipy.ndimage import zoom
+
+
+
+################ Parametros discretización ##########
+
+
+
+num_pixels_x = 2048
+num_pixels_y = 2048
+
+delta_x = 3.45E-6 # Tamaño de cada pixel (m) 
+delta_y = 3.45E-6 # Tamaño de cada pixel (m) 
+
+delta_fx = 1/(num_pixels_x * delta_x) #Tamaño de cada pixel en plano de Fourier (1/m)
+delta_fy = 1/(num_pixels_y * delta_y) #Tamaño de cada pixel en plano de Fourier (1/m)
+
+
+# Malla de coordenadas espaciales (plano de entrada) ---> Plano de salida sistema 4f
+x=np.arange(-num_pixels_x//2,num_pixels_x//2) 
+y=np.arange(-num_pixels_y//2,num_pixels_y//2)
+x,y=x*delta_x,y*delta_y
+X, Y = np.meshgrid(x, y)
+
+# malla de coordenadas espectrales
+f_x=np.arange(-num_pixels_x//2,num_pixels_x//2)
+f_y=np.arange(-num_pixels_y//2,num_pixels_y//2)
+f_x,f_y=f_x*delta_fx,f_y*delta_fy
+F_X, F_Y = np.meshgrid(f_x, f_y)
+
+
+
+#Paso 1: Recibimos el patron de difracción del objeto: es una dsitribución de intensidad }
+
+
+
+'Tomemos la matriz que respresenta la imagen y luego vamos a sacar su raíz para hallar el campo óptico a la salida'
+
+#Se define la matriz de puntos para el análisis
+matriz_campo = campo_PlanoMedicion
+
+#Verificación del tamaño de la matriz de estudio
+print("\n Tamaño  matriz campo óptico de salida:",matriz_campo.shape)
+
+
+
+# 1. Aplicamos FFT para hallar A[p,q,z]
+'NOTA: nuestro espectro angular de salida sale con un shift a causa de la fft, por lo que antes de dividir la matriz'
+' punto a punto debemos shiftear el resultado de la fft'
+
+espectro_angular_salida = np.fft.fftshift(np.fft.fft2(matriz_campo)) 
+
+
+for distancia_propagacionAribitraria in np.arange(0.1, 0.368, 0.0001):
+
+
+    # 2. Dividimos(matrices) punto a punto por la función de propagación para hallar A[p,q,0]
+
+    funcion_transferencia = np.exp((1j*distancia_propagacionAribitraria*numero_onda_input)*(np.sqrt(1-(longitud_onda_input**2)*(F_X**2 + F_Y**2))))
+
+
+    #Graficando la fase de nuestra función de transferencia
+    plt.imshow(np.angle(funcion_transferencia),cmap='gray') # Graficamos la fase para comprobar que 
+                                                            # efectivamente obtenemos una fase circular 
+                                                            # sin réplicas o distorsiones
+    plt.title("Fase función de transferencia")
+    plt.show()
+
+
+    #Calculando en espectro angular en el plano de entrada al sistema
+    espectro_angular_entrada = espectro_angular_salida / funcion_transferencia
+    print("\n Matriz Espectro angular entrada : \n", espectro_angular_entrada)
+
+    # 3. Aplicamos IFFT para hallar U[x,y,0]
+
+    "NOTA: la ifft recibe una matriz sin shiftear (desordenada) por lo que debemos desordenar nuestra matriz A[p,q,0] para"
+    "aplicarle ifft. Recordar que al final de la ifft no se hace shift pues este algoritmo automáticamente reordena"
+
+    campo_optico_entrada = np.fft.ifft2(np.fft.fftshift(espectro_angular_entrada))
+    print("\n Matriz campo óptico entrada: \n", campo_optico_entrada)
+
+
+    # Graficar la magnitud campo optico de entrada 
+    'NOTA: En este caso sólo nos interesa la amplitud, por lo que tomamos la magnitud'
+    plt.figure(figsize=(6, 6))
+    plt.imshow(np.abs(campo_optico_entrada), cmap='gray', extent=[x[0], x[-1], y[0], y[-1]]) #extend se utiliza para escalar el rango de x tomado (-51.2 -51.2) en la grafica a realizar- x[0] es el valor de mas a la iz mientras que x[-1] es el ultimo valor del intervalo x
+    plt.title("campo optico de entrada")
+    plt.xlabel("x (m)")
+    plt.ylabel("y (m)")
+    plt.colorbar()
+    plt.show()

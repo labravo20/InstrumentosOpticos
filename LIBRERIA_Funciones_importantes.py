@@ -218,3 +218,27 @@ def cargar_documento_csv_OPTION02(archivo_csv):
     return array_padded
 
 
+
+""" Función para interferir dos ondas planas """
+def interferencia_ondas_malla(X, Y, k1, k2, A1=1, A2=1, fase1=0, fase2=0):
+    """
+    Calcula el patrón de interferencia entre dos ondas planas sobre una malla dada.
+
+    Args:
+        X, Y (numpy.ndarray): Malla de coordenadas espaciales.
+        k1 (tuple): Vector de onda (kx1, ky1) de la primera onda.
+        k2 (tuple): Vector de onda (kx2, ky2) de la segunda onda.
+        A1, A2 (float): Amplitudes de las ondas.
+        fase1, fase2 (float): Fases iniciales de las ondas en radianes.
+
+    Returns:
+        np.ndarray: Patrón de interferencia (intensidad) sobre la malla.
+    """
+    # Definir las ondas planas con sus respectivos vectores de onda y fases
+    onda1 = A1 * np.exp(1j * (k1[0] * X + k1[1] * Y + fase1))
+    onda2 = A2 * np.exp(1j * (k2[0] * X + k2[1] * Y + fase2))
+
+    # Sumar las ondas (interferencia)
+    interferencia = np.abs(onda1 + onda2) ** 2  # Intensidad = |E_total|^2
+
+    return interferencia
