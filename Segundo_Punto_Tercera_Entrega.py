@@ -193,11 +193,11 @@ xx_PlanoPupila, yy_PlanoPupila = mascaras.malla_Puntos(resolucion_anchoSensorInp
 #Se llama función para determinar los deltas de muestreo del tramo PUPILA --> MÁSCARA
 deltas_tramoMascaraPupila = function.producto_espacio_frecuencia_TransformadaFresnel_Sensor(resolucion_anchoSensorInput,
                                                                                             anchoX_VentanaPlanoPupila,
-                                                                                            matriz_SistemaSegundoTramo[0,1],
+                                                                                            matriz_SistemaPrimerTramo[0,1],
                                                                                             longitud_onda_input,
                                                                                             resolucion_altoSensorInput,
                                                                                             altoY_VentanaPlanoPupila)
-
+print(matriz_SistemaSegundoTramo[0,1])
 #Se calcula el ancho de la ventana del plano de la máscara u objeto de entrada
 anchoX_VentanaPlanoMascara = resolucion_anchoSensorInput*deltas_tramoMascaraPupila[0]
 altoY_VentanaPlanoMascara = resolucion_altoSensorInput*deltas_tramoMascaraPupila[1]
@@ -282,12 +282,17 @@ intensidad_campoPlanoMedicion = amplitud_campoPlanoMedicion**2
 
 
 """ Graficando máscara de transmitancia asignada a abertura circular"""
-#graph.graficar_transmitancia(mascara,anchoX_VentanaPlanoMascara,altoY_VentanaPlanoMascara,"Holograma")
+graph.graficar_transmitancia(mascara,anchoX_VentanaPlanoMascara,altoY_VentanaPlanoMascara,"Holograma")
 
+
+"""Graficando amplitud del campo que en plano de Fourier"""
+graph.graficar_amplitud(np.abs(campo_PlanoPupila),anchoX_VentanaPlanoPupila,
+                              altoY_VentanaPlanoPupila,"Transformada de Fourier del objeto",1,0.001)
 
 """ Graficando intensidad del campo que entra al SEGUNDO TRAMO del arreglo"""
 graph.graficar_intensidad(intensidad_campoEntradaSegundoTramo_SinFiltro,anchoX_VentanaPlanoPupila,
-                             altoY_VentanaPlanoPupila,"Transformada de Fourier del objeto",1,0.00001)
+                              altoY_VentanaPlanoPupila,"Transformada de Fourier del objeto",1,0.00001)
+
 
 """ Graficando máscara de filtrado"""
 graph.graficar_transmitancia(mascara_Filtrado,anchoX_VentanaPlanoPupila,altoY_VentanaPlanoPupila,"Máscara de filtrado")
@@ -384,7 +389,7 @@ print("\n Tamaño  matriz campo óptico de salida:",matriz_campo.shape)
 espectro_angular_salida = np.fft.fftshift(np.fft.fft2(matriz_campo)) 
 
 
-for distancia_propagacionAribitraria in np.arange(0.1, 0.368, 0.0001):
+for distancia_propagacionAribitraria in np.arange(0.01, 0.68, 0.0001):
 
 
     # 2. Dividimos(matrices) punto a punto por la función de propagación para hallar A[p,q,0]

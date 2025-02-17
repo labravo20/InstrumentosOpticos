@@ -32,8 +32,8 @@ from PIL import Image
 
 """ Definiendo parámetros de máscara difractiva """
 
-resolucion_Input = 3000  # Número de puntos en la malla --> Asociado a comparación con una referencia de cámara
-longitud_ArregloInput = 1  #Tamaño físico del área de la ventana
+resolucion_Input = 2048  # Número de puntos en la malla --> Asociado a comparación con una referencia de cámara
+longitud_ArregloInput = 3.45E-6  #Tamaño físico del área de la ventana
 radio = 0.05  # Radio del círculo 
 centro = None  # El centro será el origen si es None
 
