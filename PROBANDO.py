@@ -1,9 +1,17 @@
-""" DESCRIPCIÓN GENERAL DEL PROYECTO:
-El presente proyecto tiene el objetivo de desarrollar un código base de funcionamiento para 
-el proceso de difracción usando lentes a partir de matrices ABCD --> El arreglo a analizar
-consta de un plano del objeto, una lente convergente delgada (y también un diafragma para delimitar
-el trabajo en un dominio finito) y un plano de medición asociado 
-a la imagen resultante. """
+""" DESCRIPCIÓN...
+En este documento se trabajará sobre un arreglo determinado por la siguiente estructura:
+OBJETO --> *propagación(distancia focal 01)* --> LENTE01 --> *propagación(distancia focal 01)* -->
+PUPILA --> *propagación(distancia arbitraria d)* --> LENTE02 --> *propagación(distancia focal 02)*
+--> IMAGEN
+
+Debido a la condición de planos conjugados se debe sub dividir el proceso en dos tramos:
+TRAMO 01: OBJETO --> *propagación(distancia focal 01)* --> LENTE01 --> *propagación(distancia focal 01)* -->
+PUPILA
+
+TRAMO 02: *propagación(distancia arbitraria d)* --> LENTE02 --> *propagación(distancia focal 02)*
+--> IMAGEN
+
+"""
 
 
 
@@ -51,7 +59,7 @@ radio_diafragmaInput = 0.07 #Se define variable asociada al radio de la abertura
 
 distancia_focal = 0.01
 
-distancia_focal02 = 0.05
+distancia_focal02 = 0.01
 
 distancia_propagacionAribitraria = 0.01
 
@@ -277,8 +285,8 @@ intensidad_campoPlanoMedicion = amplitud_campoPlanoMedicion**2
 
 
 """ Graficando campo asociado a transformada de Fourier filtrado para encontrar imágen real """
-graph.graficar_intensidad(intensidad_campoEntradaSegundoTramo,anchoX_VentanaPlanoPupila,
-                             altoY_VentanaPlanoPupila,"Transformada de Fourier del objeto",1,0.001)
+#graph.graficar_intensidad(intensidad_campoEntradaSegundoTramo,anchoX_VentanaPlanoPupila,
+#                             altoY_VentanaPlanoPupila,"Transformada de Fourier del objeto",1,0.001)
 
 
 """ Graficando la intensidad del campo de salida del arreglo """
@@ -293,7 +301,6 @@ from scipy.ndimage import zoom
 
 
 ################ Parametros discretización ##########
-
 
 
 num_pixels_x = 2048
@@ -320,11 +327,7 @@ F_X, F_Y = np.meshgrid(f_x, f_y)
 
 
 
-#Paso 1: Recibimos el patron de difracción del objeto: es una dsitribución de intensidad }
-
-
-
-'Tomemos la matriz que respresenta la imagen y luego vamos a sacar su raíz para hallar el campo óptico a la salida'
+'Tomar la matriz que respresenta la imagen y luego vamos a sacar su raíz para hallar el campo óptico a la salida'
 
 #Se define la matriz de puntos para el análisis
 matriz_campo = campo_PlanoMedicion
@@ -333,16 +336,33 @@ matriz_campo = campo_PlanoMedicion
 print("\n Tamaño  matriz campo óptico de salida:",matriz_campo.shape)
 
 
+'Se realiza a continuación procedimiento para eliminar contribución de haz REFERENCIA'
+# -----    ÁNGULO ENTRE HAZ DE REFERENCIA Y HAZ OBJETO --> 4.2255°  ------ #
+
+#Definición de vector con cosenos directores asociado al haz referencia
+#vector_cosenosDirectoresRef = [0.0622,0.0395] # NOTA--> Valores obtenidos en cálculo analítico
+vector_cosenosDirectoresRef = [0.06,0.0388] 
+
+#Definición de vector de onda asociado al haz de referencia
+vector_ondaRef = [numero_onda_input*vector_cosenosDirectoresRef[0], numero_onda_input*vector_cosenosDirectoresRef[1]]
+
+# Definición de onda plana INVERSA al haz de referencia  
+onda_PlanaRefInversa = np.exp(-1j*((vector_ondaRef[0]*F_X)  + (vector_ondaRef[1]*F_Y)))
+
+
+# Se multiplica el campo de interés (PLANO MEDICIÓN) con la onda plana generada
+matriz_campoNOContribucionOndaPlana = matriz_campo*onda_PlanaRefInversa
+
 
 # 1. Aplicamos FFT para hallar A[p,q,z]
 'NOTA: nuestro espectro angular de salida sale con un shift a causa de la fft, por lo que antes de dividir la matriz'
 ' punto a punto debemos shiftear el resultado de la fft'
 
-espectro_angular_salida = np.fft.fftshift(np.fft.fft2(matriz_campo)) 
+espectro_angular_salida = np.fft.fftshift(np.fft.fft2(matriz_campoNOContribucionOndaPlana)) 
 
 
 
-for distancia_propagacionAribitraria in np.arange(0.08, 0.09, 0.0005):
+for distancia_propagacionAribitraria in np.arange(0.15, 0.9, 0.0001):
 
 
     # 2. Dividimos(matrices) punto a punto por la función de propagación para hallar A[p,q,0]
