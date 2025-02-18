@@ -362,7 +362,7 @@ espectro_angular_salida = np.fft.fftshift(np.fft.fft2(matriz_campoNOContribucion
 
 
 
-for distancia_propagacionAribitraria in np.arange(0.15, 0.9, 0.0001):
+for distancia_propagacionAribitraria in np.arange(0.0845, 0.087, 0.00025):
 
 
     # 2. Dividimos(matrices) punto a punto por la función de propagación para hallar A[p,q,0]
