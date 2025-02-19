@@ -177,8 +177,7 @@ lista_matricesSegundoTramoInvertida = [matriz_propagacionSegundoTramo]
 #Se calcula la matriz del sistema
 matriz_SistemaSegundoTramo = matriz.matriz_Sistema(lista_matricesSegundoTramoInvertida)
 
-print(matriz_SistemaPrimerTramo[0,0])
-print(matriz_SistemaSegundoTramo[0,0])
+
 
 """ Calculando el camino óptico central --> Asociado a la distancia de propagación TOTAL del SEGUNDO TRAMO """
 

@@ -65,6 +65,19 @@ distancia_focalMO = 0.2
 #Definiendo la longitud de onda asociada a la fuente en consideración
 longitud_onda_input = 632.8E-9 #UNIDADES: m
 
+
+""" Definiendo inclinación del ángulo de incidencia del haz de referencia para interferencia
+en la formación del holograma"""
+
+#Definiendo ángulo máximo 
+angulo_MaxHazReferencia = np.arcsin(longitud_onda_input/(2*tamaño_PixelSensorInput))
+print("\nÁngulo máximo de inclinación del haz de referencia para garantizar buen funcionamiento sistema [GRADOS]:")
+print(np.degrees(angulo_MaxHazReferencia))
+
+#Definiendo ángulo de inclinación del haz de referencia respecto al haz objeto
+# NOTA: Leer en terminal 'print' con información sobre el ángulo máximo 
+angulo_HazReferencia = 2 #UNIDADES: Grados
+
 ' ################ FIN SECCIÓN DE CARACTERIZACIÓN ARREGLO ################## '
 
 
@@ -177,8 +190,7 @@ lista_matricesSegundoTramoInvertida = [matriz_propagacionSegundoTramo]
 #Se calcula la matriz del sistema
 matriz_SistemaSegundoTramo = matriz.matriz_Sistema(lista_matricesSegundoTramoInvertida)
 
-print(matriz_SistemaPrimerTramo[0,0])
-print(matriz_SistemaSegundoTramo[0,0])
+
 
 """ Calculando el camino óptico central --> Asociado a la distancia de propagación TOTAL del SEGUNDO TRAMO """
 
@@ -312,6 +324,8 @@ amplitud_campoPlanoMedicion = np.abs(campo_PlanoMedicion)
 intensidad_campoPlanoMedicion = amplitud_campoPlanoMedicion**2
 
 
+' ------ FIN SECCIÓN DE CÁLCULO RESULTADO DIFRACTIVO DE CADA TRAMO ------ '
+
 
 """ Graficando máscara de transmitancia """
 
@@ -323,3 +337,29 @@ graph.graficar_transmitancia(mascara,anchoX_VentanaPlanoMascara,altoY_VentanaPla
 
 graph.graficar_intensidad(intensidad_campoPlanoMedicion,ancho_SensorInput,alto_SensorInput,
                           "Intensidad recibida en el sensor",1,0.1)
+
+
+' ------ EMPIEZA SECCIÓN DE INTERFERENCIA ------ '
+
+""" Definición del haz de referencia --> ONDA PLANA """
+
+# Definición de onda plana INVERSA al haz de referencia  
+onda_PlanaRefInversa = np.exp(-1j*numero_onda_input*np.cos(np.radians(angulo_HazReferencia))
+                              *np.sqrt((xx_PlanoMedicion**2) + (yy_PlanoMedicion**2)))
+
+
+#Interferencia entre haz de referencia y haz objeto 
+ 
+
+' ------ FIN SECCIÓN DE INTERFERENCIA ------ '
+
+
+' ------ EMPIEZA SECCIÓN DE DIFRACCIÓN PARA FORMACIÓN HOLOGRAMA ------ '
+
+#Calculo matricial
+
+
+#PROPAGAR!!! 
+ 
+
+' ------ FIN SECCIÓN DE DIFRACCIÓN PARA FORMACIÓN HOLOGRAMA ------ '
