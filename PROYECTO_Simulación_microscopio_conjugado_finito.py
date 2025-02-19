@@ -1,25 +1,25 @@
 """ DESCRIPCIÓN 
---> Configuración de microscopio conjugado a infinito con iluminación coherente
+--> Configuración de microscopio conjugado a finito con iluminación coherente
 
 
 En este documento se trabajará sobre un arreglo determinado por la siguiente estructura:
-OBJETO --> *propagación(distancia focal MO)* --> OBJETIVO_MICROSCOPIO --> 
-*propagación(distancia focal MO)* --> PUPILA (Determinada por la apertura del objetivo
-de microscopio en consideración) --> *propagación(distancia arbitraria d)* --> LENTE_TL 
---> *propagación(distancia focal TL)* --> IMAGEN (Detección en cámara)
+OBJETO --> *propagación(distancia objeto)* --> OBJETIVO_MICROSCOPIO --> 
+PUPILA (Determinada por la apertura del objetivo de microscopio en consideración) --> 
+*propagación(distancia imagen)* --> IMAGEN (Detección en cámara)
 
 Debido a la condición de planos conjugados se debe sub dividir el proceso en dos tramos:
-TRAMO 01: OBJETO --> *propagación(distancia focal MO)* --> OBJETIVO_MICROSCOPIO --> 
-*propagación(distancia focal MO)* --> PUPILA (Determinada por la apertura del objetivo
-de microscopio en consideración)
+OBJETO --> *propagación(distancia objeto)* --> OBJETIVO_MICROSCOPIO --> 
+PUPILA (Determinada por la apertura del objetivo de microscopio en consideración)
 
 TRAMO 02: *propagación(distancia arbitraria d)* --> LENTE_TL 
---> *propagación(distancia focal TL)* --> IMAGEN (Detección en cámara)
+PUPILA (Determinada por la apertura del objetivo de microscopio en consideración) --> 
+*propagación(distancia imagen)* --> IMAGEN (Detección en cámara)
+
 
 """
 
 """ Se genera un print de mensaje inicial para verificar correcto funcionamiento del entorno """
-print("Inicializando entorno de programación primer punto TERCERA ENTREGA...")
+print("Inicializando entorno de programación microscopio conjugado FINITO...")
 
 
 
@@ -30,10 +30,13 @@ import LIBRERIA_Matrices_ABCD_Transferencia_rayos as matriz
 import numpy as np
 import matplotlib.pyplot as plt
 import LIBRERIA_Funciones_importantes as function
+import LIBRERIA_Funciones_Graficacion as graph
 
 
+' ################ INICIO SECCIÓN DE CARACTERIZACIÓN ARREGLO ################## '
+##### LA SIGUIENTE SECCIÓN SE REFIERE A INPUTS QUE DEBEN SER ESPECIFICADOS POR EL USUARIO*
 
-""" Definiendo parámetros de sensor  Alvium 1800-U-811m """
+""" Definiendo parámetros de sensor """
 
 #Numero de muestras/puntos distribuidos en el ancho del sensor
 resolucion_anchoSensorInput = 2848 
@@ -41,8 +44,32 @@ resolucion_anchoSensorInput = 2848
 #Numero de muestras/puntos distribuidos en el alto del sensor
 resolucion_altoSensorInput = 2848
 
-#Tamaño del pixel del sensor
+#Tamaño del pixel del sensor #UNIDADES: m
 tamaño_PixelSensorInput = 2.74E-6
+
+
+""" Definiendo parámetros objetivo microscopio """
+
+#Magnificación objetivo de microscopio
+magnificacion = 10
+
+#Apertura numérica objetivo de microscopio
+apertura_Numerica = 0.25 
+
+#Distancia focal del objetivo de microscopio #UNIDADES: m
+distancia_focalMO = 0.2
+
+
+""" Definiendo parámetros de la iluminación coherente a utilizar  """
+
+#Definiendo la longitud de onda asociada a la fuente en consideración
+longitud_onda_input = 632.8E-9 #UNIDADES: m
+
+' ################ FIN SECCIÓN DE CARACTERIZACIÓN ARREGLO ################## '
+
+
+
+""" Calculando parámetros de muestreo del sensor utilizado """
 
 #Se crea una lista a la cual se le asigna los valores de los delta de muestreo asociados al sensor
 deltas_Sensor = [tamaño_PixelSensorInput,tamaño_PixelSensorInput]
@@ -50,6 +77,35 @@ deltas_Sensor = [tamaño_PixelSensorInput,tamaño_PixelSensorInput]
 #Usando los datos anteriores se calcula el ancho y alto físicos del sensor
 ancho_SensorInput = resolucion_anchoSensorInput*tamaño_PixelSensorInput
 alto_SensorInput = resolucion_altoSensorInput*tamaño_PixelSensorInput
+
+
+
+""" Definición de distancias del arreglo """
+
+#Distancia focal asociada a la lente de tubo --> #UNIDADES: m
+distancia_Objeto = ((magnificacion + 1)*distancia_focalMO)/magnificacion   
+
+#Se define una distancia de propagación arbitraria --> #UNIDADES: m
+distancia_Imagen = (magnificacion + 1)*distancia_focalMO 
+
+
+
+""" Definiendo parámetro para el tamaño de la pupila """
+
+#Calculando el ángulo de apertura
+angulo_Apertura = np.arcsin(apertura_Numerica)
+
+#Calculando el radio de la pupila asociada al objetivo de microscopio #UNIDADES: m
+radio_pupilaInput =  distancia_focalMO*np.tan(angulo_Apertura) # Se define variable asociada al radio de la abertura que representará el
+                                                               # radio del objetivo de microscopio --> Este se calcula haciendo uso de la
+                                                               # abertura numérica y la longitud de tubo. 
+
+
+
+""" Definiendo parámetros de fuente """
+
+#Calculando el número de onda
+numero_onda_input = (2*np.pi)/longitud_onda_input
 
 
 
@@ -63,50 +119,18 @@ centro = None
 
 
 
-""" Definiendo parámetro para el tamaño de la pupila """
-
-radio_pupilaInput = 5.16E-3 #Se define variable asociada al radio de la abertura que representará el
-                            #radio del objetivo de microscopio --> Este se calcula haciendo uso de la
-                            #abertura numérica y la longitud de tubo. --> #UNIDADES: m 
-
-
-""" Definición de distancias del arreglo """
-
-distancia_focalMO = 0.02  #Distancia focal asociada al objetivo de microscopio --> #UNIDADES: m
-
-distancia_focalTL = 0.2   #Distancia focal asociada a la lente de tubo --> #UNIDADES: m
-
-distancia_propagacionAribitraria = 0.01 #Se define una distancia de propagación arbitraria --> #UNIDADES: m
-
-
-
-""" Definiendo parámetros de fuente """
-
-#Definiendo la longitud de onda asociada a la fuente en consideración
-longitud_onda_input = 533E-9 #UNIDADES: m
-
-#Calculando el número de onda
-numero_onda_input = (2*np.pi)/longitud_onda_input
-
-
-
-""" ------ EMPIEZA SECCIÓN DE CÁLCULO MATRICIAL PRIMER TRAMO ------ """
+' ------ EMPIEZA SECCIÓN DE CÁLCULO MATRICIAL PRIMER TRAMO ------ '
 
 """ Se calculan las matrices necesarias para estudiar el PRIMER TRAMO del arreglo difractivo
-    OBJETO --> *propagación(distancia focal MO)* --> OBJETIVO_MICROSCOPIO --> 
-    *propagación(distancia focal MO)* --> PUPILA (Determinada por la apertura del objetivo
-    de microscopio en consideración) """
+    OBJETO --> *propagación(distancia objeto)* --> OBJETIVO_MICROSCOPIO --> 
+    PUPILA (Determinada por la apertura del objetivo de microscopio en consideración) """
 
 #Se calcula la matriz asociada al proceso de propagación desde el plano objeto
 #hasta el plano de la lenteMO
-matriz_propagacion01PrimerTramo = matriz.propagacion_MedioHomogeneo(distancia_focalMO)
+matriz_propagacionPrimerTramo = matriz.propagacion_MedioHomogeneo(distancia_Objeto)
 
 #Se calcula la matriz asociada a la interacción con la lenteMO
 matriz_lenteMO = matriz.lente_DelgadaConociendoDistanciaFocal(distancia_focalMO)
-
-#Se calcula la matriz asociada al proceso de propagación desde el plano de la lente 01
-#hasta el plano de la pupila
-matriz_propagacion02PrimerTramo = matriz.propagacion_MedioHomogeneo(distancia_focalMO)
 
 
 
@@ -116,7 +140,7 @@ matriz_propagacion02PrimerTramo = matriz.propagacion_MedioHomogeneo(distancia_fo
 #en el arreglo.
 
 #Se define la lista de matrices
-lista_matricesPrimerTramoInvertida = [matriz_propagacion02PrimerTramo,matriz_lenteMO,matriz_propagacion01PrimerTramo]
+lista_matricesPrimerTramoInvertida = [matriz_lenteMO,matriz_propagacionPrimerTramo]
 
 #Se calcula la matriz del sistema teniendo en cuenta la lista de matrices definida anteriormente
 matriz_SistemaPrimerTramo = matriz.matriz_Sistema(lista_matricesPrimerTramoInvertida)
@@ -128,24 +152,18 @@ matriz_SistemaPrimerTramo = matriz.matriz_Sistema(lista_matricesPrimerTramoInver
 #Se calcula el camino óptico central a partir de la lista de matrices del sistema
 camino_opticoCentralPrimerTramo = matriz.camino_Optico(lista_matricesPrimerTramoInvertida)
 
+' ------ FIN SECCIÓN DE CÁLCULO MATRICIAL PRIMER TRAMO ------ '
 
 
-""" ------ EMPIEZA SECCIÓN DE CÁLCULO MATRICIAL SEGUNDO TRAMO ------ """
+' ------ EMPIEZA SECCIÓN DE CÁLCULO MATRICIAL SEGUNDO TRAMO ------ '
 
 """ Se calculan las matrices necesarias para estudiar el SEGUNDO TRAMO del arreglo difractivo
-    *propagación(distancia arbitraria d)* --> LENTE_TL --> *propagación(distancia focal TL)* 
-    --> IMAGEN (Detección en cámara)"""
+    PUPILA (Determinada por la apertura del objetivo de microscopio en consideración) --> 
+    *propagación(distancia imagen)* --> IMAGEN (Detección en cámara)"""
 
 #Se calcula la matriz asociada al proceso de propagación desde el plano de la pupila 
-# hasta el plano de la lente TL
-matriz_propagacion01SegundoTramo = matriz.propagacion_MedioHomogeneo(distancia_propagacionAribitraria)
-
-#Se calcula la matriz asociada a la interacción con la lente TL
-matriz_lenteTL = matriz.lente_DelgadaConociendoDistanciaFocal(distancia_focalTL)
-
-#Se calcula la matriz asociada al proceso de propagación desde el plano de la lente 02
-#hasta el plano de medición
-matriz_propagacion02SegundoTramo = matriz.propagacion_MedioHomogeneo(distancia_focalTL)
+# hasta el plano de la imagen
+matriz_propagacionSegundoTramo = matriz.propagacion_MedioHomogeneo(distancia_Imagen)
 
 
 
@@ -154,7 +172,7 @@ NOTA IMPORTANTE: La lista de matrices se debe poner en orden inverso a su ubicac
 en el arreglo."""
 
 #Creando lista de matrices que describe el arreglo del SEGUNDO TRAMO
-lista_matricesSegundoTramoInvertida = [matriz_propagacion02SegundoTramo,matriz_lenteTL,matriz_propagacion01SegundoTramo]
+lista_matricesSegundoTramoInvertida = [matriz_propagacionSegundoTramo]
 
 #Se calcula la matriz del sistema
 matriz_SistemaSegundoTramo = matriz.matriz_Sistema(lista_matricesSegundoTramoInvertida)
@@ -166,9 +184,10 @@ matriz_SistemaSegundoTramo = matriz.matriz_Sistema(lista_matricesSegundoTramoInv
 #Se calcula el camino óptico central a partir de la lista de matrices del Segundo tramo
 camino_opticoCentralSegundoTramo = matriz.camino_Optico(lista_matricesSegundoTramoInvertida)
 
+' ------ FIN SECCIÓN DE CÁLCULO MATRICIAL SEGUNDO TRAMO ------ '
 
 
-""" ----- EMPIEZA SECCIÓN DE CONFIGURACIÓN DE MALLAS DE PUNTOS PARA CADA PLANO ------ """
+' ----- EMPIEZA SECCIÓN DE CONFIGURACIÓN DE MALLAS DE PUNTOS PARA CADA PLANO ------ '
 
 """ Creando mallas de puntos asociada a plano del sensor """
 #Para poder conocer las condicones de creación de las mallas de puntos se debe considerar
@@ -225,20 +244,21 @@ xx_PlanoMascara, yy_PlanoMascara = mascaras.malla_Puntos(resolucion_anchoSensorI
                                                        resolucion_altoSensorInput,altoY_VentanaPlanoPupila)
 
 
+' ----- FIN SECCIÓN DE CONFIGURACIÓN DE MALLAS DE PUNTOS PARA CADA PLANO ------ '
+
+
+' ------ EMPIEZA SECCIÓN DE CÁLCULO RESULTADO DIFRACTIVO DE CADA TRAMO ------ '
 
 """ Creando máscara de transmitancia asociada al objeto de estudio en el arreglo """
 
 # Cargar la imagen PNG como máscara de transmitancia
-#ruta_imagen_png = "/home/labravo/Downloads/USAF_3000px_cl.png"  # Especifica la ruta de imagen
 ruta_imagen_png = "/home/labravo/Downloads/USAF_T-20.jpg"  # Especifica la ruta de imagen
 mascara = function.cargar_imagen_png(ruta_imagen_png, resolucion_anchoSensorInput,resolucion_altoSensorInput)
-
 
 #Creación de una máscara con un corazón de transmitancia
 #mascara = mascaras.funcion_Corazon(centro,xx_PlanoMascara,yy_PlanoMascara,radio)
 
 
-""" ------ EMPIEZA SECCIÓN DE CÁLCULO RESULTADO DIFRACTIVO DE CADA TRAMO ------ """
 
 """ Se calcula el resultado del proceso difractivo del PRIMER TRAMO"""
 
@@ -268,9 +288,6 @@ será el campo de entrada para el segundo tramo."""
 #Calculando el campo de entrada al SEGUNDO TRAMO del arreglo
 campo_entradaSegundoTramo = campo_PlanoPupila*pupila
 
-#Calculando la intensidad del campo de entrada al SEGUNDO TRAMO del arreglo
-intensidad_campoEntradaSegundoTramo = np.abs(campo_entradaSegundoTramo)**2
-
 
 
 """ Se calcula el resultado del proceso difractivo del SEGUNDO TRAMO """
@@ -297,41 +314,11 @@ intensidad_campoPlanoMedicion = amplitud_campoPlanoMedicion**2
 
 """ Graficando máscara de transmitancia """
 
-plt.imshow(mascara, extent=[-anchoX_VentanaPlanoMascara/2, anchoX_VentanaPlanoMascara/2,
-                             -altoY_VentanaPlanoMascara/2, altoY_VentanaPlanoMascara/2], 
-                             cmap='gray')
-plt.title("Máscara")
-plt.colorbar(label="Transmitancia")
-plt.xlabel("X (m)")
-plt.ylabel("Y (m)")
-plt.show()
-
-
-
-""" Graficando intensidad del campo que entra al SEGUNDO TRAMO del arreglo"""
-
-plt.imshow(intensidad_campoEntradaSegundoTramo, 
-           extent=[-anchoX_VentanaPlanoPupila/2, anchoX_VentanaPlanoPupila/2,
-                -altoY_VentanaPlanoPupila/2, altoY_VentanaPlanoPupila/2], 
-            cmap='gray',
-            vmax= 0.001*np.max(intensidad_campoEntradaSegundoTramo))
-plt.title("Campo PUPILA")
-plt.colorbar(label="Intensidad")
-plt.xlabel("X (m)")
-plt.ylabel("Y (m)")
-plt.show()
+graph.graficar_transmitancia(mascara,anchoX_VentanaPlanoMascara,altoY_VentanaPlanoMascara,
+                             "Muestra")
 
 
 """ Graficando la intensidad del campo de salida del arreglo """
 
-plt.imshow(intensidad_campoPlanoMedicion, extent=[-ancho_SensorInput/2, 
-                                                  ancho_SensorInput/2, 
-                                                  -alto_SensorInput/2, 
-                                                  alto_SensorInput/2], 
-           cmap='gray',
-           vmax = 1*(np.max(intensidad_campoPlanoMedicion)))
-plt.title("Intensidad")
-plt.colorbar(label="Intensidad")
-plt.xlabel("X (m)")
-plt.ylabel("Y (m)")
-plt.show()
+graph.graficar_intensidad(intensidad_campoPlanoMedicion,ancho_SensorInput,alto_SensorInput,
+                          "Intensidad recibida en el sensor")
