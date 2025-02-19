@@ -69,7 +69,7 @@ longitud_onda_input = 632.8E-9 #UNIDADES: m
 """ Definiendo inclinación del ángulo de incidencia del haz de referencia para interferencia
 en la formación del holograma"""
 
-#Definiendo ángulo máximo 
+#Definiendo ángulo máximo --> LAS SIGUIENTES LINEAS DE CÓDIGO NO REQUIEREN INPUT DEL USUARIO
 angulo_MaxHazReferencia = np.arcsin(longitud_onda_input/(2*tamaño_PixelSensorInput))
 print("\nÁngulo máximo de inclinación del haz de referencia para garantizar buen funcionamiento sistema [GRADOS]:")
 print(np.degrees(angulo_MaxHazReferencia))
@@ -349,7 +349,6 @@ onda_PlanaRefInversa = np.exp(-1j*numero_onda_input*np.cos(np.radians(angulo_Haz
 
 
 #Interferencia entre haz de referencia y haz objeto 
- 
 
 ' ------ FIN SECCIÓN DE INTERFERENCIA ------ '
 
