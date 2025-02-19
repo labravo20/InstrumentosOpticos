@@ -51,10 +51,10 @@ tamaño_PixelSensorInput = 2.74E-6
 """ Definiendo parámetros objetivo microscopio """
 
 #Magnificación objetivo de microscopio
-magnificacion = 10
+magnificacion = 60
 
 #Apertura numérica objetivo de microscopio
-apertura_Numerica = 0.25 
+apertura_Numerica = 0.85 
 
 #Distancia focal del objetivo de microscopio #UNIDADES: m
 distancia_focalMO = 0.2
@@ -177,7 +177,8 @@ lista_matricesSegundoTramoInvertida = [matriz_propagacionSegundoTramo]
 #Se calcula la matriz del sistema
 matriz_SistemaSegundoTramo = matriz.matriz_Sistema(lista_matricesSegundoTramoInvertida)
 
-
+print(matriz_SistemaPrimerTramo[0,0])
+print(matriz_SistemaSegundoTramo[0,0])
 
 """ Calculando el camino óptico central --> Asociado a la distancia de propagación TOTAL del SEGUNDO TRAMO """
 
@@ -321,4 +322,4 @@ graph.graficar_transmitancia(mascara,anchoX_VentanaPlanoMascara,altoY_VentanaPla
 """ Graficando la intensidad del campo de salida del arreglo """
 
 graph.graficar_intensidad(intensidad_campoPlanoMedicion,ancho_SensorInput,alto_SensorInput,
-                          "Intensidad recibida en el sensor")
+                          "Intensidad recibida en el sensor",1,0.1)
