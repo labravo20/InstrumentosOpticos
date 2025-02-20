@@ -77,7 +77,7 @@ def producto_espacio_frecuencia_TransformadaFresnel_Sensor(resolucion_AnchoSenso
     delta_EntradaY = (longitud_Onda * distancia_Propagacion) / (resolucion_AltoSensor * delta_YSensor)
 
     #Se crea una lista donde se almacena la información sobre los deltas de muestreo en la entrada
-    muestreo_Entrada = [delta_EntradaX, delta_EntradaY]
+    muestreo_Entrada = {"deltaPlanoEntrada_X":delta_EntradaX, "deltaPlanoEntrada_Y":delta_EntradaY}
 
     return muestreo_Entrada
     

@@ -5,21 +5,28 @@
 En este documento se trabajará sobre un arreglo determinado por la siguiente estructura:
 OBJETO --> *propagación(distancia objeto)* --> OBJETIVO_MICROSCOPIO --> 
 PUPILA (Determinada por la apertura del objetivo de microscopio en consideración) --> 
-*propagación(distancia imagen)* --> IMAGEN (Detección en cámara)
+*propagación(distancia imagen)* --> IMAGEN 
 
 Debido a la condición de planos conjugados se debe sub dividir el proceso en dos tramos:
+
+TRAMO 01: 
 OBJETO --> *propagación(distancia objeto)* --> OBJETIVO_MICROSCOPIO --> 
 PUPILA (Determinada por la apertura del objetivo de microscopio en consideración)
 
-TRAMO 02: *propagación(distancia arbitraria d)* --> LENTE_TL 
+TRAMO 02: 
 PUPILA (Determinada por la apertura del objetivo de microscopio en consideración) --> 
-*propagación(distancia imagen)* --> IMAGEN (Detección en cámara)
+*propagación(distancia imagen)* --> IMAGEN 
 
+Posteriormente al tramo dos se procede a la formación del holograma, de forma que 
+en el plano imagen se genera interferencia entre el campo de salida del anterior arreglo 
+(haz objeto) y una onda plana de referencia (haz referencia). Después del paso anterior se 
+procede a propagar el resultado de la interferencia una distancia arbitraria 'd'(implica presencia
+de efectos difractivos), para llegar al plano donde se forma el holograma.
 
 """
 
 """ Se genera un print de mensaje inicial para verificar correcto funcionamiento del entorno """
-print("Inicializando entorno de programación microscopio conjugado FINITO...")
+print("Inicializando entorno de programación sistema simulación holografía...")
 
 
 
@@ -76,7 +83,11 @@ print(np.degrees(angulo_MaxHazReferencia))
 
 #Definiendo ángulo de inclinación del haz de referencia respecto al haz objeto
 # NOTA: Leer en terminal 'print' con información sobre el ángulo máximo 
-angulo_HazReferencia = 2 #UNIDADES: Grados
+angulo_HazReferencia = 6 #UNIDADES: Grados
+
+
+""" Distancia de propagación para formación del holograma (PLANO IMAGEN --> PLANO HOLOGRAMA)"""
+distancia_ImagenHolograma = 0.08 #UNIDADES: m
 
 ' ################ FIN SECCIÓN DE CARACTERIZACIÓN ARREGLO ################## '
 
@@ -85,7 +96,7 @@ angulo_HazReferencia = 2 #UNIDADES: Grados
 """ Calculando parámetros de muestreo del sensor utilizado """
 
 #Se crea una lista a la cual se le asigna los valores de los delta de muestreo asociados al sensor
-deltas_Sensor = [tamaño_PixelSensorInput,tamaño_PixelSensorInput]
+deltas_Sensor = {"deltaPlanoEntrada_X":tamaño_PixelSensorInput,"deltaPlanoEntrada_Y":tamaño_PixelSensorInput}
 
 #Usando los datos anteriores se calcula el ancho y alto físicos del sensor
 ancho_SensorInput = resolucion_anchoSensorInput*tamaño_PixelSensorInput
@@ -119,16 +130,6 @@ radio_pupilaInput =  distancia_focalMO*np.tan(angulo_Apertura) # Se define varia
 
 #Calculando el número de onda
 numero_onda_input = (2*np.pi)/longitud_onda_input
-
-
-
-""" Definiendo parámetros de máscara difractiva --> Corazón"""
-
-#Radio del círculo asociado a la máscara
-radio = 0.0005  #UNIDADES: m
-
-# Se define el centro u origen para la configuración de la máscara 
-centro = None  
 
 
 
@@ -172,7 +173,7 @@ camino_opticoCentralPrimerTramo = matriz.camino_Optico(lista_matricesPrimerTramo
 
 """ Se calculan las matrices necesarias para estudiar el SEGUNDO TRAMO del arreglo difractivo
     PUPILA (Determinada por la apertura del objetivo de microscopio en consideración) --> 
-    *propagación(distancia imagen)* --> IMAGEN (Detección en cámara)"""
+    *propagación(distancia imagen)* --> IMAGEN """
 
 #Se calcula la matriz asociada al proceso de propagación desde el plano de la pupila 
 # hasta el plano de la imagen
@@ -200,35 +201,89 @@ camino_opticoCentralSegundoTramo = matriz.camino_Optico(lista_matricesSegundoTra
 ' ------ FIN SECCIÓN DE CÁLCULO MATRICIAL SEGUNDO TRAMO ------ '
 
 
+' ------ EMPIEZA SECCIÓN DE CÁLCULO MATRICIAL TRAMO FORMACIÓN HOLOGRAMA ------ '
+
+""" Se calculan las matrices necesarias para estudiar el TRAMO DE FORMACIÓN DEL HOLOGRAMA
+* Solo hay presencia de una componente de propagación entre el plano IMAGEN y el plano HOLOGRAMA
+(separados una distancia 'distancia_ImagenHolograma') """
+
+#Se calcula la matriz asociada al proceso de propagación desde el plano Imagen hasta el 
+#plano Holograma
+matriz_propagacionImagenHolograma = matriz.propagacion_MedioHomogeneo(distancia_ImagenHolograma)
+
+
+
+""" Calculando la matriz del sistema asociada a la FORMACIÓN DEL HOLOGRAMA
+NOTA IMPORTANTE: La lista de matrices se debe poner en orden inverso a su ubicación real
+en el arreglo."""
+
+#Creando lista de matrices que describe el arreglo del SEGUNDO TRAMO
+lista_matricesFormacionHologramaInvertida = [matriz_propagacionImagenHolograma]
+
+#Se calcula la matriz del sistema
+matriz_SistemaFormacionHolograma = matriz.matriz_Sistema(lista_matricesFormacionHologramaInvertida)
+
+
+""" Calculando el camino óptico central --> Asociado a la distancia de propagación TOTAL del SEGUNDO TRAMO """
+
+#Se calcula el camino óptico central a partir de la lista de matrices del Segundo tramo
+camino_opticoCentralTramoFormacionHolograma = matriz.camino_Optico(lista_matricesFormacionHologramaInvertida)
+
+
+' ------ FIN SECCIÓN DE CÁLCULO MATRICIAL TRAMO FORMACIÓN HOLOGRAMA ------ '
+
+
 ' ----- EMPIEZA SECCIÓN DE CONFIGURACIÓN DE MALLAS DE PUNTOS PARA CADA PLANO ------ '
 
 """ Creando mallas de puntos asociada a plano del sensor """
 #Para poder conocer las condicones de creación de las mallas de puntos se debe considerar
-#que los planos de interés son: PLANO OBJETO --> PLANO ANTERIOR A PUPILA --> PLANO SENSOR.
+#que los planos de interés son: PLANO OBJETO --> PLANO ANTERIOR A PUPILA --> PLANO IMAGEN -->
+# PLANO HOLOGRAMA (Sensor).
 #Ahora bien, en este caso los datos asociados al sensor son aquellos que permitirán conocer
 #las condiciones de todas las mallas de puntos, lo cual se logra usando las condiciones de
 #producto espacio frecuencia en el caso específico de la transformada de Fresnel.
 #Se calcula la malla de puntos asociada al plano de medición
 
 #Creando malla de puntos plano del sensor/MEDICIÓN
-xx_PlanoMedicion,yy_PlanoMedicion = mascaras.malla_Puntos(resolucion_anchoSensorInput,ancho_SensorInput,
+xx_PlanoHolograma,yy_PlanoHolograma = mascaras.malla_Puntos(resolucion_anchoSensorInput,ancho_SensorInput,
                                             resolucion_altoSensorInput,alto_SensorInput)
+
+
+
+""" Creando malla de puntos asociada a plano IMAGEN """
+
+#Se llama función para determinar los deltas de muestreo del tramo SENSOR --> IMÁGEN
+deltas_tramoImagenHolograma = function.producto_espacio_frecuencia_TransformadaFresnel_Sensor(resolucion_anchoSensorInput,
+                                                                                              ancho_SensorInput,
+                                                                                              matriz_SistemaFormacionHolograma[0,1],
+                                                                                              longitud_onda_input,
+                                                                                              resolucion_altoSensorInput,
+                                                                                              alto_SensorInput)
+
+#Se calcula el ancho de la ventana del plano imagen
+anchoX_VentanaPlanoImagen = resolucion_anchoSensorInput*deltas_tramoImagenHolograma["deltaPlanoEntrada_X"]
+altoY_VentanaPlanoImagen = resolucion_altoSensorInput*deltas_tramoImagenHolograma["deltaPlanoEntrada_Y"]
+
+
+#Creando malla de puntos plano del imagen
+xx_PlanoImagen,yy_PlanoImagen = mascaras.malla_Puntos(resolucion_anchoSensorInput,anchoX_VentanaPlanoImagen,
+                                            resolucion_altoSensorInput,altoY_VentanaPlanoImagen)
 
 
 
 """ Creando malla de puntos asociada a plano anterior a la pupila """
 
 #Se llama función para determinar los deltas de muestreo del tramo SENSOR --> PUPILA
-deltas_tramoPupilaMedicion = function.producto_espacio_frecuencia_TransformadaFresnel_Sensor(resolucion_anchoSensorInput,
-                                                                                             ancho_SensorInput,
+deltas_tramoPupilaImagen = function.producto_espacio_frecuencia_TransformadaFresnel_Sensor(resolucion_anchoSensorInput,
+                                                                                             anchoX_VentanaPlanoImagen,
                                                                                              matriz_SistemaSegundoTramo[0,1],
                                                                                              longitud_onda_input,
                                                                                              resolucion_altoSensorInput,
-                                                                                             alto_SensorInput)
+                                                                                             altoY_VentanaPlanoImagen)
 
 #Se calcula el ancho de la ventana del plano anterior a pupila
-anchoX_VentanaPlanoPupila = resolucion_anchoSensorInput*deltas_tramoPupilaMedicion[0]
-altoY_VentanaPlanoPupila = resolucion_altoSensorInput*deltas_tramoPupilaMedicion[1]
+anchoX_VentanaPlanoPupila = resolucion_anchoSensorInput*deltas_tramoPupilaImagen["deltaPlanoEntrada_X"]
+altoY_VentanaPlanoPupila = resolucion_altoSensorInput*deltas_tramoPupilaImagen["deltaPlanoEntrada_Y"]
 
 
 #Se calcula la malla de puntos asociada al plano de la pupila
@@ -240,7 +295,7 @@ xx_PlanoPupila, yy_PlanoPupila = mascaras.malla_Puntos(resolucion_anchoSensorInp
 """ Creando malla de puntos asociada a plano de la máscara u objeto de entrada """
 
 #Se llama función para determinar los deltas de muestreo del tramo PUPILA --> MÁSCARA
-deltas_tramoMascaraPupila = function.producto_espacio_frecuencia_TransformadaFresnel_Sensor(resolucion_anchoSensorInput,
+deltas_tramoObjetoPupila = function.producto_espacio_frecuencia_TransformadaFresnel_Sensor(resolucion_anchoSensorInput,
                                                                                             anchoX_VentanaPlanoPupila,
                                                                                             matriz_SistemaPrimerTramo[0,1],
                                                                                             longitud_onda_input,
@@ -248,12 +303,12 @@ deltas_tramoMascaraPupila = function.producto_espacio_frecuencia_TransformadaFre
                                                                                             altoY_VentanaPlanoPupila)
 
 #Se calcula el ancho de la ventana del plano de la máscara u objeto de entrada
-anchoX_VentanaPlanoMascara = resolucion_anchoSensorInput*deltas_tramoMascaraPupila[0]
-altoY_VentanaPlanoMascara = resolucion_altoSensorInput*deltas_tramoMascaraPupila[1]
+anchoX_VentanaPlanoObjeto = resolucion_anchoSensorInput*deltas_tramoObjetoPupila["deltaPlanoEntrada_X"]
+altoY_VentanaPlanoObjeto = resolucion_altoSensorInput*deltas_tramoObjetoPupila["deltaPlanoEntrada_Y"]
 
 
-#Se calcula la malla de puntos asociada al plano de la pupila
-xx_PlanoMascara, yy_PlanoMascara = mascaras.malla_Puntos(resolucion_anchoSensorInput,anchoX_VentanaPlanoPupila,
+#Se calcula la malla de puntos asociada al plano del objeto
+xx_PlanoObjeto, yy_PlanoObjeto = mascaras.malla_Puntos(resolucion_anchoSensorInput,anchoX_VentanaPlanoPupila,
                                                        resolucion_altoSensorInput,altoY_VentanaPlanoPupila)
 
 
@@ -266,23 +321,20 @@ xx_PlanoMascara, yy_PlanoMascara = mascaras.malla_Puntos(resolucion_anchoSensorI
 
 # Cargar la imagen PNG como máscara de transmitancia
 ruta_imagen_png = "/home/labravo/Downloads/USAF_T-20.jpg"  # Especifica la ruta de imagen
-mascara = function.cargar_imagen_png(ruta_imagen_png, resolucion_anchoSensorInput,resolucion_altoSensorInput)
-
-#Creación de una máscara con un corazón de transmitancia
-#mascara = mascaras.funcion_Corazon(centro,xx_PlanoMascara,yy_PlanoMascara,radio)
+objeto = function.cargar_imagen_png(ruta_imagen_png, resolucion_anchoSensorInput,resolucion_altoSensorInput)
 
 
 
 """ Se calcula el resultado del proceso difractivo del PRIMER TRAMO"""
 
 #Se calcula el campo de salida/en plano de la pupila --> Campo resultante del primer tramo 
-campo_PlanoPupila = matriz.matriz_ABCD_Difraccion_Sensor(camino_opticoCentralPrimerTramo,mascara,
+campo_PlanoPupila = matriz.matriz_ABCD_Difraccion_Sensor(camino_opticoCentralPrimerTramo,objeto,
                                                  matriz_SistemaPrimerTramo[0,0],
                                                  matriz_SistemaPrimerTramo[0,1],
                                                  matriz_SistemaPrimerTramo[1,1],
-                                                 xx_PlanoMascara,yy_PlanoMascara,
+                                                 xx_PlanoObjeto,yy_PlanoObjeto,
                                                  xx_PlanoPupila,yy_PlanoPupila,numero_onda_input,
-                                                 deltas_tramoPupilaMedicion)
+                                                 deltas_tramoPupilaImagen)
 
 
 
@@ -290,7 +342,7 @@ campo_PlanoPupila = matriz.matriz_ABCD_Difraccion_Sensor(camino_opticoCentralPri
 NOTA: La pupila va a construirse a partir de la malla de puntos asociada al plano de la pupila."""
 
 #Creación de máscara circular que representará el diafragma 
-pupila = mascaras.funcion_Circulo(radio_pupilaInput, centro, xx_PlanoPupila, yy_PlanoPupila)
+pupila = mascaras.funcion_Circulo(radio_pupilaInput, None, xx_PlanoPupila, yy_PlanoPupila)
 
 
 
@@ -306,37 +358,41 @@ campo_entradaSegundoTramo = campo_PlanoPupila*pupila
 """ Se calcula el resultado del proceso difractivo del SEGUNDO TRAMO """
 
 #Se calcula el campo de salida/en plano de medición --> Campo resultante de la difracción 
-campo_PlanoMedicion = matriz.matriz_ABCD_Difraccion_Sensor_Shift(camino_opticoCentralSegundoTramo,
+campo_PlanoImagen = matriz.matriz_ABCD_Difraccion_Sensor_Shift(camino_opticoCentralSegundoTramo,
                                                     campo_entradaSegundoTramo,
                                                     matriz_SistemaSegundoTramo[0,0],
                                                     matriz_SistemaSegundoTramo[0,1],
                                                     matriz_SistemaSegundoTramo[1,1],xx_PlanoPupila,
-                                                    yy_PlanoPupila,xx_PlanoMedicion,yy_PlanoMedicion,
-                                                    numero_onda_input,deltas_Sensor)
+                                                    yy_PlanoPupila,xx_PlanoImagen,yy_PlanoImagen,
+                                                    numero_onda_input,deltas_tramoImagenHolograma)
 
 
 
 #Se calcula la amplitud del campo de salida
-amplitud_campoPlanoMedicion = np.abs(campo_PlanoMedicion)
+amplitud_campoPlanoImagen = np.abs(campo_PlanoImagen)
 
 
 #Se calcula la intensidad del campo de salida
-intensidad_campoPlanoMedicion = amplitud_campoPlanoMedicion**2
+intensidad_campoPlanoImagen = amplitud_campoPlanoImagen**2
 
 
 ' ------ FIN SECCIÓN DE CÁLCULO RESULTADO DIFRACTIVO DE CADA TRAMO ------ '
 
 
+' ------ EMPIEZA SECCIÓN DE GRAFICACIÓN ------ '
+
 """ Graficando máscara de transmitancia """
 
-graph.graficar_transmitancia(mascara,anchoX_VentanaPlanoMascara,altoY_VentanaPlanoMascara,
+graph.graficar_transmitancia(objeto,anchoX_VentanaPlanoObjeto,altoY_VentanaPlanoObjeto,
                              "Muestra")
 
 
 """ Graficando la intensidad del campo de salida del arreglo """
 
-graph.graficar_intensidad(intensidad_campoPlanoMedicion,ancho_SensorInput,alto_SensorInput,
+graph.graficar_intensidad(intensidad_campoPlanoImagen,ancho_SensorInput,alto_SensorInput,
                           "Intensidad recibida en el sensor",1,0.1)
+
+' ------ FIN SECCIÓN DE GRAFICACIÓN ------ '
 
 
 ' ------ EMPIEZA SECCIÓN DE INTERFERENCIA ------ '
@@ -344,21 +400,54 @@ graph.graficar_intensidad(intensidad_campoPlanoMedicion,ancho_SensorInput,alto_S
 """ Definición del haz de referencia --> ONDA PLANA """
 
 # Definición de onda plana INVERSA al haz de referencia  
-onda_PlanaRefInversa = np.exp(-1j*numero_onda_input*np.cos(np.radians(angulo_HazReferencia))
-                              *np.sqrt((xx_PlanoMedicion**2) + (yy_PlanoMedicion**2)))
+onda_PlanaReferencia = np.exp(-1j*numero_onda_input*np.cos(np.radians(angulo_HazReferencia))
+                              *np.sqrt((xx_PlanoImagen**2) + (yy_PlanoImagen**2)))
 
+ 
+
+""" Se genera interferencia entre el haz de referencia (ONDA PLANA REF) y el haz objeto (CAMPO EN PLANO IMAGEN)"""
 
 #Interferencia entre haz de referencia y haz objeto 
+campo_interferenciaObjetoReferencia = onda_PlanaReferencia + campo_PlanoImagen
 
 ' ------ FIN SECCIÓN DE INTERFERENCIA ------ '
 
 
 ' ------ EMPIEZA SECCIÓN DE DIFRACCIÓN PARA FORMACIÓN HOLOGRAMA ------ '
 
-#Calculo matricial
+
+""" Se calcula el resultado del proceso difractivo del TRAMO FORMACIÓN HOLOGRAMA """
+
+#Se calcula el campo de salida/en plano de medición --> Campo resultante de la difracción 
+campo_PlanoHolograma = matriz.matriz_ABCD_Difraccion_Sensor(camino_opticoCentralTramoFormacionHolograma,
+                                                            campo_interferenciaObjetoReferencia,
+                                                            matriz_SistemaFormacionHolograma[0,0],
+                                                            matriz_SistemaFormacionHolograma[0,1],
+                                                            matriz_SistemaFormacionHolograma[1,1],
+                                                            xx_PlanoImagen,yy_PlanoImagen,xx_PlanoHolograma,
+                                                            yy_PlanoHolograma,numero_onda_input,
+                                                            deltas_Sensor)
+
+#Se calcula la amplitud del campo de salida
+amplitud_campoPlanoHolograma = np.abs(campo_PlanoHolograma)
 
 
-#PROPAGAR!!! 
+#Se calcula la intensidad del campo de salida
+intensidad_campoPlanoHolograma= amplitud_campoPlanoHolograma**2
  
 
 ' ------ FIN SECCIÓN DE DIFRACCIÓN PARA FORMACIÓN HOLOGRAMA ------ '
+
+
+' ------ EMPIEZA SECCIÓN DE GRAFICACIÓN ------ '
+
+""" Graficando la amplitud del campo asociada al HOLOGRAMA"""
+graph.graficar_amplitud(amplitud_campoPlanoHolograma,ancho_SensorInput,alto_SensorInput,
+                        "Amplitud del campo Holograma",1,0.3)
+
+""" Graficando la intensidad del HOLOGRAMA """
+
+graph.graficar_intensidad(intensidad_campoPlanoHolograma,ancho_SensorInput,alto_SensorInput,
+                          "Intensidad recibida en el sensor",1,0.1)
+
+' ------ FIN SECCIÓN DE GRAFICACIÓN ------ '

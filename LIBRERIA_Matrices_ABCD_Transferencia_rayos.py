@@ -407,7 +407,7 @@ def matriz_ABCD_Difraccion_Sensor(camino_optico_central, campo_entrada, posicion
     transformada_FourierFuncionEntrada = np.fft.fftshift(np.fft.fft2(funcion_Entrada))
 
     #Calculando el campo difractado
-    campo_Difractado = (deltas_muestreoPlanoMedicion[0]*deltas_muestreoPlanoMedicion[1])*fase_constante*fase_parabolicaPlanoMedicion*transformada_FourierFuncionEntrada
+    campo_Difractado = (deltas_muestreoPlanoMedicion["deltaPlanoEntrada_X"]*deltas_muestreoPlanoMedicion["deltaPlanoEntrada_Y"])*fase_constante*fase_parabolicaPlanoMedicion*transformada_FourierFuncionEntrada
 
 
     return campo_Difractado
@@ -448,7 +448,7 @@ def matriz_ABCD_Difraccion_Sensor_Shift(camino_optico_central, campo_entrada, po
     transformada_FourierFuncionEntrada = (np.fft.fft2(funcion_Entrada))
 
     #Calculando el campo difractado
-    campo_Difractado = (deltas_muestreoPlanoMedicion[0]*deltas_muestreoPlanoMedicion[1])*fase_constante*fase_parabolicaPlanoMedicion*transformada_FourierFuncionEntrada
+    campo_Difractado = (deltas_muestreoPlanoMedicion["deltaPlanoEntrada_X"]*deltas_muestreoPlanoMedicion["deltaPlanoEntrada_Y"])*fase_constante*fase_parabolicaPlanoMedicion*transformada_FourierFuncionEntrada
 
 
     return campo_Difractado
