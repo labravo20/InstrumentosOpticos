@@ -312,6 +312,7 @@ amplitud_campoPlanoMedicion = np.abs(campo_PlanoMedicion)
 #Se calcula la intensidad del campo de salida
 intensidad_campoPlanoMedicion = amplitud_campoPlanoMedicion**2
 
+' ------ FIN SECCIÓN DE CÁLCULO RESULTADO DIFRACTIVO DE CADA TRAMO ------ '
 
 
 """ Graficando máscara de transmitancia """
