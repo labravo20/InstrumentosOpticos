@@ -3,7 +3,7 @@ print("Inicializando entorno de programación Espectro Angular...")
 
 import numpy as np
 import matplotlib.pyplot as plt
-import Mascaras_Transmitancia as m
+import LIBRERIA_Mascaras_Transmitancia as m
 
 
 def producto_espacio_frecuencia(longitud_onda,z,resolucion,longitud_Arreglo):
