@@ -62,7 +62,7 @@ def graficar_fase(campo,xx_TamañoVentana,yy_TamañoVentana,titulo):
     
     plt.imshow(campo, extent=[-xx_TamañoVentana/2, xx_TamañoVentana/2,
                               -yy_TamañoVentana/2, yy_TamañoVentana/2], 
-                              cmap='gray')
+                              cmap='inferno')
     plt.title(titulo)
     plt.colorbar(label="Fase")
     plt.xlabel("X (m)")

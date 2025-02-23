@@ -2,6 +2,19 @@ import numpy as np
 from PIL import Image
 from scipy.ndimage import zoom
 
+""" Función producto espacio frecuencia ESPECTRO ANGULAR """
+
+def producto_espacio_frecuencia(resolucion,longitud_Arreglo):
+
+    delta_input = longitud_Arreglo/resolucion #Definiendo separación entre número total de muestras
+
+    delta_output = (1)/(resolucion*delta_input) #Definiendo separación entre muestras
+                                                            #en plano de medición
+
+    delta_muestreo = [delta_input,delta_output]
+
+    return delta_muestreo
+
 """ Función producto espacio frecuencia en caso TRANSFORMADA FRESNEL """
 
 def producto_espacio_frecuencia_TransformadaFresnel(longitud_onda,distancia_Propagacion,resolucion,longitud_Arreglo):

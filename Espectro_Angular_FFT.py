@@ -4,9 +4,10 @@ print("Inicializando entorno de programación Espectro Angular...")
 import numpy as np
 import matplotlib.pyplot as plt
 import LIBRERIA_Mascaras_Transmitancia as m
+import LIBRERIA_Funciones_importantes as function
 
 
-def producto_espacio_frecuencia(longitud_onda,z,resolucion,longitud_Arreglo):
+def producto_espacio_frecuencia(resolucion,longitud_Arreglo):
 
     delta_input = longitud_Arreglo/resolucion #Definiendo separación entre número total de muestras
 
@@ -28,8 +29,13 @@ centro_input = None
 """ Creación de malla de puntos máscara difractiva"""
 xx,yy = m.malla_Puntos(resolucion_input,longitud_arreglo_input)
 
+
+# Cargar la imagen PNG como máscara de transmitancia
+ruta_imagen_png = "/home/labravo/Downloads/imagenAMPLICADA_MOInfinito.png"  # Especifica la ruta de imagen
+mascara = function.cargar_imagen_png(ruta_imagen_png, resolucion_input,resolucion_input)
+
 """ Creación de abertura circular """
-mascara_circular = m.funcion_Circulo(radio_input,centro_input,xx,yy)
+#mascara = m.funcion_Circulo(radio_input,centro_input,xx,yy)
 
 """ Parámetros de configuración del arreglo difractivo """
 longitud_onda_input = 633E-9 #UNIDADES: m
@@ -58,7 +64,7 @@ xx_espectro,yy_espectro = m.malla_Puntos(resolucion_medicion,longitud_arreglo_me
 #### de la máscara difractiva
 campo_incidente = 1 #Se considera por facilidad esta característica en campo incidente 
 
-campo_entrada = campo_incidente*mascara_circular
+campo_entrada = campo_incidente*mascara
 
 ## Definiendo termino correspondiente a transformada de Fourier del campo de entrada
 transformada_campo = np.fft.fft2(campo_entrada)
@@ -91,7 +97,7 @@ irradiancia_campo_difractado = ((np.abs(campo_difractado))**2)
 """ Graficando el resultado de difracción por espectro angular """
 
 #GRAFICANDO MASCARA DIFRACTIVA DE ABERTURA CIRCULAR
-plt.imshow(mascara_circular, extent=[-longitud_arreglo_input/2, longitud_arreglo_input/2, -longitud_arreglo_input/2, longitud_arreglo_input/2], cmap='gray')
+plt.imshow(mascara, extent=[-longitud_arreglo_input/2, longitud_arreglo_input/2, -longitud_arreglo_input/2, longitud_arreglo_input/2], cmap='gray')
 plt.title("Máscara Circular")
 plt.colorbar(label="Transmitancia")
 plt.xlabel("X (m)")

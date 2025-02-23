@@ -52,17 +52,17 @@ tamaño_PixelSensorInput = 5.2E-6
 """ Definiendo parámetros objetivo microscopio """
 
 #Magnificación objetivo de microscopio
-magnificacion = 60
+magnificacion = 20
 
 #Apertura numérica objetivo de microscopio
-apertura_Numerica = 0.85 
+apertura_Numerica = 0.4 
 
 #Distancia focal del objetivo de microscopio #UNIDADES: m
 ### NOTA: Si se desconoce la distancia focal del objetivo de microscopio escribir el número CERO (0) 
 distancia_focalMO = 0
 
 #Distancia focal asociada a la lente de tubo --> #UNIDADES: m
-distancia_focalTL = 0.2   
+distancia_focalTL = 0.18   
 
 
 
