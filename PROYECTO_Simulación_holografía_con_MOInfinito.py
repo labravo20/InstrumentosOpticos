@@ -101,7 +101,7 @@ print(np.degrees(angulo_MaxHazReferencia))
 
 #Definiendo ángulo de inclinación del haz de referencia respecto al haz objeto
 # NOTA: Leer en terminal 'print' con información sobre el ángulo máximo 
-angulo_HazReferencia = 0 #UNIDADES: Grados
+angulo_HazReferencia = 1 #UNIDADES: Grados
 
 
 ' ################ FIN SECCIÓN DE CARACTERIZACIÓN ARREGLO ################## '
@@ -362,11 +362,6 @@ intensidad_campoPlanoImagen = amplitud_campoPlanoImagen**2
 graph.graficar_transmitancia(mascara,anchoX_VentanaPlanoMascara,altoY_VentanaPlanoMascara,"Objeto de análisis")
 
 
-""" Graficando intensidad del campo que entra al SEGUNDO TRAMO del arreglo"""
-graph.graficar_intensidad(intensidad_campoEntradaSegundoTramo,anchoX_VentanaPlanoPupila,altoY_VentanaPlanoPupila,
-                          "Intensidad del campo en plano de la PUPILA",1,0.1)
-
-
 """ Graficando la intensidad del campo de salida del arreglo """
 graph.graficar_intensidad(intensidad_campoPlanoImagen,ancho_SensorInput,alto_SensorInput,"Intensidad del campo en plano de MEDICIÓN")
 
@@ -395,7 +390,8 @@ xx_espectroFourier,yy_espectroFourier = mascaras.malla_Puntos(resolucion_anchoSe
 
 
 ## Definiendo termino correspondiente a transformada de Fourier del campo de entrada
-transformada_campo = np.fft.fft2(np.abs(campo_PlanoImagen))
+transformada_campo = np.fft.fft2(campo_PlanoImagen)
+#transformada_campo = np.fft.fft2(np.abs(campo_PlanoImagen))
 transformada_campo_centrada = np.fft.fftshift(transformada_campo)
 
 ## ---- ##
@@ -408,59 +404,60 @@ espectro_angular_plano_mascara = (deltas_Sensor["deltaPlanoEntrada_X"]*deltas_Se
 ### Definiendo término exponente que determina condición de evanescencia
 cond_evanescencia = (np.sqrt(1-((longitud_onda_input**2)*(((xx_espectroFourier)**2)+((yy_espectroFourier)**2)))))
 
-termino_cond_evanescencia = np.exp(1j*distancia_ImagenHolograma*numero_onda_input*cond_evanescencia)
+for distancia_ImagenHolograma in np.arange(0.005, 0.05, 0.00045):
 
-## ---- ##
-espectro_angular_plano_medicion = termino_cond_evanescencia*espectro_angular_plano_mascara
+    termino_cond_evanescencia = np.exp(1j*distancia_ImagenHolograma*numero_onda_input*cond_evanescencia)
+    
+    ## ---- ##
+    espectro_angular_plano_medicion = termino_cond_evanescencia*espectro_angular_plano_mascara
 
-#Definiendo término de transformada de Fourier inversa del espectro angular en el plano de medición
-transformada_inversa_espectro_angular = np.fft.ifft2(espectro_angular_plano_medicion)
+    #Definiendo término de transformada de Fourier inversa del espectro angular en el plano de medición
+    transformada_inversa_espectro_angular = np.fft.ifft2(espectro_angular_plano_medicion)
 
-#Definiendo resultado de campo difractado en plano de medición
-campo_difractado = (delta_fx*delta_fy)*transformada_inversa_espectro_angular
+    #Definiendo resultado de campo difractado en plano de medición
+    campo_difractado = (delta_fx*delta_fy)*transformada_inversa_espectro_angular
 
-intensidad_campoOpticoPlanoHolograma = (np.abs(campo_difractado))
+    #Normalización del campo difractado --> PREGUNTAR 
+    #campo_difractado = campo_difractado / np.max(np.abs(campo_difractado))
 
+    intensidad_campoOpticoPlanoHolograma = (np.abs(campo_difractado))
 
-' ------ FIN SECCIÓN DE DIFRACCIÓN PARA FORMACIÓN HOLOGRAMA ------ '
+    """ Graficando el campo resultante de la propagación (PLANO IMAGEN --> PLANO HOLOGRAMA)"""
+    graph.graficar_intensidad(intensidad_campoOpticoPlanoHolograma,ancho_SensorInput,alto_SensorInput,"IMAGEN PROPAGADA")
 
+    ' ------ FIN SECCIÓN DE DIFRACCIÓN PARA FORMACIÓN HOLOGRAMA ------ '
 
-' ------ EMPIEZA SECCIÓN DE INTERFERENCIA ------ '
+    ' ------ EMPIEZA SECCIÓN DE INTERFERENCIA ------ '
 
-""" Definición del haz de referencia --> ONDA PLANA """
+    """ Definición del haz de referencia --> ONDA PLANA """
 
-# Definición de onda plana INVERSA al haz de referencia  
-onda_PlanaReferencia = np.exp(1j*numero_onda_input*np.cos(np.radians(angulo_HazReferencia))
-                              *np.sqrt((xx_PlanoImagen**2) + (yy_PlanoImagen**2)))
+    # Definición de onda plana INVERSA al haz de referencia  
+    onda_PlanaReferencia = (10**(-20))*np.exp(1j * numero_onda_input * 
+                              (xx_PlanoImagen * np.cos(np.radians(angulo_HazReferencia)) + 
+                               yy_PlanoImagen * np.sin(np.radians(angulo_HazReferencia))))
 
- 
-""" Se genera interferencia entre el haz de referencia (ONDA PLANA REF) y el haz objeto (CAMPO EN PLANO IMAGEN)"""
+    
+    """ Se genera interferencia entre el haz de referencia (ONDA PLANA REF) y el haz objeto (CAMPO EN PLANO IMAGEN)"""
 
-#Interferencia entre haz de referencia y haz objeto 
-campo_interferenciaObjetoReferencia = onda_PlanaReferencia + campo_difractado
-intensidad_interferenciaObjetoReferencia = (np.abs(campo_interferenciaObjetoReferencia))**2
+    #Interferencia entre haz de referencia y haz objeto 
+    campo_interferenciaObjetoReferencia = onda_PlanaReferencia + campo_difractado
+    intensidad_interferenciaObjetoReferencia = (np.abs(campo_interferenciaObjetoReferencia))**2
 
-' ------ FIN SECCIÓN DE INTERFERENCIA ------ '
+    ' ------ FIN SECCIÓN DE INTERFERENCIA ------ '
 
+    ' ------ EMPIEZA SECCIÓN DE GRAFICACIÓN ------ '
 
-' ------ EMPIEZA SECCIÓN DE GRAFICACIÓN ------ '
+    """ Graficando el campo resultante de la formación del holograma (interferencia entre haz de referencia y haz objeto)"""
+    graph.graficar_intensidad(intensidad_interferenciaObjetoReferencia,ancho_SensorInput,alto_SensorInput,"HOLOGRAMA")
 
-""" Graficando el campo resultante de la propagación (PLANO IMAGEN --> PLANO HOLOGRAMA)"""
-graph.graficar_intensidad(intensidad_campoOpticoPlanoHolograma,ancho_SensorInput,alto_SensorInput,"IMAGEN PROPAGADA")
-
-""" Graficando aporte en FASE de la onda plana --> HAZ REFERENCIA"""
-graph.graficar_fase(np.angle(onda_PlanaReferencia),ancho_SensorInput,alto_SensorInput,":v")
-
-""" Graficando el campo resultante de la formación del holograma (interferencia entre haz de referencia y haz objeto)"""
-graph.graficar_intensidad(intensidad_interferenciaObjetoReferencia,ancho_SensorInput,alto_SensorInput,"HOLOGRAMA")
-
-
-' ------ FIN SECCIÓN DE GRAFICACIÓN ------ '
-
+    graph.graficar_fase(np.angle(campo_interferenciaObjetoReferencia),ancho_SensorInput,
+    alto_SensorInput,"fase")
+    ' ------ FIN SECCIÓN DE GRAFICACIÓN ------ '
 
 
+##################################
 ###########################################################################################
-
+##################################
 
 """ Definiendo parámetro para el tamaño del diafragma """
 
