@@ -66,11 +66,9 @@ apertura_Numerica = 0.4
 #Distancia focal del objetivo de microscopio #UNIDADES: m
 distancia_focalMO = 0.009
 
-#Distancia de trabajo del objetivo de microscopio #UNIDADES: m
-distancia_Trabajo = 0.0017
 
 #Distancia de longitud del objetivo de microscopio #UNIDADES: m
-distancia_Trabajo = 0.160
+distancia_TL = 0.160
 
 
 """ Definiendo parámetros de la iluminación coherente a utilizar  """
@@ -110,17 +108,14 @@ alto_SensorInput = resolucion_altoSensorInput*tamaño_PixelSensorInput
 
 
 
-""" Definición de distancias del arreglo """
-
-#Distancia focal asociada a la lente de tubo --> #UNIDADES: m
-distancia_Objeto = ((magnificacion + 1)*distancia_focalMO)/magnificacion   
+""" Definición de distancias del arreglo """ 
 
 #Se define una distancia de propagación arbitraria --> #UNIDADES: m
-distancia_Imagen = (magnificacion + 1)*distancia_focalMO 
+distancia_Imagen = distancia_TL + distancia_focalMO
 
+#Distancia focal asociada a la lente de tubo --> #UNIDADES: m
+distancia_Objeto = distancia_Imagen/magnificacion  
 
-print(distancia_Objeto)
-print(distancia_Imagen)
 
 
 """ Definiendo parámetro para el tamaño de la pupila """

@@ -1,3 +1,5 @@
+##TAREA --> CALCULAR RESOLUCIÓN DEL PROGRAMA TENIENDO EN CUENTA CARACTERÍSTICAS DEL MONTAJE REALIZADO
+
 """ DESCRIPCIÓN 
 --> Configuración de microscopio conjugado a infinito con iluminación coherente
 
@@ -52,10 +54,10 @@ tamaño_PixelSensorInput = 5.2E-6
 """ Definiendo parámetros objetivo microscopio """
 
 #Magnificación objetivo de microscopio
-magnificacion = 20
+magnificacion = 10
 
 #Apertura numérica objetivo de microscopio
-apertura_Numerica = 0.4 
+apertura_Numerica = 0.25 
 
 #Distancia focal del objetivo de microscopio #UNIDADES: m
 ### NOTA: Si se desconoce la distancia focal del objetivo de microscopio escribir el número CERO (0) 
@@ -76,7 +78,8 @@ longitud_onda_input = 632.8E-9 #UNIDADES: m
 """ Definiendo parámetros del montaje  """
 
 #Se define una distancia de propagación arbitraria 'd' para simulación de sistema 4F --> #UNIDADES: m
-distancia_propagacionAribitraria = 0.01 
+distancia_propagacionAribitraria = 0.18  #Se hace igual a la distancia focal TL para convertir el sistema en uno invariante al
+                                         #desplazamiento --> ELIMINACIÓN DEL TÉRMINO DE FASE PARABÓLICO
 
 ' ################ FIN SECCIÓN DE CARACTERIZACIÓN ARREGLO ################## '
 
@@ -343,3 +346,7 @@ graph.graficar_intensidad(intensidad_campoEntradaSegundoTramo,anchoX_VentanaPlan
 
 """ Graficando la intensidad del campo de salida del arreglo """
 graph.graficar_intensidad(intensidad_campoPlanoMedicion,ancho_SensorInput,alto_SensorInput,"Intensidad del campo en plano de MEDICIÓN")
+
+
+""" Graficar fase del campo de salida del arreglo """
+graph.graficar_fase(np.angle(campo_PlanoMedicion),ancho_SensorInput,alto_SensorInput,"Fase del campo en el plano de medición")
