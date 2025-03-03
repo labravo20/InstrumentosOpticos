@@ -145,8 +145,8 @@ graph.graficar_transmitancia(mascaraReconstruccion,ancho_SensorInput,alto_Sensor
 
 # Crear malla de puntos de plano ESPECTRO DE FOURIER
 
-delta_fx = 1/(resolucion_anchoSensorInput * deltas_Sensor["deltaPlanoEntrada_X"]) #Tamaño de cada pixel en plano de Fourier (1/m)
-delta_fy = 1/(resolucion_altoSensorInput * deltas_Sensor["deltaPlanoEntrada_Y"]) #Tamaño de cada pixel en plano de Fourier (1/m)
+delta_fx = (longitud_onda_input*distancia_focalMO)/(resolucion_anchoSensorInput * deltas_Sensor["deltaPlanoEntrada_X"]) #Tamaño de cada pixel en plano de Fourier (1/m)
+delta_fy = (longitud_onda_input*distancia_focalMO)/(resolucion_altoSensorInput * deltas_Sensor["deltaPlanoEntrada_Y"]) #Tamaño de cada pixel en plano de Fourier (1/m)
 
 
 #Calculando el ancho del arreglo en el plano de Fourier
@@ -173,11 +173,12 @@ intensidad_TransformadaFourierRecosntruccion = (np.abs(transformada_FourierRecon
 """Se diseña una máscara de transmitancia para filtrar la imágen gemela de interés """
 
 #Definición del radio de la pupila en el plano de Fourier
-#radio_pupilaEscaladaPlanoFourier= 1/(radio_pupilaInput) #REVISAR
-radio_pupilaEscaladaPlanoFourier= 16000
+#radio_pupilaEscaladaPlanoFourier= 1 #REVISAR
+#radio_pupilaEscaladaPlanoFourier= 0.0003
+radio_pupilaEscaladaPlanoFourier= 0.00023
 
 # Se define el vector asociado a las coordenadas de la máscara de filtrado
-coordenadas_MascaraFiltrado = [-20000,12000] #coordenada TOMAS EXPERIMENTALES
+coordenadas_MascaraFiltrado = [-0.000258,0.000158] #coordenada TOMAS EXPERIMENTALES
 
 #Creación de la máscara de filtrado para el proceso de reconstrucción
 mascaraReconstruccion_Filtrado = mascaras.funcion_Circulo(radio_pupilaEscaladaPlanoFourier,coordenadas_MascaraFiltrado,
@@ -224,8 +225,11 @@ graph.graficar_intensidad(intensidad_CampoFiltrado,anchoX_PlanoFourier,altoY_Pla
 
 graph.graficar_intensidad(intensidad_CampoOpticoHolograma,ancho_SensorInput,alto_SensorInput,"Campo Optico Filtrado")
 
+graph.graficar_fase(np.angle(campo_Reconstruccion),ancho_SensorInput,alto_SensorInput,"FASE")
+
 graph.graficar_intensidad(intensidad_matrizCampoNOcontribucionOndaPlana,ancho_SensorInput,alto_SensorInput,
                           "Campo óptico del objeto")
 
 graph.graficar_fase(np.angle(matriz_campoNOContribucionOndaPlana),ancho_SensorInput,alto_SensorInput,
                     "Distribución de fase Campo óptico objeto")
+
