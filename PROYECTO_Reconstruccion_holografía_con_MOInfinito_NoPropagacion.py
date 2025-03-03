@@ -359,15 +359,15 @@ intensidad_campoPlanoImagen = amplitud_campoPlanoImagen**2
 ' ------ EMPIEZA SECCIÓN DE GRAFICACIÓN ------ '
 
 """ Graficando máscara de transmitancia """
-graph.graficar_transmitancia(mascara,anchoX_VentanaPlanoMascara,altoY_VentanaPlanoMascara,"Objeto de análisis")
+#graph.graficar_transmitancia(mascara,anchoX_VentanaPlanoMascara,altoY_VentanaPlanoMascara,"Objeto de análisis")
 
 
 """ Graficando la intensidad del campo de salida del arreglo """
-graph.graficar_intensidad(intensidad_campoPlanoImagen,ancho_SensorInput,alto_SensorInput,"Intensidad del campo en plano IMÁGEN")
+#graph.graficar_intensidad(intensidad_campoPlanoImagen,ancho_SensorInput,alto_SensorInput,"Intensidad del campo en plano IMÁGEN")
 
 
 """ Graficando la información de fase de el campo en el plano imágen """
-graph.graficar_fase(np.angle(campo_PlanoImagen),ancho_SensorInput,alto_SensorInput,"Fase de campo en Plano IMÁGEN")
+#graph.graficar_fase(np.angle(campo_PlanoImagen),ancho_SensorInput,alto_SensorInput,"Fase de campo en Plano IMÁGEN")
 
 ' ------ FIN SECCIÓN DE GRAFICACIÓN ------ '
 
@@ -401,12 +401,23 @@ intensidad_interferenciaObjetoReferencia = (np.abs(campo_interferenciaObjetoRefe
 ' ------ EMPIEZA SECCIÓN DE GRAFICACIÓN ------ '
 
 """ Graficando el campo resultante de la formación del holograma (interferencia entre haz de referencia y haz objeto)"""
-graph.graficar_intensidad(intensidad_interferenciaObjetoReferencia,ancho_SensorInput,alto_SensorInput,"HOLOGRAMA")
+#graph.graficar_intensidad(intensidad_interferenciaObjetoReferencia,ancho_SensorInput,alto_SensorInput,"HOLOGRAMA")
 
 ' ------ FIN SECCIÓN DE GRAFICACIÓN ------ '
 
 
 ######################## INICIA SECCIÓN DE RECONSTRUCCIÓN HOLOGRAMA ##############################
+
+""" Definición de variables para cálculo de sistema 4F para reconstrucción del holograma """
+
+#Definiendo distancia focal asociada a la primera lente
+distancia_focalLente01 = 0.06
+
+#Definiendo distancia focal asociada a la segunda lente
+distancia_focalLente02 = 0.02
+
+#Definiendo distancia de propagación arbitraria
+distancia_propagacionAribitrariaReconstruccion = 0.02
 
 
 
@@ -418,11 +429,11 @@ graph.graficar_intensidad(intensidad_interferenciaObjetoReferencia,ancho_SensorI
 
 #Se calcula la matriz asociada al proceso de propagación desde el plano objeto
 #hasta el plano de la lente
-matrizReconstruccion_propagacionPrimerTramo = matriz.propagacion_MedioHomogeneo(distancia_focalMO)
+matrizReconstruccion_propagacionPrimerTramo = matriz.propagacion_MedioHomogeneo(distancia_focalLente01)
 
-matrizReconstruccion_lente = matriz.lente_DelgadaConociendoDistanciaFocal(distancia_focalMO)
+matrizReconstruccion_lente = matriz.lente_DelgadaConociendoDistanciaFocal(distancia_focalLente01)
 
-matrizReconstruccion_propagacion02 = matriz.propagacion_MedioHomogeneo(distancia_focalMO)
+matrizReconstruccion_propagacion02 = matriz.propagacion_MedioHomogeneo(distancia_focalLente01)
 
 
 
@@ -456,14 +467,14 @@ caminoReconstruccion_opticoCentralPrimerTramo = matriz.camino_Optico(lista_matri
 
 #Se calcula la matriz asociada al proceso de propagación desde el plano de la pupila 
 # hasta el plano de la lente 02
-matrizReconstruccion_propagacion01SegundoTramo = matriz.propagacion_MedioHomogeneo(distancia_propagacionAribitraria)
+matrizReconstruccion_propagacion01SegundoTramo = matriz.propagacion_MedioHomogeneo(distancia_propagacionAribitrariaReconstruccion)
 
 #Se calcula la matriz asociada a la interacción con la lente 02
-matrizReconstruccion_lente02 = matriz.lente_DelgadaConociendoDistanciaFocal(distancia_focalTL)
+matrizReconstruccion_lente02 = matriz.lente_DelgadaConociendoDistanciaFocal(distancia_focalLente02)
 
 #Se calcula la matriz asociada al proceso de propagación desde el plano de la lente 02
 #hasta el plano de medición
-matrizReconstruccion_propagacion02SegundoTramo = matriz.propagacion_MedioHomogeneo(distancia_focalTL)
+matrizReconstruccion_propagacion02SegundoTramo = matriz.propagacion_MedioHomogeneo(distancia_focalLente02)
 
 
 
@@ -583,24 +594,19 @@ intensidad_campoReconstruccionEntradaSegundoTramo_SinFiltro = np.abs(campoRecons
 """Se diseña una máscara de transmitancia para filtrar la imágen gemela de interés """
 
 # Definición del Lado del rectangulo (dimensión de máscara de transmitancia)
-lado_mascaraReconstruccion = 0.00033
+lado_mascaraReconstruccion = 0.0012
 
-# # Se calculan las coordenadas de la máscara de filtrado
-# ## NOTA: Las coordenadas se calculan teniendo en cuenta la relación de cosenos directores con las coordenadas 
-# ## frecuenciales.
-# x_Filtrado = cosenoDirector_HazReferenciaAlfa*distancia_focalMO
-# y_Filtrado = cosenoDirector_HazReferenciaBeta*distancia_focalMO
 
 # # Se define el vector asociado a las coordenadas de la máscara de filtrado
-# coordenadas_MascaraFiltrado = [-y_Filtrado,-x_Filtrado]
-#coordenadas_MascaraFiltrado = [-0.00067,-0.00066]
-coordenadas_MascaraFiltrado = [0.00029,-0.00018]
+#coordenadas_MascaraFiltrado = [-0.002,-0.002] #coordenada SIMULACIÓN
+coordenadas_MascaraFiltrado = [-0.0008,0.00049] #coordenada TOMAS EXPERIMENTALES
 
 #Creación de la máscara de filtrado para el proceso de reconstrucción
 mascaraReconstruccion_Filtrado = mascaras.funcion_Rectangulo(lado_mascaraReconstruccion,lado_mascaraReconstruccion,
-                                                             coordenadas_MascaraFiltrado,xx_PlanoPupilaReconstruccion,
-                                                             yy_PlanoPupilaReconstruccion)
-
+                                                              coordenadas_MascaraFiltrado,xx_PlanoPupilaReconstruccion,
+                                                              yy_PlanoPupilaReconstruccion)
+#mascaraReconstruccion_Filtrado = mascaras.funcion_Cruz(lado_mascaraReconstruccion,lado_mascaraReconstruccion/3,coordenadas_MascaraFiltrado,
+#                                                       xx_PlanoPupilaReconstruccion,yy_PlanoPupilaReconstruccion)
 
 
 """ Se calcula el campo de entrada para el SEGUNDO TRAMO del arreglo 
@@ -639,8 +645,10 @@ graph.graficar_transmitancia(mascaraReconstruccion,ancho_SensorInput,alto_Sensor
 
 
 """ Graficando intensidad del campo que entra al SEGUNDO TRAMO del arreglo"""
-graph.graficar_intensidad(intensidad_campoReconstruccionEntradaSegundoTramo_SinFiltro,anchoX_VentanaPlanoPupilaReconstruccion,
-                              altoY_VentanaPlanoPupilaReconstruccion,"Transformada de Fourier del objeto",1,0.0001)
+#graph.graficar_intensidad(intensidad_campoReconstruccionEntradaSegundoTramo_SinFiltro,anchoX_VentanaPlanoPupilaReconstruccion,
+#                              altoY_VentanaPlanoPupilaReconstruccion,"Transformada de Fourier del objeto",1,0.0001)
+graph.graficar_intensidad(np.log(intensidad_campoReconstruccionEntradaSegundoTramo_SinFiltro),anchoX_VentanaPlanoPupilaReconstruccion,
+                              altoY_VentanaPlanoPupilaReconstruccion,"Transformada de Fourier del objeto",1,1)
 
 
 """ Graficando máscara de filtrado"""
@@ -657,13 +665,13 @@ graph.graficar_intensidad(intensidad_campoReconstruccionEntradaSegundoTramo,anch
 graph.graficar_intensidad(intensidad_campoReconstruccionPlanoMedicion,anchoX_VentanaPlanoMedicionReconstruccion,
                           altoY_VentanaPlanoMedicionReconstruccion,"Intensidad campo de salida")
 
-graph.graficar_fase(np.angle(campoReconstruccion_PlanoMedicion),anchoX_VentanaPlanoMedicionReconstruccion,altoY_VentanaPlanoMedicionReconstruccion,
-                    "FASE CON CONTRIBUCION INTERFERENCIA")
+# graph.graficar_fase(np.angle(campoReconstruccion_PlanoMedicion),anchoX_VentanaPlanoMedicionReconstruccion,altoY_VentanaPlanoMedicionReconstruccion,
+#                     "FASE CON CONTRIBUCION INTERFERENCIA")
 
-camino_OpticoCampoObjeto = ((2*np.pi)/longitud_onda_input)*(np.angle(campoReconstruccion_PlanoMedicion))
+# camino_OpticoCampoObjeto = (np.angle(campoReconstruccion_PlanoMedicion))/numero_onda_input
 
-graph.graficar_longitudCaminoOptico(camino_OpticoCampoObjeto,anchoX_VentanaPlanoMedicionReconstruccion,altoY_VentanaPlanoMedicionReconstruccion,
-                          "Longitud de camino óptico")
+# graph.graficar_longitudCaminoOptico(camino_OpticoCampoObjeto,anchoX_VentanaPlanoMedicionReconstruccion,altoY_VentanaPlanoMedicionReconstruccion,
+#                           "Longitud de camino óptico")
 
 
 ' ------ FIN SECCIÓN DE GRAFICACIÓN ------- '
@@ -676,8 +684,8 @@ graph.graficar_longitudCaminoOptico(camino_OpticoCampoObjeto,anchoX_VentanaPlano
 
 #Definición de vector con cosenos directores asociado al haz referencia
 #vector_cosenosDirectoresRef = [cosenoDirector_HazReferenciaAlfa,cosenoDirector_HazReferenciaBeta] 
-#vector_cosenosDirectoresRef = [-0.0335,-0.033] 
-vector_cosenosDirectoresRef = [0.0145,0.0019] 
+#vector_cosenosDirectoresRef = [0.03333,0.0333] 
+vector_cosenosDirectoresRef = [0.01333,0.008166] 
 
 #Definición de vector de onda asociado al haz de referencia
 vector_ondaRef = [numero_onda_input*vector_cosenosDirectoresRef[0], numero_onda_input*vector_cosenosDirectoresRef[1]]
@@ -701,7 +709,7 @@ graph.graficar_fase(np.angle(matriz_campoNOContribucionOndaPlana),anchoX_Ventana
 
 ## FUNCIÓN PARA CÁLCULO DE CAMINO ÓPTICO ##
 
-camino_OpticoCampoObjeto = ((2*np.pi)/longitud_onda_input)*(np.angle(matriz_campoNOContribucionOndaPlana))
+camino_OpticoCampoObjeto = (np.angle(matriz_campoNOContribucionOndaPlana))/numero_onda_input
 
 graph.graficar_longitudCaminoOptico(camino_OpticoCampoObjeto,anchoX_VentanaPlanoMedicionReconstruccion,altoY_VentanaPlanoMedicionReconstruccion,
                           "Longitud de camino óptico")

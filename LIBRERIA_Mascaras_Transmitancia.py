@@ -186,6 +186,45 @@ def funcion_Rectangulo(base, altura, centro, xx, yy):
     return mascara_rectangular
  
 
+""" Definición de función para máscara en forma de cruz """
+
+def funcion_Cruz(largo, grosor, centro, xx, yy):
+    '''
+    Crea una máscara con una cruz
+    
+    FUNCIÓN RECIBE:
+        largo   == float  (longitud de cada brazo de la cruz)
+        grosor  == float  (ancho de cada brazo de la cruz)
+        centro  == type(list) --> [X, Y] (centro de la cruz)
+        xx, yy  == malla de puntos de salida en la cuál se encontrará la cruz
+    
+    FUNCIÓN RETORNA: Máscara en forma de cruz
+    '''
+    
+    # Se verifica si se especificó la posición del centro de la cruz
+    if centro is None:
+        centro = [0, 0]  # Se coloca en el origen por defecto
+    
+    # Definir los límites de los brazos de la cruz
+    x_Min_V = centro[0] - grosor / 2  # Vertical
+    x_Max_V = centro[0] + grosor / 2
+    y_Min_V = centro[1] - largo / 2
+    y_Max_V = centro[1] + largo / 2
+    
+    y_Min_H = centro[1] - grosor / 2  # Horizontal
+    y_Max_H = centro[1] + grosor / 2
+    x_Min_H = centro[0] - largo / 2
+    x_Max_H = centro[0] + largo / 2
+    
+    # Se ubican las dimensiones de la cruz dentro de la malla de puntos
+    mascara_vertical = (xx >= x_Min_V) & (xx <= x_Max_V) & (yy >= y_Min_V) & (yy <= y_Max_V)
+    mascara_horizontal = (xx >= x_Min_H) & (xx <= x_Max_H) & (yy >= y_Min_H) & (yy <= y_Max_H)
+    
+    # La máscara final es la unión de los dos brazos
+    mascara_cruz = mascara_vertical | mascara_horizontal
+    
+    return mascara_cruz
+
 
 """ Definición de función para máscara corazón """
 

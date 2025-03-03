@@ -31,7 +31,7 @@ xx,yy = m.malla_Puntos(resolucion_input,longitud_arreglo_input)
 
 
 # Cargar la imagen PNG como máscara de transmitancia
-ruta_imagen_png = "/home/labravo/Downloads/imagenAMPLICADA_MOInfinito.png"  # Especifica la ruta de imagen
+ruta_imagen_png = "/home/labravo/Downloads/Holograma007.tif"  # Especifica la ruta de imagen
 mascara = function.cargar_imagen_png(ruta_imagen_png, resolucion_input,resolucion_input)
 
 """ Creación de abertura circular """
@@ -46,7 +46,7 @@ numero_onda = ((2*np.pi)/longitud_onda_input)
 """ Definición de variables input para creación malla de puntos plano medición"""
 
 #Llamando a la función para determinar los deltas de input y output
-delta_muestreo = producto_espacio_frecuencia(longitud_onda_input,z_input,resolucion_input,longitud_arreglo_input)
+delta_muestreo = producto_espacio_frecuencia(resolucion_input,longitud_arreglo_input)
 
 resolucion_medicion = resolucion_input 
 longitud_arreglo_medicion = (delta_muestreo[1])*resolucion_medicion #UNIDADES: m

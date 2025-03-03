@@ -41,7 +41,7 @@ def graficar_amplitud(campo,xx_TamañoVentana,yy_TamañoVentana,titulo, valor_mi
 
 def graficar_intensidadLog(campo,xx_TamañoVentana,yy_TamañoVentana,titulo, valor_min = 1,valor_max = 1):
     
-    plt.imshow(np.log(campo + 1),extent=[- xx_TamañoVentana/ 2, xx_TamañoVentana/ 2,
+    plt.imshow(np.log(campo),extent=[- xx_TamañoVentana/ 2, xx_TamañoVentana/ 2,
                              -yy_TamañoVentana/ 2, yy_TamañoVentana/ 2],
                              cmap="gray",
                              vmin = valor_min*(np.min(campo)),
@@ -52,7 +52,6 @@ def graficar_intensidadLog(campo,xx_TamañoVentana,yy_TamañoVentana,titulo, val
     plt.xlabel("X (m)")
     plt.ylabel("Y (m)")
     plt.show()
-
 
 
 
@@ -77,7 +76,7 @@ def graficar_longitudCaminoOptico(campo,xx_TamañoVentana,yy_TamañoVentana,titu
     
     plt.imshow(campo, extent=[-xx_TamañoVentana/2, xx_TamañoVentana/2,
                               -yy_TamañoVentana/2, yy_TamañoVentana/2], 
-                              cmap='gray')
+                              cmap='winter')
     plt.title(titulo)
     plt.colorbar(label="Longitud de camino óptico [m]")
     plt.xlabel("X (m)")
