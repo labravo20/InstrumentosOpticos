@@ -19,10 +19,7 @@ TRAMO 02: *propagación(distancia arbitraria d)* --> LENTE_TL
 Posteriormente al tramo dos se procede a la formación del holograma, de forma que 
 en el plano imagen se genera interferencia entre el campo de salida del anterior arreglo 
 (haz objeto) y una onda plana de referencia (haz referencia) --> Esta interferencia se realiza
-en el plano del sensor: Des pués de la formación de la imagen se procede a propagar el resultado 
-de la formación con el MO en el sistema 4f, a una distancia arbitraria 'd'(implica presencia
-de efectos difractivos), para llegar al plano donde se forma el holograma al realizar la interferencia
-antes mencionada.
+en el plano del sensor
 
 """
 

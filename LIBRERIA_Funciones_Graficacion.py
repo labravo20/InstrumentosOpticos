@@ -71,6 +71,19 @@ def graficar_fase(campo,xx_TamañoVentana,yy_TamañoVentana,titulo):
 
 
 
+""" Función para graficar longitud de camino óptico """
+
+def graficar_longitudCaminoOptico(campo,xx_TamañoVentana,yy_TamañoVentana,titulo):
+    
+    plt.imshow(campo, extent=[-xx_TamañoVentana/2, xx_TamañoVentana/2,
+                              -yy_TamañoVentana/2, yy_TamañoVentana/2], 
+                              cmap='gray')
+    plt.title(titulo)
+    plt.colorbar(label="Longitud de camino óptico [m]")
+    plt.xlabel("X (m)")
+    plt.ylabel("Y (m)")
+    plt.show()
+
 """ Funcion para graficar transmitancias """
 
 def graficar_transmitancia(campo,xx_TamañoVentana,yy_TamañoVentana,titulo):
