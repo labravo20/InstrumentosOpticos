@@ -1,4 +1,3 @@
-
 """ Importando librerias y documentos necesarios """
 
 import LIBRERIA_Mascaras_Transmitancia as mascaras
@@ -128,8 +127,7 @@ print(radio_pupilaInput)
 """ Creación de mascara de transmitancia """
 
 # Cargar la imagen PNG como máscara de transmitancia
-ruta_imagen_png = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/HOLOGRAMAS/fibra_Enfoque_Luz1.tif"
-#ruta_imagen_png = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/HOLOGRAMAS/fibra_EnfoquePlanoEnfoqueLuz.tif" 
+ruta_imagen_png = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/HOLOGRAMAS/fibra_EnfoquePlanoEnfoqueLuz.tif" 
 #ruta_imagen_png = "/home/labravo/Downloads/Holograma007.tif"  # Especifica la ruta de tu imagen
 #ruta_imagen_png = "/home/labravo/Downloads/Mi_primer_holograma.PNG"  # Especifica la ruta de tu imagen
 mascaraReconstruccion = function.cargar_imagen_png(ruta_imagen_png,resolucion_anchoSensorInput,resolucion_altoSensorInput)
@@ -155,7 +153,7 @@ delta_fy = (longitud_onda_input*distancia_focalMO)/(resolucion_altoSensorInput *
 #Calculando el ancho del arreglo en el plano de Fourier
 anchoX_PlanoFourier = delta_fx*resolucion_anchoSensorInput
 altoY_PlanoFourier = delta_fy*resolucion_altoSensorInput
-print(delta_fy)
+
 
 # Crear la malla de puntos plano de entrada --> HOLOGRAMA A RECONSTRUIR 
 xx_planoFourier, yy_planoFourier = mascaras.malla_Puntos(resolucion_anchoSensorInput, 
@@ -176,15 +174,13 @@ intensidad_TransformadaFourierRecosntruccion = (np.abs(transformada_FourierRecon
 """Se diseña una máscara de transmitancia para filtrar la imágen gemela de interés """
 
 #Definición del radio de la pupila en el plano de Fourier
-#radio_pupilaEscaladaPlanoFourier= 0.0003 # --> USAF
-radio_pupilaEscaladaPlanoFourier= 0.0005 # --> MUESTRAS CON ILUMINACIÓN 
+#radio_pupilaEscaladaPlanoFourier= 1 #REVISAR
+#radio_pupilaEscaladaPlanoFourier= 0.0003
+radio_pupilaEscaladaPlanoFourier= 0.0003
 
-
-# Se define el vector asociado a las coordenadas de la máscara de filtrado  --> CALIBRANDO COORDENADAS TRANSFORMADA DE FOURIER
-
-#coordenadas_MascaraFiltrado = [-0.000258,0.000158] #coordenada TOMAS EXPERIMENTALES USAF
-#coordenadas_MascaraFiltrado = [-0.00107,-0.0002] #coordenada TOMAS EXPERIMENTALES CON ILUMINACIÓN
-coordenadas_MascaraFiltrado = [-0.00107,-0.0002] #coordenada TOMAS EXPERIMENTALES 
+# Se define el vector asociado a las coordenadas de la máscara de filtrado
+#coordenadas_MascaraFiltrado = [-0.000258,0.000158] #coordenada TOMAS EXPERIMENTALES
+coordenadas_MascaraFiltrado = [-0.000858,-0.000207] #coordenada TOMAS EXPERIMENTALES
 
 #Creación de la máscara de filtrado para el proceso de reconstrucción
 mascaraReconstruccion_Filtrado = mascaras.funcion_Circulo(radio_pupilaEscaladaPlanoFourier,coordenadas_MascaraFiltrado,
@@ -206,9 +202,8 @@ intensidad_CampoOpticoHolograma = (np.abs(campo_Reconstruccion))**2
 
 
 #Definiceión de onda plana para eliminar aporte de efectos de interferencia
-#vector_cosenosDirectoresRef =  [-0.012656,0.0075936] #coordenada TOMAS EXPERIMENTALES USAF
-#vector_cosenosDirectoresRef =  [-0.0535,-0.01035] #coordenada TOMAS EXPERIMENTALES CON ILUMINACIÓN
-vector_cosenosDirectoresRef =  [-0.0535,-0.01035] #coordenada TOMAS EXPERIMENTALES
+#vector_cosenosDirectoresRef =  [-0.012656,0.0075936] #coordenada TOMAS EXPERIMENTALES
+vector_cosenosDirectoresRef =  [-0.0429,-0.01035] #coordenada TOMAS EXPERIMENTALES
 
 #Definición de vector de onda asociado al haz de referencia
 vector_ondaRef = [numero_onda_input*vector_cosenosDirectoresRef[0], numero_onda_input*vector_cosenosDirectoresRef[1]]
@@ -223,8 +218,8 @@ matriz_campoNOContribucionOndaPlana = campo_Reconstruccion*onda_PlanaRefInversa
 intensidad_matrizCampoNOcontribucionOndaPlana = (np.abs(matriz_campoNOContribucionOndaPlana))**2
 
 #Graficando la transformada de Fourier del holograma
-graph.graficar_intensidad(np.log(intensidad_TransformadaFourierRecosntruccion),anchoX_PlanoFourier,altoY_PlanoFourier,
-                             "Transformada de Fourier del Holograma",1,1)
+graph.graficar_intensidad(intensidad_TransformadaFourierRecosntruccion,anchoX_PlanoFourier,altoY_PlanoFourier,
+                             "Transformada de Fourier del Holograma",1,0.0001)
 
 graph.graficar_transmitancia(mascaraReconstruccion_Filtrado,anchoX_PlanoFourier,altoY_PlanoFourier,"Mascara Filtrado")
 
@@ -240,12 +235,3 @@ graph.graficar_intensidad(intensidad_matrizCampoNOcontribucionOndaPlana,ancho_Se
 
 graph.graficar_fase(np.angle(matriz_campoNOContribucionOndaPlana),ancho_SensorInput,alto_SensorInput,
                     "Distribución de fase Campo óptico objeto")
-
-
-#MULTIPLICANDO POR TÉRMINO DE FASE 
-fase_adicionalPrueba = np.exp(-1j*(1*(np.pi)/4))
-
-matriz_prueba = matriz_campoNOContribucionOndaPlana*fase_adicionalPrueba
-
-graph.graficar_fase(np.angle(matriz_prueba),ancho_SensorInput,alto_SensorInput,
-                    "Distribución de fase Campo óptico objeto + FASE PRUEBA")
