@@ -128,8 +128,8 @@ print(radio_pupilaInput)
 """ Creación de mascara de transmitancia """
 
 # Cargar la imagen PNG como máscara de transmitancia
-ruta_imagen_png = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/HOLOGRAMAS/fibra_Enfoque_Luz1.tif"
-#ruta_imagen_png = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/HOLOGRAMAS/fibra_EnfoquePlanoEnfoqueLuz.tif" 
+#ruta_imagen_png = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/HOLOGRAMAS/fibra_Enfoque_Luz1.tif"
+ruta_imagen_png = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/HOLOGRAMAS/fibra_EnfoquePlanoEnfoqueLuz.tif" 
 #ruta_imagen_png = "/home/labravo/Downloads/Holograma007.tif"  # Especifica la ruta de tu imagen
 #ruta_imagen_png = "/home/labravo/Downloads/Mi_primer_holograma.PNG"  # Especifica la ruta de tu imagen
 mascaraReconstruccion = function.cargar_imagen_png(ruta_imagen_png,resolucion_anchoSensorInput,resolucion_altoSensorInput)
@@ -183,8 +183,8 @@ radio_pupilaEscaladaPlanoFourier= 0.0005 # --> MUESTRAS CON ILUMINACIÓN
 # Se define el vector asociado a las coordenadas de la máscara de filtrado  --> CALIBRANDO COORDENADAS TRANSFORMADA DE FOURIER
 
 #coordenadas_MascaraFiltrado = [-0.000258,0.000158] #coordenada TOMAS EXPERIMENTALES USAF
-#coordenadas_MascaraFiltrado = [-0.00107,-0.0002] #coordenada TOMAS EXPERIMENTALES CON ILUMINACIÓN
-coordenadas_MascaraFiltrado = [-0.00107,-0.0002] #coordenada TOMAS EXPERIMENTALES 
+coordenadas_MascaraFiltrado = [-0.00107,-0.0002] #coordenada TOMAS EXPERIMENTALES CON ILUMINACIÓN
+#coordenadas_MascaraFiltrado = [-0.000955,-0.00066] #coordenada TOMAS EXPERIMENTALES 
 
 #Creación de la máscara de filtrado para el proceso de reconstrucción
 mascaraReconstruccion_Filtrado = mascaras.funcion_Circulo(radio_pupilaEscaladaPlanoFourier,coordenadas_MascaraFiltrado,
@@ -207,8 +207,8 @@ intensidad_CampoOpticoHolograma = (np.abs(campo_Reconstruccion))**2
 
 #Definiceión de onda plana para eliminar aporte de efectos de interferencia
 #vector_cosenosDirectoresRef =  [-0.012656,0.0075936] #coordenada TOMAS EXPERIMENTALES USAF
-#vector_cosenosDirectoresRef =  [-0.0535,-0.01035] #coordenada TOMAS EXPERIMENTALES CON ILUMINACIÓN
-vector_cosenosDirectoresRef =  [-0.0535,-0.01035] #coordenada TOMAS EXPERIMENTALES
+vector_cosenosDirectoresRef =  [-0.0535,-0.01035] #coordenada TOMAS EXPERIMENTALES CON ILUMINACIÓN
+#vector_cosenosDirectoresRef =  [-0.04775,-0.033] #coordenada TOMAS EXPERIMENTALES
 
 #Definición de vector de onda asociado al haz de referencia
 vector_ondaRef = [numero_onda_input*vector_cosenosDirectoresRef[0], numero_onda_input*vector_cosenosDirectoresRef[1]]
@@ -243,7 +243,7 @@ graph.graficar_fase(np.angle(matriz_campoNOContribucionOndaPlana),ancho_SensorIn
 
 
 #MULTIPLICANDO POR TÉRMINO DE FASE 
-fase_adicionalPrueba = np.exp(-1j*(1*(np.pi)/4))
+fase_adicionalPrueba = np.exp(1j*(1*(np.pi)/4))
 
 matriz_prueba = matriz_campoNOContribucionOndaPlana*fase_adicionalPrueba
 
