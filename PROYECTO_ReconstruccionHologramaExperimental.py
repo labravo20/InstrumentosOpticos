@@ -1,3 +1,14 @@
+""" DESCRIPCIÓN 
+
+Documento para trabajar la reconstrucción de hologramas. El proceso consiste en aplicar la transformada de Fourier 
+al campo del holograma para filtrar, en el dominio de Fourier, las frecuencias asociadas a una de las imágenes GEMELAS
+con información sobre el holograma. Posteriormente, el campo resultante de la filtración es multiplicado por el inverso de 
+la onda plana de referencia usada para realizar la interferencia, pues de esta forma de descarta el aporte de la interferencia
+antes mencionada. El resultado de las anteriores operaciones es el objeto original magnificado por el sistema de amplificación
+del microscopio.
+
+"""
+
 
 """ Importando librerias y documentos necesarios """
 
@@ -10,19 +21,6 @@ import LIBRERIA_Funciones_Graficacion as graph
 
 
 
-######################## INICIA SECCIÓN DE RECONSTRUCCIÓN HOLOGRAMA ##############################
-
-""" Definición de variables para cálculo de sistema 4F para reconstrucción del holograma """
-
-#Definiendo distancia focal asociada a la primera lente
-distancia_focalLente01 = 0.06
-
-#Definiendo distancia focal asociada a la segunda lente
-distancia_focalLente02 = 0.02
-
-#Definiendo distancia de propagación arbitraria
-distancia_propagacionAribitrariaReconstruccion = 0.02
-
 ' ################ INICIO SECCIÓN DE CARACTERIZACIÓN ARREGLO ################## '
 ##### LA SIGUIENTE SECCIÓN SE REFIERE A INPUTS QUE DEBEN SER ESPECIFICADOS POR EL USUARIO*
 
@@ -30,20 +28,16 @@ distancia_propagacionAribitrariaReconstruccion = 0.02
 
 #Numero de muestras/puntos distribuidos en el ancho del sensor
 #resolucion_anchoSensorInput = 1280 
-resolucion_anchoSensorInput = 1024
+resolucion_anchoSensorInput = 1024  # Usando esta configuración se simplifica el cálculo para un sensor con distribución CUADRADA
+                                    # NOTA: Se decide usar esta configuración porque ya se configuraron las características de 
+                                    # reconstrucción adecuadas asociadas a este caso (específicamente las coordenadas del orden
+                                    # +1 presente en la transformada de Fourier del holograma). 
 
 #Numero de muestras/puntos distribuidos en el alto del sensor
 resolucion_altoSensorInput = 1024
 
 #Tamaño del pixel del sensor #UNIDADES: m
 tamaño_PixelSensorInput = 5.2E-6
-
-
-
-""" Definiendo parámetros del montaje  """
-
-#Se define una distancia de propagación arbitraria 'd' para simulación de sistema 4F --> #UNIDADES: m
-distancia_propagacionAribitraria = 0.2
 
 
 
@@ -54,20 +48,7 @@ longitud_onda_input = 632.8E-9 #UNIDADES: m
 
 
 
-""" Definiendo inclinación del ángulo de incidencia del haz de referencia para interferencia
-en la formación del holograma"""
-
-#Definiendo ángulo máximo --> LAS SIGUIENTES LINEAS DE CÓDIGO NO REQUIEREN INPUT DEL USUARIO
-angulo_MaxHazReferencia = np.arcsin(longitud_onda_input/(2*tamaño_PixelSensorInput))
-print("\nÁngulo máximo de inclinación del haz de referencia para garantizar buen funcionamiento sistema [GRADOS]:")
-print(np.degrees(angulo_MaxHazReferencia))
-
-#Definiendo ángulo de inclinación del haz de referencia respecto al haz objeto
-# NOTA: Leer en terminal 'print' con información sobre el ángulo máximo 
-cosenoDirector_HazReferenciaAlfa = np.cos(np.radians(0.25))
-
-cosenoDirector_HazReferenciaBeta = np.cos(np.radians(0.25))
-
+""" Definiendo parámetros del OM usado para el sistema de magnificación """
 
 #Magnificación objetivo de microscopio
 magnificacion = 10
@@ -82,7 +63,11 @@ distancia_focalMO = 0
 #Distancia focal asociada a la lente de tubo --> #UNIDADES: m
 distancia_focalTL = 0.2   
 
+
 ' ################ FIN SECCIÓN DE CARACTERIZACIÓN ARREGLO ################## '
+
+
+' ################ EMPIEZA SECCIÓN DE CÁLCULOS PARA CARACTERIZACIÓN ARREGLO ################## '
 
 """ Calculando parámetros de muestreo del sensor utilizado """
 
@@ -113,6 +98,7 @@ else:
     distancia_focalMO = distancia_focalMO
 
 
+
 """ Definiendo parámetro para el tamaño de la pupila """
 
 #Calculando el ángulo de apertura
@@ -122,18 +108,21 @@ angulo_Apertura = np.arcsin(apertura_Numerica)
 radio_pupilaInput =  distancia_focalMO*np.tan(angulo_Apertura) # Se define variable asociada al radio de la abertura que representará el
                                                                # radio del objetivo de microscopio --> Este se calcula haciendo uso de la
                                                                # abertura numérica y la longitud de tubo. 
-print(radio_pupilaInput)
 
 
-""" Creación de mascara de transmitancia """
+' ################ FIN SECCIÓN DE CÁLCULOS PARA CARACTERIZACIÓN ARREGLO ################## '
+
+
+' ################ EMPIEZA SECCIÓN DE RECONSTRUCCIÓN ################## '
+
+
+""" Creación de mascaras de transmitancia """
 
 # Cargar la imagen PNG como máscara de transmitancia
-#ruta_imagen_png = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/HOLOGRAMAS/fibra_Enfoque_Luz1.tif"
 ruta_imagen_png = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/HOLOGRAMAS/fibra_EnfoquePlanoEnfoqueLuz.tif" 
 #ruta_imagen_png = "/home/labravo/Downloads/Holograma007.tif"  # Especifica la ruta de tu imagen
 #ruta_imagen_png = "/home/labravo/Downloads/Mi_primer_holograma.PNG"  # Especifica la ruta de tu imagen
 mascaraReconstruccion = function.cargar_imagen_png(ruta_imagen_png,resolucion_anchoSensorInput,resolucion_altoSensorInput)
-
 
 
 # Crear la malla de puntos plano de entrada --> HOLOGRAMA A RECONSTRUIR 
@@ -141,10 +130,8 @@ xx_mascaraReconstruccion, yy_mascaraReconstruccion = mascaras.malla_Puntos(resol
                                                alto_SensorInput)
 
 
-""" Graficando máscara de transmitancia"""
-graph.graficar_transmitancia(mascaraReconstruccion,ancho_SensorInput,alto_SensorInput,"Imágen de entrada para reconstrucción")
 
-
+""" Implementación de condición producto espacio frecuencia para cálculo de malla de puntos en dominio de Fourier """
 
 # Crear malla de puntos de plano ESPECTRO DE FOURIER
 
@@ -155,7 +142,7 @@ delta_fy = (longitud_onda_input*distancia_focalMO)/(resolucion_altoSensorInput *
 #Calculando el ancho del arreglo en el plano de Fourier
 anchoX_PlanoFourier = delta_fx*resolucion_anchoSensorInput
 altoY_PlanoFourier = delta_fy*resolucion_altoSensorInput
-print(delta_fy)
+
 
 # Crear la malla de puntos plano de entrada --> HOLOGRAMA A RECONSTRUIR 
 xx_planoFourier, yy_planoFourier = mascaras.malla_Puntos(resolucion_anchoSensorInput, 
@@ -172,29 +159,32 @@ intensidad_TransformadaFourierRecosntruccion = (np.abs(transformada_FourierRecon
 
 
 
-
-"""Se diseña una máscara de transmitancia para filtrar la imágen gemela de interés """
+"""Se diseña e implementa una máscara de transmitancia para filtrar la imágen gemela de interés """
+### Se diseñan diferentes condiciones de máscara de filtrado dependiendo del ángulo del haz de referencia usado para 
+### la formación del holograma
 
 #Definición del radio de la pupila en el plano de Fourier
 #radio_pupilaEscaladaPlanoFourier= 0.0003 # --> USAF
-radio_pupilaEscaladaPlanoFourier= 0.0005 # --> MUESTRAS CON ILUMINACIÓN 
+radio_pupilaEscaladaPlanoFourier= 0.0004 # --> MUESTRAS CON ILUMINACIÓN 
 
 
 # Se define el vector asociado a las coordenadas de la máscara de filtrado  --> CALIBRANDO COORDENADAS TRANSFORMADA DE FOURIER
-
 #coordenadas_MascaraFiltrado = [-0.000258,0.000158] #coordenada TOMAS EXPERIMENTALES USAF
-coordenadas_MascaraFiltrado = [-0.00107,-0.0002] #coordenada TOMAS EXPERIMENTALES CON ILUMINACIÓN
-#coordenadas_MascaraFiltrado = [-0.000955,-0.00066] #coordenada TOMAS EXPERIMENTALES 
+#coordenadas_MascaraFiltrado = [-0.00107,-0.0002] #coordenada TOMAS EXPERIMENTALES SENSOR CUADRADO
+coordenadas_MascaraFiltrado = [-0.00081,-0.0002] #coordenada TOMAS EXPERIMENTALES SENSOR CUADRADO --> prueba DESPLAZAMIENTO
+#coordenadas_MascaraFiltrado = [-0.000852,-0.0002] #coordenada TOMAS EXPERIMENTALES 
 
 #Creación de la máscara de filtrado para el proceso de reconstrucción
 mascaraReconstruccion_Filtrado = mascaras.funcion_Circulo(radio_pupilaEscaladaPlanoFourier,coordenadas_MascaraFiltrado,
                                                           xx_planoFourier,yy_planoFourier)
 
-
+#Se implementa la filtración para obtener el campo filtrado
 campo_Filtrado = mascaraReconstruccion_Filtrado*transformada_FourierReconstruccion
 
+#Intensidad del campo resultante después del proceso de filtrado
 intensidad_CampoFiltrado = (np.abs(campo_Filtrado))**2
 
+""" Se vuelve al dominio espacial para determinar el campo complejo asociado al campo filtrado """
 
 #Calculando la transformada de fourier inversa del campo shifteado
 campo_FiltradoShifteado = np.fft.fftshift(campo_Filtrado)
@@ -202,13 +192,16 @@ campo_FiltradoShifteado = np.fft.fftshift(campo_Filtrado)
 #Calculando la transformada de Fourier inversa
 campo_Reconstruccion = np.fft.ifft2(campo_FiltradoShifteado)
 
+#Calculando intensidad del campo resultante en el dominio espacial
 intensidad_CampoOpticoHolograma = (np.abs(campo_Reconstruccion))**2
 
 
-#Definiceión de onda plana para eliminar aporte de efectos de interferencia
+""" Se diseña e implementa una onda plana, inversa al haz de referencia, para despreciar el aporte de la interferencia """
+
+#Definición de onda plana para eliminar aporte de efectos de interferencia
 #vector_cosenosDirectoresRef =  [-0.012656,0.0075936] #coordenada TOMAS EXPERIMENTALES USAF
-vector_cosenosDirectoresRef =  [-0.0535,-0.01035] #coordenada TOMAS EXPERIMENTALES CON ILUMINACIÓN
-#vector_cosenosDirectoresRef =  [-0.04775,-0.033] #coordenada TOMAS EXPERIMENTALES
+vector_cosenosDirectoresRef =  [-0.0535,-0.01035] #coordenada TOMAS EXPERIMENTALES SENSOR CUADRADO
+#vector_cosenosDirectoresRef =  [-0.0426,-0.01] #coordenada TOMAS EXPERIMENTALES
 
 #Definición de vector de onda asociado al haz de referencia
 vector_ondaRef = [numero_onda_input*vector_cosenosDirectoresRef[0], numero_onda_input*vector_cosenosDirectoresRef[1]]
@@ -220,7 +213,17 @@ onda_PlanaRefInversa = np.exp(-1j*((vector_ondaRef[0]*xx_mascaraReconstruccion) 
 # Se multiplica el campo de interés (PLANO MEDICIÓN) con la onda plana generada
 matriz_campoNOContribucionOndaPlana = campo_Reconstruccion*onda_PlanaRefInversa
 
+#Intensidad del campo resultante de la reconstrucción
 intensidad_matrizCampoNOcontribucionOndaPlana = (np.abs(matriz_campoNOContribucionOndaPlana))**2
+
+' ################ FIN SECCIÓN DE RECONSTRUCCIÓN ################## '
+
+
+' ################ EMPIEZA SECCIÓN DE GRAFICACIÓN ################## '
+
+""" Graficando máscara de transmitancia"""
+graph.graficar_transmitancia(mascaraReconstruccion,ancho_SensorInput,alto_SensorInput,"Imágen de entrada para reconstrucción")
+
 
 #Graficando la transformada de Fourier del holograma
 graph.graficar_intensidad(np.log(intensidad_TransformadaFourierRecosntruccion),anchoX_PlanoFourier,altoY_PlanoFourier,
@@ -231,9 +234,6 @@ graph.graficar_transmitancia(mascaraReconstruccion_Filtrado,anchoX_PlanoFourier,
 
 graph.graficar_intensidad(intensidad_CampoFiltrado,anchoX_PlanoFourier,altoY_PlanoFourier,"Tranformada de Fourier filtrada")
 
-#graph.graficar_intensidad(intensidad_CampoOpticoHolograma,ancho_SensorInput,alto_SensorInput,"Campo Optico Filtrado")
-
-#graph.graficar_fase(np.angle(campo_Reconstruccion),ancho_SensorInput,alto_SensorInput,"FASE")
 
 graph.graficar_intensidad(intensidad_matrizCampoNOcontribucionOndaPlana,ancho_SensorInput,alto_SensorInput,
                           "Campo óptico del objeto")
@@ -243,9 +243,12 @@ graph.graficar_fase(np.angle(matriz_campoNOContribucionOndaPlana),ancho_SensorIn
 
 
 #MULTIPLICANDO POR TÉRMINO DE FASE 
-fase_adicionalPrueba = np.exp(1j*(1*(np.pi)/4))
+# fase_adicionalPrueba = np.exp(1j*(1*(np.pi)/4))
 
-matriz_prueba = matriz_campoNOContribucionOndaPlana*fase_adicionalPrueba
+# matriz_prueba = matriz_campoNOContribucionOndaPlana*fase_adicionalPrueba
 
-graph.graficar_fase(np.angle(matriz_prueba),ancho_SensorInput,alto_SensorInput,
-                    "Distribución de fase Campo óptico objeto + FASE PRUEBA")
+# graph.graficar_fase(np.angle(matriz_prueba),ancho_SensorInput,alto_SensorInput,
+#                     "Distribución de fase Campo óptico objeto + FASE PRUEBA")
+
+
+' ################ EMPIEZA SECCIÓN DE GRAFICACIÓN ################## '
