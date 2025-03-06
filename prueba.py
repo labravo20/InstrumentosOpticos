@@ -119,7 +119,7 @@ radio_pupilaInput =  distancia_focalMO*np.tan(angulo_Apertura) # Se define varia
 """ Creación de mascaras de transmitancia """
 
 # Cargar la imagen PNG como máscara de transmitancia
-ruta_imagen_png = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/HOLOGRAMAS/fibra_EnfoquePlanoEnfoqueLuz.tif" 
+ruta_imagen_png = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/HOLOGRAMAS/estafue.tif" 
 #ruta_imagen_png = "/home/labravo/Downloads/Holograma007.tif"  # Especifica la ruta de tu imagen
 #ruta_imagen_png = "/home/labravo/Downloads/Mi_primer_holograma.PNG"  # Especifica la ruta de tu imagen
 mascaraReconstruccion = function.cargar_imagen_png(ruta_imagen_png,resolucion_anchoSensorInput,resolucion_altoSensorInput)
@@ -169,10 +169,9 @@ radio_pupilaEscaladaPlanoFourier= 0.0004 # --> MUESTRAS CON ILUMINACIÓN
 
 
 # Se define el vector asociado a las coordenadas de la máscara de filtrado  --> CALIBRANDO COORDENADAS TRANSFORMADA DE FOURIER
-#coordenadas_MascaraFiltrado = [-0.000258,0.000158] #coordenada TOMAS EXPERIMENTALES USAF
-#coordenadas_MascaraFiltrado = [-0.00107,-0.0002] #coordenada TOMAS EXPERIMENTALES SENSOR CUADRADO
-coordenadas_MascaraFiltrado = [-0.00081,-0.0002] #coordenada TOMAS EXPERIMENTALES SENSOR CUADRADO --> prueba DESPLAZAMIENTO
-#coordenadas_MascaraFiltrado = [-0.000852,-0.0002] #coordenada TOMAS EXPERIMENTALES 
+#coordenadas_MascaraFiltrado = [-0.000928,-0.000665] #coordenada TOMAS EXPERIMENTALES 
+coordenadas_MascaraFiltrado = [-0.0008,-0.000665] #coordenada TOMAS EXPERIMENTALES --> prueba DESPLAZAMIENTO para garantizar 
+                                                  #filtro "completo"
 
 #Creación de la máscara de filtrado para el proceso de reconstrucción
 mascaraReconstruccion_Filtrado = mascaras.funcion_Circulo(radio_pupilaEscaladaPlanoFourier,coordenadas_MascaraFiltrado,
@@ -199,9 +198,7 @@ intensidad_CampoOpticoHolograma = (np.abs(campo_Reconstruccion))**2
 """ Se diseña e implementa una onda plana, inversa al haz de referencia, para despreciar el aporte de la interferencia """
 
 #Definición de onda plana para eliminar aporte de efectos de interferencia
-#vector_cosenosDirectoresRef =  [-0.012656,0.0075936] #coordenada TOMAS EXPERIMENTALES USAF
-vector_cosenosDirectoresRef =  [-0.0535,-0.01035] #coordenada TOMAS EXPERIMENTALES SENSOR CUADRADO
-#vector_cosenosDirectoresRef =  [-0.0426,-0.01] #coordenada TOMAS EXPERIMENTALES
+vector_cosenosDirectoresRef =  [-0.04648,-0.0333] #coordenada TOMAS EXPERIMENTALES
 
 #Definición de vector de onda asociado al haz de referencia
 vector_ondaRef = [numero_onda_input*vector_cosenosDirectoresRef[0], numero_onda_input*vector_cosenosDirectoresRef[1]]
