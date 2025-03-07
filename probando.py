@@ -117,11 +117,18 @@ radio_pupilaInput =  distancia_focalMO*np.tan(angulo_Apertura) # Se define varia
 
 """ Creación de mascaras de transmitancia """
 
-# Cargar la imagen PNG como máscara de transmitancia
-ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/estafue.tif" 
+# Cargar la imagen como máscara de transmitancia --> USAF PRUEBA
+#ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/test_USAF150nm.tif" 
+#ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/test_USAF200nm.tif" #--> AJUSTAR ÁNGULO
+#ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/test_USAF250nm.tif" #--> AJUSTAR ÁNGULO
+#ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/test_USAF300nm.tif" #--> FUNCIONA 
+ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/test_USAF350nm.tif" #--> FUNCIONA    
+ruta_imagenReferencia = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/referenciaUSAF.tif" 
 
 
-ruta_imagenReferencia = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/referenciaUSAF.tif" 
+# Cargar la imagen como máscara de transmitancia --> USAF PRUEBA
+#ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/HOLOGRAMAS/tejido_epitelialBucalJOSE(HOLOGRAMA).tif" 
+#ruta_imagenReferencia = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/HOLOGRAMAS/REFERENCIA_tejido_epitelialJOSE(HOLOGRAMA).tif" 
 
 
 """ Implementación de condición producto espacio frecuencia para cálculo de malla de puntos en dominio de Fourier """
@@ -163,6 +170,9 @@ def reconstruccion_Holograma(ruta_imagenHolograma):
 
     #Calculando la intensidad de la transformada de Fourier
     intensidad_TransformadaFourierRecosntruccion = (np.abs(transformada_FourierReconstruccion))**2
+
+    #Normalizando la intensidad de la transformada de Fourier
+    intensidad_TransformadaFourierRecosntruccionNormalizada = intensidad_TransformadaFourierRecosntruccion / np.max(intensidad_TransformadaFourierRecosntruccion)
 
 
 
@@ -220,7 +230,7 @@ def reconstruccion_Holograma(ruta_imagenHolograma):
     
     ' ################ FIN SECCIÓN DE RECONSTRUCCIÓN ################## '
 
-    return {"Mascara": mascaraReconstruccion,"Intensidad_TransformadaFourier": intensidad_TransformadaFourierRecosntruccion,
+    return {"Mascara": mascaraReconstruccion,"Intensidad_TransformadaFourier": intensidad_TransformadaFourierRecosntruccionNormalizada,
             "Mascara_ReconstruccionFiltrado":mascaraReconstruccion_Filtrado,"Intensidad_CampoFiltrado":intensidad_CampoFiltrado,
             "Matriz_NOOndaPlana": matriz_campoNOContribucionOndaPlana,"Intensidad_matrizNOOndaPlana":intensidad_matrizCampoNOcontribucionOndaPlana}
 
@@ -236,19 +246,19 @@ referencia_Reconstruida = reconstruccion_Holograma(ruta_imagenReferencia)
 ' ################ EMPIEZA SECCIÓN DE GRAFICACIÓN ################## '
 
 """ Graficando máscara de transmitancia"""
-graph.graficar_transmitancia(objeto_Reconstruido["Mascara"],ancho_SensorInput,alto_SensorInput,"Imágen de entrada para reconstrucción")
+graph.graficar_intensidad(objeto_Reconstruido["Mascara"],ancho_SensorInput,alto_SensorInput,"Holograma de entrada para reconstrucción")
 
 
 #Graficando la transformada de Fourier del holograma
 graph.graficar_intensidad(np.log(objeto_Reconstruido["Intensidad_TransformadaFourier"]),anchoX_PlanoFourier,altoY_PlanoFourier,
-                             "Transformada de Fourier del Holograma",1,1)
+                             "Intensidad normalizada de la Transformada de Fourier del Holograma",1,1)
 
 graph.graficar_transmitancia(objeto_Reconstruido["Mascara_ReconstruccionFiltrado"],anchoX_PlanoFourier,altoY_PlanoFourier,"Mascara Filtrado")
 
 
 
 graph.graficar_intensidad(objeto_Reconstruido["Intensidad_matrizNOOndaPlana"],ancho_SensorInput,alto_SensorInput,
-                          "Campo óptico del objeto")
+                          "Intensidad asociada al Campo óptico del objeto reconstruido")
 
 graph.graficar_fase(np.angle(objeto_Reconstruido["Matriz_NOOndaPlana"]),ancho_SensorInput,alto_SensorInput,
                     "Distribución de fase Campo óptico objeto")
@@ -258,7 +268,7 @@ graph.graficar_fase(np.angle(objeto_Reconstruido["Matriz_NOOndaPlana"]),ancho_Se
 """ Graficando información sobre REFERENCIA """
 
 graph.graficar_fase(np.angle(referencia_Reconstruida["Matriz_NOOndaPlana"]),ancho_SensorInput,alto_SensorInput,
-                    "Distribución de fase Campo óptico objeto")
+                    "Distribución de fase referencia")
 
 ' ################ FIN SECCIÓN DE GRAFICACIÓN ################## '
 
@@ -281,9 +291,48 @@ diferencia_indiceRefraccion = 1.52 - 1 #PRIMERO: Indice de refracción del acril
                                        #SEGUNDO: Indice de refracción de la REFERENCIA (aire)
 
 #Calculando el camino óptico asociado a la medida relativa de fase
-camino_Optico = np.angle(diferencia_FaseHologramaReferencia)/(numero_onda_input*diferencia_indiceRefraccion)
+altura_muestra = np.angle(diferencia_FaseHologramaReferencia)/(numero_onda_input*diferencia_indiceRefraccion)
 
 #Graficando el camino óptico de la muestra
-graph.graficar_longitudCaminoOptico(camino_Optico,ancho_SensorInput,alto_SensorInput,"Altura de la muestra")
+graph.graficar_altura(altura_muestra,ancho_SensorInput,alto_SensorInput,"Altura de la muestra")
 
 ' ################ FIN SECCIÓN DE CÁLCULO DE LONGITUD DE CAMINO ÓPTICO RELATIVO ################## '
+
+
+' ################ EMPIEZA SECCIÓN DE CÁLCULO GRÁFICOS 1D ################## '
+
+# Coordenada espacial X en cm que queremos analizar
+X_m = -0.00085  # Por ejemplo, en el centro
+
+
+#GRAFICANDO RECTA EN IMAGEN DE ALTURA --> PARA IDENTIFICAR PERFIL DE GRAFICACIÓN 
+plt.imshow(altura_muestra, extent=[-ancho_SensorInput/2, ancho_SensorInput/2,
+                            -alto_SensorInput/2, alto_SensorInput/2], 
+                            cmap='winter')
+plt.axvline(X_m,color = 'red',linestyle = "--",label = f"X = {X_m} m")
+plt.title("Altura de la muestra")
+plt.colorbar(label="Altura [m]")
+plt.xlabel("X (m)")
+plt.ylabel("Y (m)")
+plt.show()
+
+
+
+# Convertir la coordenada espacial en índice de matriz
+col_idx = int(X_m * (resolucion_anchoSensorInput / ancho_SensorInput))
+
+# Extraer la columna de la imagen
+column_values = altura_muestra[:, col_idx]
+
+# Generar las coordenadas Y en cm
+y_values = np.linspace(-alto_SensorInput/2, alto_SensorInput/2, resolucion_altoSensorInput)
+
+# Graficar la columna en función de Y
+plt.plot(y_values, column_values)
+plt.xlabel("Posición Y (m)")
+plt.ylabel("Altura")
+plt.title(f"Perfil de Altura en X = {X_m} m")
+plt.show()
+
+
+' ################ FIN SECCIÓN DE CÁLCULO GRÁFICOS 1D ################## '

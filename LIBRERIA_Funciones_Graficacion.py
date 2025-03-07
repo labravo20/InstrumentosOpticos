@@ -13,7 +13,7 @@ def graficar_intensidad(campo,xx_TamañoVentana,yy_TamañoVentana,titulo, valor_
                              vmax = valor_max*(np.max(campo)))
     
     plt.title(titulo)
-    plt.colorbar(label="Intensidad")
+    #plt.colorbar(label="Intensidad normalizada")
     plt.xlabel("X (m)")
     plt.ylabel("Y (m)")
     plt.show()
@@ -82,6 +82,21 @@ def graficar_longitudCaminoOptico(campo,xx_TamañoVentana,yy_TamañoVentana,titu
     plt.xlabel("X (m)")
     plt.ylabel("Y (m)")
     plt.show()
+
+
+""" Función para graficar altura en muestras"""
+
+def graficar_altura(campo,xx_TamañoVentana,yy_TamañoVentana,titulo):
+    
+    plt.imshow(campo, extent=[-xx_TamañoVentana/2, xx_TamañoVentana/2,
+                              -yy_TamañoVentana/2, yy_TamañoVentana/2], 
+                              cmap='winter')
+    plt.title(titulo)
+    plt.colorbar(label="Altura [m]")
+    plt.xlabel("X (m)")
+    plt.ylabel("Y (m)")
+    plt.show()
+
 
 """ Funcion para graficar transmitancias """
 
