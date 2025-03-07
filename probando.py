@@ -118,8 +118,6 @@ radio_pupilaInput =  distancia_focalMO*np.tan(angulo_Apertura) # Se define varia
 """ Creación de mascaras de transmitancia """
 
 # Cargar la imagen como máscara de transmitancia --> USAF PRUEBA
-#ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/test_USAF150nm.tif" 
-#ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/test_USAF200nm.tif" #--> AJUSTAR ÁNGULO
 #ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/test_USAF250nm.tif" #--> AJUSTAR ÁNGULO
 #ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/test_USAF300nm.tif" #--> FUNCIONA 
 ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/test_USAF350nm.tif" #--> FUNCIONA    
@@ -302,7 +300,8 @@ graph.graficar_altura(altura_muestra,ancho_SensorInput,alto_SensorInput,"Altura 
 ' ################ EMPIEZA SECCIÓN DE CÁLCULO GRÁFICOS 1D ################## '
 
 # Coordenada espacial X en cm que queremos analizar
-X_m = -0.00085  # Por ejemplo, en el centro
+X_m = -0.0013  # Por ejemplo, en el centro 350 nm
+
 
 
 #GRAFICANDO RECTA EN IMAGEN DE ALTURA --> PARA IDENTIFICAR PERFIL DE GRAFICACIÓN 
@@ -317,22 +316,32 @@ plt.ylabel("Y (m)")
 plt.show()
 
 
+# Definiendo límites verticales de la recta
+Y_min =  -0.00053 # Límite inferior en metros 350nm y 300 nm
+Y_max = -0.00045   # Límite superior en metros 350nm y 300 nm
+
 
 # Convertir la coordenada espacial en índice de matriz
-col_idx = int(X_m * (resolucion_anchoSensorInput / ancho_SensorInput))
+col_idx = int((X_m + ancho_SensorInput / 2) * (resolucion_anchoSensorInput / ancho_SensorInput))
+
+# Generar las coordenadas Y en metros
+y_values = np.linspace(-alto_SensorInput/2, alto_SensorInput/2, resolucion_altoSensorInput)
 
 # Extraer la columna de la imagen
 column_values = altura_muestra[:, col_idx]
 
-# Generar las coordenadas Y en cm
-y_values = np.linspace(-alto_SensorInput/2, alto_SensorInput/2, resolucion_altoSensorInput)
+# Filtrar valores dentro del rango deseado
+mask = (y_values >= Y_min) & (y_values <= Y_max)
+y_values_recortado = y_values[mask]
+column_values_recortado = column_values[mask]
 
-# Graficar la columna en función de Y
-plt.plot(y_values, column_values)
-plt.xlabel("Posición Y (m)")
-plt.ylabel("Altura")
-plt.title(f"Perfil de Altura en X = {X_m} m")
+# Graficar la columna en función de Y con límites específicos
+plt.plot(y_values_recortado, column_values_recortado)
+plt.xlabel("Posición Y [m]")
+plt.ylabel("Altura [m]")
+plt.title(f"Perfil de Altura en X = {X_m} m (Limitado a [{Y_min}, {Y_max}])")
 plt.show()
 
-
 ' ################ FIN SECCIÓN DE CÁLCULO GRÁFICOS 1D ################## '
+
+

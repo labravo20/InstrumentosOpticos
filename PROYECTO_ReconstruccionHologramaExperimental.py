@@ -118,8 +118,6 @@ radio_pupilaInput =  distancia_focalMO*np.tan(angulo_Apertura) # Se define varia
 """ Creación de mascaras de transmitancia """
 
 # Cargar la imagen como máscara de transmitancia --> USAF PRUEBA
-#ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/test_USAF150nm.tif" 
-#ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/test_USAF200nm.tif" #--> AJUSTAR ÁNGULO
 #ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/test_USAF250nm.tif" #--> AJUSTAR ÁNGULO
 #ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/test_USAF300nm.tif" #--> FUNCIONA 
 ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/test_USAF350nm.tif" #--> FUNCIONA    
@@ -291,9 +289,59 @@ diferencia_indiceRefraccion = 1.52 - 1 #PRIMERO: Indice de refracción del acril
                                        #SEGUNDO: Indice de refracción de la REFERENCIA (aire)
 
 #Calculando el camino óptico asociado a la medida relativa de fase
-camino_Optico = np.angle(diferencia_FaseHologramaReferencia)/(numero_onda_input*diferencia_indiceRefraccion)
+altura_muestra = np.angle(diferencia_FaseHologramaReferencia)/(numero_onda_input*diferencia_indiceRefraccion)
 
 #Graficando el camino óptico de la muestra
-graph.graficar_altura(camino_Optico,ancho_SensorInput,alto_SensorInput,"Altura de la muestra")
+graph.graficar_altura(altura_muestra,ancho_SensorInput,alto_SensorInput,"Altura de la muestra")
 
 ' ################ FIN SECCIÓN DE CÁLCULO DE LONGITUD DE CAMINO ÓPTICO RELATIVO ################## '
+
+
+' ################ EMPIEZA SECCIÓN DE CÁLCULO GRÁFICOS 1D ################## '
+
+# Coordenada espacial X en cm que queremos analizar
+X_m = -0.0013  # Por ejemplo, en el centro 350 nm
+
+
+
+#GRAFICANDO RECTA EN IMAGEN DE ALTURA --> PARA IDENTIFICAR PERFIL DE GRAFICACIÓN 
+plt.imshow(altura_muestra, extent=[-ancho_SensorInput/2, ancho_SensorInput/2,
+                            -alto_SensorInput/2, alto_SensorInput/2], 
+                            cmap='winter')
+plt.axvline(X_m,color = 'red',linestyle = "--",label = f"X = {X_m} m")
+plt.title("Altura de la muestra")
+plt.colorbar(label="Altura [m]")
+plt.xlabel("X (m)")
+plt.ylabel("Y (m)")
+plt.show()
+
+
+# Definiendo límites verticales de la recta
+Y_min =  -0.00053 # Límite inferior en metros 350nm y 300 nm
+Y_max = -0.00045   # Límite superior en metros 350nm y 300 nm
+
+
+# Convertir la coordenada espacial en índice de matriz
+col_idx = int((X_m + ancho_SensorInput / 2) * (resolucion_anchoSensorInput / ancho_SensorInput))
+
+# Generar las coordenadas Y en metros
+y_values = np.linspace(-alto_SensorInput/2, alto_SensorInput/2, resolucion_altoSensorInput)
+
+# Extraer la columna de la imagen
+column_values = altura_muestra[:, col_idx]
+
+# Filtrar valores dentro del rango deseado
+mask = (y_values >= Y_min) & (y_values <= Y_max)
+y_values_recortado = y_values[mask]
+column_values_recortado = column_values[mask]
+
+# Graficar la columna en función de Y con límites específicos
+plt.plot(y_values_recortado, column_values_recortado)
+plt.xlabel("Posición Y [m]")
+plt.ylabel("Altura [m]")
+plt.title(f"Perfil de Altura en X = {X_m} m (Limitado a [{Y_min}, {Y_max}])")
+plt.show()
+
+' ################ FIN SECCIÓN DE CÁLCULO GRÁFICOS 1D ################## '
+
+
