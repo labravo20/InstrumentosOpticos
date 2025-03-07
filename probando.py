@@ -18,7 +18,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import LIBRERIA_Funciones_importantes as function
 import LIBRERIA_Funciones_Graficacion as graph
-
+from mpl_toolkits.mplot3d import Axes3D
 
 
 ' ################ INICIO SECCIÓN DE CARACTERIZACIÓN ARREGLO ################## '
@@ -291,6 +291,9 @@ diferencia_indiceRefraccion = 1.52 - 1 #PRIMERO: Indice de refracción del acril
 #Calculando el camino óptico asociado a la medida relativa de fase
 altura_muestra = np.angle(diferencia_FaseHologramaReferencia)/(numero_onda_input*diferencia_indiceRefraccion)
 
+#Calculando altura de la muestra NORMALIZADA
+altura_muestraNormalizada = altura_muestra/np.max(altura_muestra)
+
 #Graficando el camino óptico de la muestra
 graph.graficar_altura(altura_muestra,ancho_SensorInput,alto_SensorInput,"Altura de la muestra")
 
@@ -344,4 +347,29 @@ plt.show()
 
 ' ################ FIN SECCIÓN DE CÁLCULO GRÁFICOS 1D ################## '
 
+
+' ################ EMPIEZA SECCIÓN DE CÁLCULO GRÁFICOS 3D ################## '
+
+# Crear figura y ejes 3D
+fig = plt.figure(figsize=(10, 7))
+ax = fig.add_subplot(111, projection='3d')
+
+# Crear las coordenadas X e Y
+x = np.linspace(-ancho_SensorInput / 2, ancho_SensorInput / 2, resolucion_anchoSensorInput)
+y = np.linspace(-alto_SensorInput / 2, alto_SensorInput / 2, resolucion_altoSensorInput)
+X, Y = np.meshgrid(x, y)
+
+# Graficar la superficie en 3D
+ax.plot_surface(X, Y, -altura_muestraNormalizada, cmap='viridis', edgecolor='none')
+
+# Etiquetas de los ejes
+ax.set_xlabel('X (m)')
+ax.set_ylabel('Y (m)')
+ax.set_zlabel('Altura Normalizada')
+ax.set_title('Reconstrucción 3D de la muestra')
+
+# Permitir interacción para rotar
+plt.show()
+
+' ################ FIN SECCIÓN DE CÁLCULO GRÁFICOS 3D ################## '
 
