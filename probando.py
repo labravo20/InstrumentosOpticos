@@ -113,7 +113,7 @@ radio_pupilaInput =  distancia_focalMO*np.tan(angulo_Apertura) # Se define varia
 ' ################ FIN SECCIÓN DE CÁLCULOS PARA CARACTERIZACIÓN ARREGLO ################## '
 
 
-
+' ################ EMPIEZA SECCIÓN DE IMPORTACIÓN Y PREPARACIÓN DE HOLOGRAMAS ################## '
 
 """ Creación de mascaras de transmitancia """
 
@@ -233,61 +233,90 @@ def reconstruccion_Holograma(ruta_imagenHolograma):
             "Matriz_NOOndaPlana": matriz_campoNOContribucionOndaPlana,"Intensidad_matrizNOOndaPlana":intensidad_matrizCampoNOcontribucionOndaPlana}
 
 
+
 """ Llamando función de reconstrucción para obtener resultado de HOLOGRAMA de interés """
+
 objeto_Reconstruido = reconstruccion_Holograma(ruta_imagen)
 
-objeto_Reconstruido_Desfasado = objeto_Reconstruido["Matriz_NOOndaPlana"]*np.exp(1j*((np.pi))/(4))
+objeto_Reconstruido_Desfasado = objeto_Reconstruido["Matriz_NOOndaPlana"]*np.exp(1j*((np.pi))/(4)) # TEJIDO EPITELIAL
 
 
-""" Llamando función de reconstrucción para obtener resultado de la REFERENCIA """
+
+""" Llamando función de reconstrucción para obtener resultado de la REFERENCIA --> USAF"""
+
 #referencia_Reconstruida = reconstruccion_Holograma(ruta_imagenReferencia)
+
+' ################ FIN SECCIÓN DE IMPORTACIÓN Y PREPARACIÓN DE HOLOGRAMAS ################## '
 
 
 ' ################ EMPIEZA SECCIÓN DE GRAFICACIÓN ################## '
 
 """ Graficando máscara de transmitancia"""
+
 graph.graficar_intensidad(objeto_Reconstruido["Mascara"],ancho_SensorInput,alto_SensorInput,"Holograma de entrada para reconstrucción")
 
 
-#Graficando la transformada de Fourier del holograma
+
+""" Graficando intensisdad de la transformada de Fourier del holograma"""
+
 graph.graficar_intensidad(np.log(objeto_Reconstruido["Intensidad_TransformadaFourier"]),anchoX_PlanoFourier,altoY_PlanoFourier,
                              "Intensidad normalizada de la Transformada de Fourier del Holograma",1,1)
+
+
+
+""" Graficando máscara de filtración para obtener orden +1 de TF"""
 
 graph.graficar_transmitancia(objeto_Reconstruido["Mascara_ReconstruccionFiltrado"],anchoX_PlanoFourier,altoY_PlanoFourier,"Mascara Filtrado")
 
 
 
+""" Graficando intensidad del objeto reconstruido """
+
 graph.graficar_intensidad(objeto_Reconstruido["Intensidad_matrizNOOndaPlana"],ancho_SensorInput,alto_SensorInput,
                           "Intensidad asociada al Campo óptico del objeto reconstruido")
 
+
+
+""" Graficando información de fase del objeto reconstruido"""
+
 graph.graficar_fase(np.angle(objeto_Reconstruido["Matriz_NOOndaPlana"]),ancho_SensorInput,alto_SensorInput,
                     "Distribución de fase Campo óptico objeto")
+
+
+
+""" Graficando información de fase del objeto reconstruido desfasado --> TEJIDO EPITELIAL"""
 
 graph.graficar_fase(np.angle(objeto_Reconstruido_Desfasado),ancho_SensorInput,alto_SensorInput,
                     "Distribución de fase Campo óptico objeto DESFASADO")
 
 
-""" Graficando información sobre REFERENCIA """
+""" Graficando información sobre REFERENCIA --> USAF"""
 
 #graph.graficar_fase(np.angle(referencia_Reconstruida["Matriz_NOOndaPlana"]),ancho_SensorInput,alto_SensorInput,
 #                    "Distribución de fase referencia")
 
 
+' ################ FIN SECCIÓN DE GRAFICACIÓN ################## '
 
+
+' ################ EMPIEZA SECCIÓN DE CREACIÓN SUBMATRIZ PARA ANALIZAR UNA SECCIÓN DE LA MUESTRA --> TEJIDO EPITELIAL ################## '
+
+# Coordenada espacial X en metros --> EJE CENTRAL DEL RECTANGULO DE SELECCIÓN DE ÁREA DE INTERÉS
+X_m_central = 0.0002  
+
+# Definiendo límites de la región cuadrada --> LIMITES EN EJE VERTICAL DE SELECCIÓN DE ÁREA DE INTERÉS
+Y_min = 0.0008  # Límite inferior en metros
+Y_max = 0.0024  # Límite superior en metros
+
+
+# Convertir coordenadas espaciales a índices de matriz
+col_min_idx = int((X_m_central - 0.0008 + (ancho_SensorInput / 2)) * (resolucion_anchoSensorInput / ancho_SensorInput))  
+col_max_idx = int((X_m_central + 0.0008 + (ancho_SensorInput / 2)) * (resolucion_anchoSensorInput / ancho_SensorInput))  
+row_min_idx = int(((alto_SensorInput / 2) - Y_max) * (resolucion_altoSensorInput / alto_SensorInput))
+row_max_idx = int(((alto_SensorInput / 2) - Y_min) * (resolucion_altoSensorInput / alto_SensorInput))
+
+#Función para graficar sección seleccionada y para generar submatrizz (también es graficada esta nueva matriz de estudio)
 def submatriz(objeto_Reconstruido_Desfasado):
-
-    # Coordenada espacial X en metros --> EJE CENTRAL
-    X_m = 0.0002  
-
-    # Definiendo límites de la región cuadrada --> LIMITES EN EJE VERTICAL
-    Y_min = 0.0008  # Límite inferior en metros
-    Y_max = 0.0024  # Límite superior en metros
-
-    # Convertir coordenadas espaciales a índices de matriz
-    col_min_idx = int((X_m - 0.0008 + (ancho_SensorInput / 2)) * (resolucion_anchoSensorInput / ancho_SensorInput))  
-    col_max_idx = int((X_m + 0.0008 + (ancho_SensorInput / 2)) * (resolucion_anchoSensorInput / ancho_SensorInput))  
-    row_min_idx = int(((alto_SensorInput / 2) - Y_max) * (resolucion_altoSensorInput / alto_SensorInput))
-    row_max_idx = int(((alto_SensorInput / 2) - Y_min) * (resolucion_altoSensorInput / alto_SensorInput))
 
 
     # Graficar la imagen original con la región marcada
@@ -298,7 +327,7 @@ def submatriz(objeto_Reconstruido_Desfasado):
                cmap='inferno')
 
     # Dibujar el rectángulo de la región seleccionada
-    rect = patches.Rectangle((X_m - 0.0008, Y_min), 0.0016, Y_max - Y_min, 
+    rect = patches.Rectangle((X_m_central - 0.0008, Y_min), 0.0016, Y_max - Y_min, 
                              linewidth=1.5, edgecolor='red', facecolor='none', linestyle="--")
     plt.gca().add_patch(rect)
 
@@ -315,7 +344,7 @@ def submatriz(objeto_Reconstruido_Desfasado):
     # Graficar la fase de la submatriz extraída
     plt.figure(figsize=(6,5))
     plt.imshow(np.angle(submatriz_resultado), 
-                extent=[X_m - 0.0008, X_m + 0.0008, Y_min, Y_max], 
+                extent=[X_m_central - 0.0008, X_m_central + 0.0008, Y_min, Y_max], 
                 cmap='inferno')
 
     # Configuración de la gráfica de la submatriz
@@ -329,13 +358,13 @@ def submatriz(objeto_Reconstruido_Desfasado):
 
     return submatriz_resultado  # Retornar la submatriz extraída
 
+#Asociando la submatriz seleccionada en una variable
+submatriz_muestraDesfasada = submatriz(objeto_Reconstruido_Desfasado)
 
-submatriz(objeto_Reconstruido_Desfasado)
-
-' ################ FIN SECCIÓN DE GRAFICACIÓN ################## '
+' ################ FIN SECCIÓN DE CREACIÓN SUBMATRIZ PARA ANALIZAR UNA SECCIÓN DE LA MUESTRA --> TEJIDO EPITELIAL ################## '
 
 
-' ################ EMPIEZA SECCIÓN DE MEDICIÓN RELATIVA DE FASE ################## '
+' ################ EMPIEZA SECCIÓN DE MEDICIÓN RELATIVA DE FASE --> USAF ################## '
 
 # Se calcula la diferencia de fase entre el holograma de interés y la referencia pre establecida
 #diferencia_FaseHologramaReferencia = (objeto_Reconstruido["Matriz_NOOndaPlana"])/(referencia_Reconstruida["Matriz_NOOndaPlana"])
@@ -344,27 +373,41 @@ submatriz(objeto_Reconstruido_Desfasado)
 #graph.graficar_fase(np.angle(diferencia_FaseHologramaReferencia),ancho_SensorInput,alto_SensorInput,
 #                    "Fase relativa de la muestra") 
 
-' ################ FIN SECCIÓN DE MEDICIÓN RELATIVA DE FASE ################## '
+' ################ FIN SECCIÓN DE MEDICIÓN RELATIVA DE FASE --> USAF  ################## '
 
 
 ' ################ EMPIEZA SECCIÓN DE CÁLCULO DE LONGITUD DE CAMINO ÓPTICO RELATIVO ################## '
-#Calculando la longitud de camino óptico de la muestra
-longitud_caminoOpticoMuestra = np.angle(objeto_Reconstruido_Desfasado)/numero_onda_input
 
-#Graficando el camino óptico de la muestra
-graph.graficar_altura(longitud_caminoOpticoMuestra,ancho_SensorInput,alto_SensorInput,"Longitud de camino óptico de la muestra")
+#Calculando la longitud de camino óptico de la muestra --> TEJIDO EPITELIAL
+longitud_caminoOpticoMuestra = np.angle(submatriz_muestraDesfasada)/numero_onda_input
 
-#Definiendo el índice de refracción asociado al arreglo
+#Calculando altura de la muestra NORMALIZADA --> TEJIDO EPITELIAL
+longitud_caminoOpticoMuestraNormalizada = longitud_caminoOpticoMuestra/np.max(longitud_caminoOpticoMuestra)
+
+#Graficando el camino óptico de la muestra --> TEJIDO EPITELIAL
+plt.figure(figsize=(6,5))
+plt.imshow(longitud_caminoOpticoMuestra, 
+            extent=[X_m_central - 0.0008, X_m_central + 0.0008, Y_min, Y_max], 
+            cmap='winter')
+
+# Configuración de la gráfica de la submatriz
+plt.title("Longitud de camino óptico de la muestra")
+plt.colorbar(label="Longitud camino óptico [m]")
+plt.xlabel("X (m)")
+plt.ylabel("Y (m)")
+plt.show()
+
+#Definiendo el índice de refracción asociado al arreglo --> USAF
 #diferencia_indiceRefraccion = 1.52 - 1 #PRIMERO: Indice de refracción del acrilato/porta muestras
                                        #SEGUNDO: Indice de refracción de la REFERENCIA (aire)
 
-#Calculando el camino óptico asociado a la medida relativa de fase
+#Calculando el camino óptico asociado a la medida relativa de fase --> USAF
 #altura_muestra = np.angle(diferencia_FaseHologramaReferencia)/(numero_onda_input*diferencia_indiceRefraccion)
 
-#Calculando altura de la muestra NORMALIZADA
+#Calculando altura de la muestra NORMALIZADA --> USAF
 #altura_muestraNormalizada = altura_muestra/np.max(altura_muestra)
 
-#Graficando altura de la muestra
+#Graficando altura de la muestra --> USAF
 #graph.graficar_altura(altura_muestra,ancho_SensorInput,alto_SensorInput,"Altura de la muestra")
 
 ' ################ FIN SECCIÓN DE CÁLCULO DE LONGITUD DE CAMINO ÓPTICO RELATIVO ################## '
@@ -372,12 +415,11 @@ graph.graficar_altura(longitud_caminoOpticoMuestra,ancho_SensorInput,alto_Sensor
 
 ' ################ EMPIEZA SECCIÓN DE CÁLCULO GRÁFICOS 1D ################## '
 
-# Coordenada espacial X en cm que queremos analizar
-X_m = 0  # Por ejemplo, en el centro 350 nm
+# Coordenada espacial X en m que queremos analizar --> Recta en vertical de la cual se quiere conocer perfil de altura/camino óptico
+X_m = 0  
 
 
-
-#GRAFICANDO RECTA EN IMAGEN DE ALTURA --> PARA IDENTIFICAR PERFIL DE GRAFICACIÓN 
+#GRAFICANDO RECTA EN IMAGEN DE ALTURA --> PARA IDENTIFICAR PERFIL DE GRAFICACIÓN  USAF
 # plt.imshow(altura_muestra, extent=[-ancho_SensorInput/2, ancho_SensorInput/2,
 #                             -alto_SensorInput/2, alto_SensorInput/2], 
 #                             cmap='winter')
@@ -388,12 +430,14 @@ X_m = 0  # Por ejemplo, en el centro 350 nm
 # plt.ylabel("Y (m)")
 # plt.show()
 
-
-plt.imshow(longitud_caminoOpticoMuestra, extent=[-ancho_SensorInput/2, ancho_SensorInput/2,
-                            -alto_SensorInput/2, alto_SensorInput/2], 
-                            cmap='winter')
+#GRAFICO PERFIL 1D de la muestra --> TEJIDO EPITELIAL
+plt.figure(figsize=(6,5))
+plt.imshow(longitud_caminoOpticoMuestra, 
+            extent=[X_m - 0.0008, X_m + 0.0008, Y_min, Y_max], 
+            cmap='winter')
 plt.axvline(X_m,color = 'red',linestyle = "--",label = f"X = {X_m} m")
-plt.title("Longitud camino óptico de la muestra")
+# Configuración de la gráfica de la submatriz
+plt.title("Longitud de camino óptico de la muestra")
 plt.colorbar(label="Longitud camino óptico [m]")
 plt.xlabel("X (m)")
 plt.ylabel("Y (m)")
@@ -401,38 +445,38 @@ plt.show()
 
 
 # Definiendo límites verticales de la recta
-Y_min =  -0.00053 # Límite inferior en metros 350nm y 300 nm
-Y_max = -0.00045   # Límite superior en metros 350nm y 300 nm
+Y_min =  0.0019 # Límite inferior Y en metros 
+Y_max = 0.00225   # Límite superior Y en metros  
 
 
 # Convertir la coordenada espacial en índice de matriz
-col_idx = int((X_m + ancho_SensorInput / 2) * (resolucion_anchoSensorInput / ancho_SensorInput))
+#col_idx = int((X_m + ancho_SensorInput / 2) * (resolucion_anchoSensorInput / ancho_SensorInput)) #USAF
+col_idx = int((X_m + 0.0008) * ( (col_max_idx - col_min_idx) / 0.0016)) #TEJIDO EPITELIAL
 
-# Generar las coordenadas Y en metros
-y_values = np.linspace(-alto_SensorInput/2, alto_SensorInput/2, resolucion_altoSensorInput)
+# Generar las coordenadas Y en metros 
+#y_values = np.linspace(-alto_SensorInput/2, alto_SensorInput/2, resolucion_altoSensorInput) #USAF
+y_values = np.linspace(Y_min, Y_max, row_max_idx - row_min_idx) #TEJIDO EPITELIAL
 
 # Extraer la columna de la imagen
-#column_values = altura_muestra[:, col_idx]
-column_values = longitud_caminoOpticoMuestra[:, col_idx]
+#column_values = altura_muestra[:, col_idx] #USAF
+column_values = longitud_caminoOpticoMuestra[:, col_idx] #TEJIDO EPITELIAL
 
 # Filtrar valores dentro del rango deseado
 mask = (y_values >= Y_min) & (y_values <= Y_max)
 y_values_recortado = y_values[mask]
 column_values_recortado = column_values[mask]
 
-# # Graficar la columna en función de Y con límites específicos
-# plt.plot(y_values_recortado, column_values_recortado)
-# plt.xlabel("Posición Y [m]")
-# plt.ylabel("Altura [m]")
-# plt.title(f"Perfil de Altura en X = {X_m} m (Limitado a [{Y_min}, {Y_max}])")
-# plt.show()
-
-
-# Graficar la columna en función de Y con límites específicos
+# Graficar la columna en función de Y con límites específicos 
 plt.plot(y_values_recortado, column_values_recortado)
 plt.xlabel("Posición Y [m]")
-plt.ylabel("Longitud camino óptico [m]")
-plt.title(f"Perfil de longitud camino óptico en X = {X_m} m (Limitado a [{Y_min}, {Y_max}])")
+
+# plt.ylabel("Altura [m]") #USAF
+# plt.title(f"Perfil de Altura en X = {X_m} m (Limitado a [{Y_min}, {Y_max}])") #USAF
+
+
+plt.ylabel("Longitud camino óptico [m]") #TEJIDO EPITELIAL
+plt.title(f"Perfil de longitud camino óptico en X = {X_m} m (Limitado a [{Y_min}, {Y_max}])") #TEJIDO EPITELIAL
+
 plt.show()
 
 ' ################ FIN SECCIÓN DE CÁLCULO GRÁFICOS 1D ################## '
@@ -444,28 +488,28 @@ plt.show()
 fig = plt.figure(figsize=(10, 7))
 ax = fig.add_subplot(111, projection='3d')
 
-# Crear las coordenadas X e Y
-x = np.linspace(-ancho_SensorInput / 2, ancho_SensorInput / 2, resolucion_anchoSensorInput)
-y = np.linspace(-alto_SensorInput / 2, alto_SensorInput / 2, resolucion_altoSensorInput)
+# Crear las coordenadas X e Y --> USAF
+# x = np.linspace(-ancho_SensorInput / 2, ancho_SensorInput / 2, resolucion_anchoSensorInput)
+# y = np.linspace(-alto_SensorInput / 2, alto_SensorInput / 2, resolucion_altoSensorInput)
+
+# Crear las coordenadas X e Y --> TEJIDO EPITELIAL
+x = np.linspace(X_m_central - 0.0008, X_m_central + 0.0008, col_max_idx - col_min_idx)
+y = np.linspace(Y_min, Y_max, row_max_idx - row_min_idx)
+
+#Creando malla de puntos
 X, Y = np.meshgrid(x, y)
 
 # Graficar la superficie en 3D
-#ax.plot_surface(X, Y, -altura_muestraNormalizada, cmap='viridis', edgecolor='none')
-ax.plot_surface(X, Y, longitud_caminoOpticoMuestra, cmap='viridis', edgecolor='none')
-
-# # Etiquetas de los ejes
-# ax.set_xlabel('X (m)')
-# ax.set_ylabel('Y (m)')
-# ax.set_zlabel('Altura Normalizada')
-# ax.set_title('Reconstrucción 3D de la muestra')
-
-# # Permitir interacción para rotar
-# plt.show()
+#ax.plot_surface(X, Y, -altura_muestraNormalizada, cmap='viridis', edgecolor='none') #USAF
+ax.plot_surface(X, Y, -longitud_caminoOpticoMuestraNormalizada, cmap='viridis', edgecolor='none') #TEJIDO EPITELIAL
 
 # Etiquetas de los ejes
 ax.set_xlabel('X (m)')
 ax.set_ylabel('Y (m)')
-ax.set_zlabel('Longitud camino óptico normalizado')
+
+# ax.set_zlabel('Altura Normalizada') #USAF
+ax.set_zlabel('Longitud camino óptico normalizado') #TEJIDO EPITELIAL
+
 ax.set_title('Reconstrucción 3D de la muestra')
 
 # Permitir interacción para rotar
