@@ -284,10 +284,10 @@ def submatriz(objeto_Reconstruido_Desfasado):
     Y_max = 0.0024  # Límite superior en metros
 
     # Convertir coordenadas espaciales a índices de matriz
-    col_min_idx = int((X_m - 0.0008 + ancho_SensorInput / 2) * (resolucion_anchoSensorInput / ancho_SensorInput))  
-    col_max_idx = int((X_m + 0.0008 + ancho_SensorInput / 2) * (resolucion_anchoSensorInput / ancho_SensorInput))  
-    row_min_idx = int((Y_min + alto_SensorInput / 2) * (resolucion_altoSensorInput / alto_SensorInput))
-    row_max_idx = int((Y_max + alto_SensorInput / 2) * (resolucion_altoSensorInput / alto_SensorInput))
+    col_min_idx = int((X_m - 0.0008 + (ancho_SensorInput / 2)) * (resolucion_anchoSensorInput / ancho_SensorInput))  
+    col_max_idx = int((X_m + 0.0008 + (ancho_SensorInput / 2)) * (resolucion_anchoSensorInput / ancho_SensorInput))  
+    row_min_idx = int(((alto_SensorInput / 2) - Y_max) * (resolucion_altoSensorInput / alto_SensorInput))
+    row_max_idx = int(((alto_SensorInput / 2) - Y_min) * (resolucion_altoSensorInput / alto_SensorInput))
 
 
     # Graficar la imagen original con la región marcada
@@ -311,16 +311,12 @@ def submatriz(objeto_Reconstruido_Desfasado):
 
     # Extraer la submatriz dentro del rectángulo
     submatriz_resultado = objeto_Reconstruido_Desfasado[row_min_idx:row_max_idx, col_min_idx:col_max_idx]
-    
-    # Crear ejes de la submatriz en coordenadas espaciales
-    x_range = np.linspace(X_m - 0.0008, X_m + 0.0008, col_max_idx - col_min_idx)
-    y_range = np.linspace(Y_min, Y_max, row_max_idx - row_min_idx)
 
     # Graficar la fase de la submatriz extraída
     plt.figure(figsize=(6,5))
     plt.imshow(np.angle(submatriz_resultado), 
-                extent=[x_range[0], x_range[1], y_range[0], y_range[1]], 
-                cmap='inferno', aspect='auto')
+                extent=[X_m - 0.0008, X_m + 0.0008, Y_min, Y_max], 
+                cmap='inferno')
 
     # Configuración de la gráfica de la submatriz
     plt.title("Fase de la región recortada")
@@ -328,6 +324,8 @@ def submatriz(objeto_Reconstruido_Desfasado):
     plt.xlabel("X (m)")
     plt.ylabel("Y (m)")
     plt.show()
+
+    
 
     return submatriz_resultado  # Retornar la submatriz extraída
 
