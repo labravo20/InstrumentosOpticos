@@ -124,8 +124,9 @@ radio_pupilaInput =  distancia_focalMO*np.tan(angulo_Apertura) # Se define varia
 #ruta_imagenReferencia = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/referenciaUSAF.tif" 
 
 
-# Cargar la imagen como máscara de transmitancia --> USAF PRUEBA
+# Cargar la imagen como máscara de transmitancia --> USAF PRUEBA 
 ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/HOLOGRAMAS/tejido_epitelialBucalJOSE4.0(HOLOGRAMA).tif" 
+#ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/HOLOGRAMAS/tejido_epitelialBucalJOSE3.0(HOLOGRAMA).tif" 
 
 
 """ Implementación de condición producto espacio frecuencia para cálculo de malla de puntos en dominio de Fourier """
@@ -238,8 +239,8 @@ def reconstruccion_Holograma(ruta_imagenHolograma):
 
 objeto_Reconstruido = reconstruccion_Holograma(ruta_imagen)
 
-objeto_Reconstruido_Desfasado = objeto_Reconstruido["Matriz_NOOndaPlana"]*np.exp(1j*((np.pi))/(4)) # TEJIDO EPITELIAL
-
+objeto_Reconstruido_Desfasado = objeto_Reconstruido["Matriz_NOOndaPlana"]*np.exp(1j*((np.pi))/(2)) # TEJIDO EPITELIAL 4.0
+#objeto_Reconstruido_Desfasado = objeto_Reconstruido["Matriz_NOOndaPlana"] # TEJIDO EPITELIAL 3.0
 
 
 """ Llamando función de reconstrucción para obtener resultado de la REFERENCIA --> USAF"""
@@ -302,16 +303,23 @@ graph.graficar_fase(np.angle(objeto_Reconstruido_Desfasado),ancho_SensorInput,al
 ' ################ EMPIEZA SECCIÓN DE CREACIÓN SUBMATRIZ PARA ANALIZAR UNA SECCIÓN DE LA MUESTRA --> TEJIDO EPITELIAL ################## '
 
 # Coordenada espacial X en metros --> EJE CENTRAL DEL RECTANGULO DE SELECCIÓN DE ÁREA DE INTERÉS
-X_m_central = 0.0002  
+#X_m_central = 0.0002  #MUESTRAS PARTE SUPERIOR 4.0
+X_m_central = 0.000795  #MUESTRAS PARTE INFERIOR 4.0
+#X_m_central = 0.0008  #MUESTRAS 3.0
+
+#Ancho del rectangulo
+#ancho_rectangulo = 0.0016 #MUESTRAS PARTE SUPERIOR 4.0
+#ancho_rectangulo = 0.00233 #MUESTRAS PARTE INFERIOR 4.0
+ancho_rectangulo = 0.0013 #MUESTRAS 3.0
 
 # Definiendo límites de la región cuadrada --> LIMITES EN EJE VERTICAL DE SELECCIÓN DE ÁREA DE INTERÉS
 Y_min = 0.0008  # Límite inferior en metros
-Y_max = 0.0024  # Límite superior en metros
+Y_max = 0.002  # Límite superior en metros
 
 
 # Convertir coordenadas espaciales a índices de matriz
-col_min_idx = int((X_m_central - 0.0008 + (ancho_SensorInput / 2)) * (resolucion_anchoSensorInput / ancho_SensorInput))  
-col_max_idx = int((X_m_central + 0.0008 + (ancho_SensorInput / 2)) * (resolucion_anchoSensorInput / ancho_SensorInput))  
+col_min_idx = int((X_m_central - (ancho_rectangulo/2) + (ancho_SensorInput / 2)) * (resolucion_anchoSensorInput / ancho_SensorInput))  
+col_max_idx = int((X_m_central + (ancho_rectangulo/2) + (ancho_SensorInput / 2)) * (resolucion_anchoSensorInput / ancho_SensorInput))  
 row_min_idx = int(((alto_SensorInput / 2) - Y_max) * (resolucion_altoSensorInput / alto_SensorInput))
 row_max_idx = int(((alto_SensorInput / 2) - Y_min) * (resolucion_altoSensorInput / alto_SensorInput))
 
@@ -327,7 +335,7 @@ def submatriz(objeto_Reconstruido_Desfasado):
                cmap='inferno')
 
     # Dibujar el rectángulo de la región seleccionada
-    rect = patches.Rectangle((X_m_central - 0.0008, Y_min), 0.0016, Y_max - Y_min, 
+    rect = patches.Rectangle((X_m_central - (ancho_rectangulo/2), Y_min), ancho_rectangulo, Y_max - Y_min, 
                              linewidth=1.5, edgecolor='red', facecolor='none', linestyle="--")
     plt.gca().add_patch(rect)
 
@@ -344,7 +352,7 @@ def submatriz(objeto_Reconstruido_Desfasado):
     # Graficar la fase de la submatriz extraída
     plt.figure(figsize=(6,5))
     plt.imshow(np.angle(submatriz_resultado), 
-                extent=[X_m_central - 0.0008, X_m_central + 0.0008, Y_min, Y_max], 
+                extent=[X_m_central - (ancho_rectangulo/2), X_m_central + (ancho_rectangulo/2), Y_min, Y_max], 
                 cmap='inferno')
 
     # Configuración de la gráfica de la submatriz
@@ -387,7 +395,7 @@ longitud_caminoOpticoMuestraNormalizada = longitud_caminoOpticoMuestra/np.max(lo
 #Graficando el camino óptico de la muestra --> TEJIDO EPITELIAL
 plt.figure(figsize=(6,5))
 plt.imshow(longitud_caminoOpticoMuestra, 
-            extent=[X_m_central - 0.0008, X_m_central + 0.0008, Y_min, Y_max], 
+            extent=[X_m_central - (ancho_rectangulo/2), X_m_central + (ancho_rectangulo/2), Y_min, Y_max], 
             cmap='winter')
 
 # Configuración de la gráfica de la submatriz
@@ -416,7 +424,7 @@ plt.show()
 ' ################ EMPIEZA SECCIÓN DE CÁLCULO GRÁFICOS 1D ################## '
 
 # Coordenada espacial X en m que queremos analizar --> Recta en vertical de la cual se quiere conocer perfil de altura/camino óptico
-X_m = 12e-5  
+X_m = 0.0006 
 
 
 #GRAFICANDO RECTA EN IMAGEN DE ALTURA --> PARA IDENTIFICAR PERFIL DE GRAFICACIÓN  USAF
@@ -433,7 +441,7 @@ X_m = 12e-5
 #GRAFICO PERFIL 1D de la muestra --> TEJIDO EPITELIAL
 plt.figure(figsize=(6,5))
 plt.imshow(longitud_caminoOpticoMuestra, 
-            extent=[X_m_central - 0.0008, X_m_central + 0.0008, Y_min, Y_max], 
+            extent=[X_m_central - (ancho_rectangulo/2), X_m_central + (ancho_rectangulo/2), Y_min, Y_max], 
             cmap='winter')
 plt.axvline(X_m,color = 'red',linestyle = "--",label = f"X = {X_m} m")
 # Configuración de la gráfica de la submatriz
@@ -445,13 +453,14 @@ plt.show()
 
 
 # Definiendo límites verticales de la recta
-Y_min =  0.0018 # Límite inferior Y en metros 
-Y_max = 0.00225   # Límite superior Y en metros  
+Y_min =  0.0009 # Límite inferior Y en metros 
+Y_max = 0.0019   # Límite superior Y en metros  
 
 
 # Convertir la coordenada espacial en índice de matriz
 #col_idx = int((X_m + ancho_SensorInput / 2) * (resolucion_anchoSensorInput / ancho_SensorInput)) #USAF
-col_idx = int((X_m + 0.0008) * ( (col_max_idx - col_min_idx) / 0.0016)) #TEJIDO EPITELIAL
+col_idx = int((X_m + (ancho_rectangulo/2)) * ( (col_max_idx - col_min_idx) / ancho_rectangulo)) #TEJIDO EPITELIAL
+
 
 # Generar las coordenadas Y en metros 
 #y_values = np.linspace(-alto_SensorInput/2, alto_SensorInput/2, resolucion_altoSensorInput) #USAF
@@ -493,7 +502,7 @@ ax = fig.add_subplot(111, projection='3d')
 # y = np.linspace(-alto_SensorInput / 2, alto_SensorInput / 2, resolucion_altoSensorInput)
 
 # Crear las coordenadas X e Y --> TEJIDO EPITELIAL
-x = np.linspace(X_m_central - 0.0008, X_m_central + 0.0008, col_max_idx - col_min_idx)
+x = np.linspace(X_m_central - (ancho_rectangulo/2), X_m_central + (ancho_rectangulo/2), col_max_idx - col_min_idx)
 y = np.linspace(Y_min, Y_max, row_max_idx - row_min_idx)
 
 #Creando malla de puntos
@@ -501,7 +510,7 @@ X, Y = np.meshgrid(x, y)
 
 # Graficar la superficie en 3D
 #ax.plot_surface(X, Y, -altura_muestraNormalizada, cmap='viridis', edgecolor='none') #USAF
-ax.plot_surface(X, Y, -longitud_caminoOpticoMuestraNormalizada, cmap='viridis', edgecolor='none') #TEJIDO EPITELIAL
+ax.plot_surface(X, Y, longitud_caminoOpticoMuestraNormalizada, cmap='viridis', edgecolor='none') #TEJIDO EPITELIAL
 
 # Etiquetas de los ejes
 ax.set_xlabel('X (m)')
