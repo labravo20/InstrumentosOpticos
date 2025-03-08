@@ -287,7 +287,7 @@ graph.graficar_fase(np.angle(objeto_Reconstruido["Matriz_NOOndaPlana"]),ancho_Se
 """ Graficando información de fase del objeto reconstruido desfasado --> TEJIDO EPITELIAL"""
 
 graph.graficar_fase(np.angle(objeto_Reconstruido_Desfasado),ancho_SensorInput,alto_SensorInput,
-                    "Distribución de fase Campo óptico objeto DESFASADO")
+                    "Distribución de fase Campo óptico objeto con desfase")
 
 
 """ Graficando información sobre REFERENCIA --> USAF"""
@@ -416,7 +416,7 @@ plt.show()
 ' ################ EMPIEZA SECCIÓN DE CÁLCULO GRÁFICOS 1D ################## '
 
 # Coordenada espacial X en m que queremos analizar --> Recta en vertical de la cual se quiere conocer perfil de altura/camino óptico
-X_m = 0  
+X_m = 12e-5  
 
 
 #GRAFICANDO RECTA EN IMAGEN DE ALTURA --> PARA IDENTIFICAR PERFIL DE GRAFICACIÓN  USAF
@@ -433,7 +433,7 @@ X_m = 0
 #GRAFICO PERFIL 1D de la muestra --> TEJIDO EPITELIAL
 plt.figure(figsize=(6,5))
 plt.imshow(longitud_caminoOpticoMuestra, 
-            extent=[X_m - 0.0008, X_m + 0.0008, Y_min, Y_max], 
+            extent=[X_m_central - 0.0008, X_m_central + 0.0008, Y_min, Y_max], 
             cmap='winter')
 plt.axvline(X_m,color = 'red',linestyle = "--",label = f"X = {X_m} m")
 # Configuración de la gráfica de la submatriz
@@ -445,7 +445,7 @@ plt.show()
 
 
 # Definiendo límites verticales de la recta
-Y_min =  0.0019 # Límite inferior Y en metros 
+Y_min =  0.0018 # Límite inferior Y en metros 
 Y_max = 0.00225   # Límite superior Y en metros  
 
 
