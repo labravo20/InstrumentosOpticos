@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 import LIBRERIA_Funciones_importantes as function
 import LIBRERIA_Funciones_Graficacion as graph
 from mpl_toolkits.mplot3d import Axes3D
-
+import matplotlib.patches as patches
 
 ' ################ INICIO SECCIÓN DE CARACTERIZACIÓN ARREGLO ################## '
 ##### LA SIGUIENTE SECCIÓN SE REFIERE A INPUTS QUE DEBEN SER ESPECIFICADOS POR EL USUARIO*
@@ -236,6 +236,8 @@ def reconstruccion_Holograma(ruta_imagenHolograma):
 """ Llamando función de reconstrucción para obtener resultado de HOLOGRAMA de interés """
 objeto_Reconstruido = reconstruccion_Holograma(ruta_imagen)
 
+objeto_Reconstruido_Desfasado = objeto_Reconstruido["Matriz_NOOndaPlana"]*np.exp(1j*((np.pi))/(4))
+
 
 """ Llamando función de reconstrucción para obtener resultado de la REFERENCIA """
 #referencia_Reconstruida = reconstruccion_Holograma(ruta_imagenReferencia)
@@ -261,12 +263,76 @@ graph.graficar_intensidad(objeto_Reconstruido["Intensidad_matrizNOOndaPlana"],an
 graph.graficar_fase(np.angle(objeto_Reconstruido["Matriz_NOOndaPlana"]),ancho_SensorInput,alto_SensorInput,
                     "Distribución de fase Campo óptico objeto")
 
+graph.graficar_fase(np.angle(objeto_Reconstruido_Desfasado),ancho_SensorInput,alto_SensorInput,
+                    "Distribución de fase Campo óptico objeto DESFASADO")
 
 
 """ Graficando información sobre REFERENCIA """
 
 #graph.graficar_fase(np.angle(referencia_Reconstruida["Matriz_NOOndaPlana"]),ancho_SensorInput,alto_SensorInput,
 #                    "Distribución de fase referencia")
+
+
+
+def submatriz(objeto_Reconstruido_Desfasado):
+
+    # Coordenada espacial X en metros --> EJE CENTRAL
+    X_m = 0.0002  
+
+    # Definiendo límites de la región cuadrada --> LIMITES EN EJE VERTICAL
+    Y_min = 0.0008  # Límite inferior en metros
+    Y_max = 0.0024  # Límite superior en metros
+
+    # Convertir coordenadas espaciales a índices de matriz
+    col_min_idx = int((X_m - 0.0008 + ancho_SensorInput / 2) * (resolucion_anchoSensorInput / ancho_SensorInput))  
+    col_max_idx = int((X_m + 0.0008 + ancho_SensorInput / 2) * (resolucion_anchoSensorInput / ancho_SensorInput))  
+    row_min_idx = int((Y_min + alto_SensorInput / 2) * (resolucion_altoSensorInput / alto_SensorInput))
+    row_max_idx = int((Y_max + alto_SensorInput / 2) * (resolucion_altoSensorInput / alto_SensorInput))
+
+
+    # Graficar la imagen original con la región marcada
+    plt.figure(figsize=(6,5))
+    plt.imshow(np.angle(objeto_Reconstruido_Desfasado), 
+               extent=[-ancho_SensorInput/2, ancho_SensorInput/2,
+                       -alto_SensorInput/2, alto_SensorInput/2], 
+               cmap='inferno')
+
+    # Dibujar el rectángulo de la región seleccionada
+    rect = patches.Rectangle((X_m - 0.0008, Y_min), 0.0016, Y_max - Y_min, 
+                             linewidth=1.5, edgecolor='red', facecolor='none', linestyle="--")
+    plt.gca().add_patch(rect)
+
+    # Configuración de la gráfica original
+    plt.title("Región seleccionada en la imagen")
+    plt.colorbar(label="Fase del objeto")
+    plt.xlabel("X (m)")
+    plt.ylabel("Y (m)")
+    plt.show()
+
+    # Extraer la submatriz dentro del rectángulo
+    submatriz_resultado = objeto_Reconstruido_Desfasado[row_min_idx:row_max_idx, col_min_idx:col_max_idx]
+    
+    # Crear ejes de la submatriz en coordenadas espaciales
+    x_range = np.linspace(X_m - 0.0008, X_m + 0.0008, col_max_idx - col_min_idx)
+    y_range = np.linspace(Y_min, Y_max, row_max_idx - row_min_idx)
+
+    # Graficar la fase de la submatriz extraída
+    plt.figure(figsize=(6,5))
+    plt.imshow(np.angle(submatriz_resultado), 
+                extent=[x_range[0], x_range[1], y_range[0], y_range[1]], 
+                cmap='inferno', aspect='auto')
+
+    # Configuración de la gráfica de la submatriz
+    plt.title("Fase de la región recortada")
+    plt.colorbar(label="Fase")
+    plt.xlabel("X (m)")
+    plt.ylabel("Y (m)")
+    plt.show()
+
+    return submatriz_resultado  # Retornar la submatriz extraída
+
+
+submatriz(objeto_Reconstruido_Desfasado)
 
 ' ################ FIN SECCIÓN DE GRAFICACIÓN ################## '
 
@@ -285,7 +351,7 @@ graph.graficar_fase(np.angle(objeto_Reconstruido["Matriz_NOOndaPlana"]),ancho_Se
 
 ' ################ EMPIEZA SECCIÓN DE CÁLCULO DE LONGITUD DE CAMINO ÓPTICO RELATIVO ################## '
 #Calculando la longitud de camino óptico de la muestra
-longitud_caminoOpticoMuestra = np.angle(objeto_Reconstruido["Matriz_NOOndaPlana"])/numero_onda_input
+longitud_caminoOpticoMuestra = np.angle(objeto_Reconstruido_Desfasado)/numero_onda_input
 
 #Graficando el camino óptico de la muestra
 graph.graficar_altura(longitud_caminoOpticoMuestra,ancho_SensorInput,alto_SensorInput,"Longitud de camino óptico de la muestra")
@@ -309,7 +375,7 @@ graph.graficar_altura(longitud_caminoOpticoMuestra,ancho_SensorInput,alto_Sensor
 ' ################ EMPIEZA SECCIÓN DE CÁLCULO GRÁFICOS 1D ################## '
 
 # Coordenada espacial X en cm que queremos analizar
-X_m = -0.0013  # Por ejemplo, en el centro 350 nm
+X_m = 0  # Por ejemplo, en el centro 350 nm
 
 
 
