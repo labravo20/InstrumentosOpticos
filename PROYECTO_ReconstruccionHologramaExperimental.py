@@ -120,13 +120,13 @@ radio_pupilaInput =  distancia_focalMO*np.tan(angulo_Apertura) # Se define varia
 # Cargar la imagen como máscara de transmitancia --> USAF PRUEBA
 #ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/test_USAF250nm.tif" #--> AJUSTAR ÁNGULO
 #ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/test_USAF300nm.tif" #--> FUNCIONA 
-#ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/test_USAF350nm.tif" #--> FUNCIONA    
-#ruta_imagenReferencia = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/referenciaUSAF.tif" 
+ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/test_USAF350nm.tif" #--> FUNCIONA    
+ruta_imagenReferencia = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/referenciaUSAF.tif" 
 
 
 # Cargar la imagen como máscara de transmitancia --> USAF PRUEBA 
 #ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/HOLOGRAMAS/tejido_epitelialBucalJOSE4.0(HOLOGRAMA).tif" 
-ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/HOLOGRAMAS/tejido_epitelialBucalJOSE3.0(HOLOGRAMA).tif" 
+#ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/HOLOGRAMAS/tejido_epitelialBucalJOSE3.0(HOLOGRAMA).tif" 
 
 
 """ Implementación de condición producto espacio frecuencia para cálculo de malla de puntos en dominio de Fourier """
@@ -211,8 +211,8 @@ def reconstruccion_Holograma(ruta_imagenHolograma):
     """ Se diseña e implementa una onda plana, inversa al haz de referencia, para despreciar el aporte de la interferencia """
 
     #Definición de onda plana para eliminar aporte de efectos de interferencia
-    #vector_cosenosDirectoresRef =  [-0.04648,-0.0333] #coordenada TOMAS EXPERIMENTALES --> TEST USAF -0.0467,-0.0333
-    vector_cosenosDirectoresRef =  [-0.0467,-0.0333] #coordenada TOMAS EXPERIMENTALES --> TEJIDO BUCAL EPITELIAL JOSE
+    vector_cosenosDirectoresRef =  [-0.04648,-0.0333] #coordenada TOMAS EXPERIMENTALES --> TEST USAF -0.0467,-0.0333
+    #vector_cosenosDirectoresRef =  [-0.0467,-0.0333] #coordenada TOMAS EXPERIMENTALES --> TEJIDO BUCAL EPITELIAL JOSE
 
     #Definición de vector de onda asociado al haz de referencia
     vector_ondaRef = [numero_onda_input*vector_cosenosDirectoresRef[0], numero_onda_input*vector_cosenosDirectoresRef[1]]

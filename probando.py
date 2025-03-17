@@ -120,13 +120,21 @@ radio_pupilaInput =  distancia_focalMO*np.tan(angulo_Apertura) # Se define varia
 # Cargar la imagen como máscara de transmitancia --> USAF PRUEBA
 #ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/test_USAF250nm.tif" #--> AJUSTAR ÁNGULO
 #ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/test_USAF300nm.tif" #--> FUNCIONA 
-#ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/test_USAF350nm.tif" #--> FUNCIONA    
-#ruta_imagenReferencia = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/referenciaUSAF.tif" 
+ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/test_USAF350nm.tif" #--> FUNCIONA    
+ruta_imagenReferencia = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/CARACTERIZACION_FASE/HOLOGRAMAS/referenciaUSAF.tif" 
+#ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/MICROSCOPIO/TEST_USAF.tif" 
 
 
-# Cargar la imagen como máscara de transmitancia --> USAF PRUEBA 
-ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/HOLOGRAMAS/tejido_epitelialBucalJOSE4.0(HOLOGRAMA).tif" 
+
+
+# Cargar la imagen como máscara de transmitancia --> TEJIDO EPITELIAL JOSE 
+#ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/HOLOGRAMAS/tejido_epitelialBucalJOSE4.0(HOLOGRAMA).tif" 
 #ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/HOLOGRAMAS/tejido_epitelialBucalJOSE3.0(HOLOGRAMA).tif" 
+
+# Cargar la imagen como máscara de transmitancia --> ALAS MOSCA 
+#ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/HOLOGRAMAS/ala_mosca(HOLOGRAMA).tif" 
+#ruta_imagen = "/home/labravo/Desktop/Instrumentos ópticos/PROYECTO/HOLOGRAMAS/ala_abeja(HOLOGRA,A).tif" 
+
 
 
 """ Implementación de condición producto espacio frecuencia para cálculo de malla de puntos en dominio de Fourier """
@@ -198,6 +206,8 @@ def reconstruccion_Holograma(ruta_imagenHolograma):
     #Intensidad del campo resultante después del proceso de filtrado
     intensidad_CampoFiltrado = (np.abs(campo_Filtrado))**2
 
+    intensidad_CampoFiltradoNormalizado = intensidad_CampoFiltrado/(np.max(intensidad_CampoFiltrado))
+
     """ Se vuelve al dominio espacial para determinar el campo complejo asociado al campo filtrado """
 
     #Calculando la transformada de fourier inversa del campo shifteado
@@ -211,8 +221,10 @@ def reconstruccion_Holograma(ruta_imagenHolograma):
     """ Se diseña e implementa una onda plana, inversa al haz de referencia, para despreciar el aporte de la interferencia """
 
     #Definición de onda plana para eliminar aporte de efectos de interferencia
-    #vector_cosenosDirectoresRef =  [-0.04648,-0.0333] #coordenada TOMAS EXPERIMENTALES --> TEST USAF -0.0467,-0.0333
-    vector_cosenosDirectoresRef =  [-0.0467,-0.0333] #coordenada TOMAS EXPERIMENTALES --> TEJIDO BUCAL EPITELIAL JOSE
+    vector_cosenosDirectoresRef =  [-0.04648,-0.0333] #coordenada TOMAS EXPERIMENTALES --> TEST USAF -0.0467,-0.0333
+    #vector_cosenosDirectoresRef =  [-0.0467,-0.0333] #coordenada TOMAS EXPERIMENTALES --> TEJIDO BUCAL EPITELIAL JOSE
+    #vector_cosenosDirectoresRef =  [-0.04635,-0.03236] #coordenada TOMAS EXPERIMENTALES --> ALA MOSCA 
+    #vector_cosenosDirectoresRef =  [-0.04618,-0.033752] #coordenada TOMAS EXPERIMENTALES --> ALA MOSCA 
 
     #Definición de vector de onda asociado al haz de referencia
     vector_ondaRef = [numero_onda_input*vector_cosenosDirectoresRef[0], numero_onda_input*vector_cosenosDirectoresRef[1]]
@@ -230,7 +242,7 @@ def reconstruccion_Holograma(ruta_imagenHolograma):
     ' ################ FIN SECCIÓN DE RECONSTRUCCIÓN ################## '
 
     return {"Mascara": mascaraReconstruccion,"Intensidad_TransformadaFourier": intensidad_TransformadaFourierRecosntruccionNormalizada,
-            "Mascara_ReconstruccionFiltrado":mascaraReconstruccion_Filtrado,"Intensidad_CampoFiltrado":intensidad_CampoFiltrado,
+            "Mascara_ReconstruccionFiltrado":mascaraReconstruccion_Filtrado,"Intensidad_CampoFiltrado":intensidad_CampoFiltradoNormalizado,
             "Matriz_NOOndaPlana": matriz_campoNOContribucionOndaPlana,"Intensidad_matrizNOOndaPlana":intensidad_matrizCampoNOcontribucionOndaPlana}
 
 
@@ -239,13 +251,13 @@ def reconstruccion_Holograma(ruta_imagenHolograma):
 
 objeto_Reconstruido = reconstruccion_Holograma(ruta_imagen)
 
-objeto_Reconstruido_Desfasado = objeto_Reconstruido["Matriz_NOOndaPlana"]*np.exp(1j*((np.pi))/(2)) # TEJIDO EPITELIAL 4.0
+#objeto_Reconstruido_Desfasado = objeto_Reconstruido["Matriz_NOOndaPlana"]*np.exp(1j*((np.pi))/(4)) # TEJIDO EPITELIAL 4.0
 #objeto_Reconstruido_Desfasado = objeto_Reconstruido["Matriz_NOOndaPlana"] # TEJIDO EPITELIAL 3.0
 
 
 """ Llamando función de reconstrucción para obtener resultado de la REFERENCIA --> USAF"""
 
-#referencia_Reconstruida = reconstruccion_Holograma(ruta_imagenReferencia)
+referencia_Reconstruida = reconstruccion_Holograma(ruta_imagenReferencia)
 
 ' ################ FIN SECCIÓN DE IMPORTACIÓN Y PREPARACIÓN DE HOLOGRAMAS ################## '
 
@@ -260,8 +272,8 @@ graph.graficar_intensidad(objeto_Reconstruido["Mascara"],ancho_SensorInput,alto_
 
 """ Graficando intensisdad de la transformada de Fourier del holograma"""
 
-graph.graficar_intensidad(np.log(objeto_Reconstruido["Intensidad_TransformadaFourier"]),anchoX_PlanoFourier,altoY_PlanoFourier,
-                             "Intensidad normalizada de la Transformada de Fourier del Holograma",1,1)
+graph.graficar_intensidad((objeto_Reconstruido["Intensidad_TransformadaFourier"]),anchoX_PlanoFourier,altoY_PlanoFourier,
+                             "Intensidad normalizada de la Transformada de Fourier del Holograma",1,0.00001)
 
 
 
@@ -269,7 +281,8 @@ graph.graficar_intensidad(np.log(objeto_Reconstruido["Intensidad_TransformadaFou
 
 graph.graficar_transmitancia(objeto_Reconstruido["Mascara_ReconstruccionFiltrado"],anchoX_PlanoFourier,altoY_PlanoFourier,"Mascara Filtrado")
 
-
+graph.graficar_intensidad((objeto_Reconstruido["Intensidad_CampoFiltrado"]),anchoX_PlanoFourier,altoY_PlanoFourier,
+                             "Intensidad normalizada de la Transformada de Fourier filtrada del Holograma",1,0.00001)
 
 """ Graficando intensidad del objeto reconstruido """
 
@@ -287,34 +300,49 @@ graph.graficar_fase(np.angle(objeto_Reconstruido["Matriz_NOOndaPlana"]),ancho_Se
 
 """ Graficando información de fase del objeto reconstruido desfasado --> TEJIDO EPITELIAL"""
 
-graph.graficar_fase(np.angle(objeto_Reconstruido_Desfasado),ancho_SensorInput,alto_SensorInput,
-                    "Distribución de fase Campo óptico objeto con desfase")
+#graph.graficar_fase(np.angle(objeto_Reconstruido_Desfasado),ancho_SensorInput,alto_SensorInput,
+#                    "Distribución de fase Campo óptico objeto con desfase")
 
 
 """ Graficando información sobre REFERENCIA --> USAF"""
 
-#graph.graficar_fase(np.angle(referencia_Reconstruida["Matriz_NOOndaPlana"]),ancho_SensorInput,alto_SensorInput,
-#                    "Distribución de fase referencia")
+graph.graficar_fase(np.angle(referencia_Reconstruida["Matriz_NOOndaPlana"]),ancho_SensorInput,alto_SensorInput,
+                    "Distribución de fase referencia")
 
 
 ' ################ FIN SECCIÓN DE GRAFICACIÓN ################## '
 
 
+' ################ EMPIEZA SECCIÓN DE MEDICIÓN RELATIVA DE FASE --> USAF ################## '
+
+# Se calcula la diferencia de fase entre el holograma de interés y la referencia pre establecida
+diferencia_FaseHologramaReferencia = (objeto_Reconstruido["Matriz_NOOndaPlana"])/(referencia_Reconstruida["Matriz_NOOndaPlana"])
+
+# Graficando resultados de la medida de diferencia de Fase
+#graph.graficar_fase(np.angle(diferencia_FaseHologramaReferencia),ancho_SensorInput,alto_SensorInput,
+#                    "Fase relativa de la muestra") 
+
+' ################ FIN SECCIÓN DE MEDICIÓN RELATIVA DE FASE --> USAF  ################## '
+
+
+
 ' ################ EMPIEZA SECCIÓN DE CREACIÓN SUBMATRIZ PARA ANALIZAR UNA SECCIÓN DE LA MUESTRA --> TEJIDO EPITELIAL ################## '
 
 # Coordenada espacial X en metros --> EJE CENTRAL DEL RECTANGULO DE SELECCIÓN DE ÁREA DE INTERÉS
-#X_m_central = 0.0002  #MUESTRAS PARTE SUPERIOR 4.0
-X_m_central = 0.000795  #MUESTRAS PARTE INFERIOR 4.0
+X_m_central = 0.0002  #MUESTRAS PARTE SUPERIOR 4.0
+#X_m_central = 0.000795  #MUESTRAS PARTE INFERIOR 4.0
 #X_m_central = 0.0008  #MUESTRAS 3.0
+#X_m_central = -0.0005  #MUESTRAS ala mosca
+
 
 #Ancho del rectangulo
-#ancho_rectangulo = 0.0016 #MUESTRAS PARTE SUPERIOR 4.0
+ancho_rectangulo = 0.0016 #MUESTRAS PARTE SUPERIOR 4.0
 #ancho_rectangulo = 0.00233 #MUESTRAS PARTE INFERIOR 4.0
-ancho_rectangulo = 0.0013 #MUESTRAS 3.0
+#ancho_rectangulo = 0.003 #MUESTRAS 3.0
 
 # Definiendo límites de la región cuadrada --> LIMITES EN EJE VERTICAL DE SELECCIÓN DE ÁREA DE INTERÉS
-Y_min = 0.0008  # Límite inferior en metros
-Y_max = 0.002  # Límite superior en metros
+Y_min = 0.0009  # Límite inferior en metros
+Y_max = 0.0022  # Límite superior en metros
 
 
 # Convertir coordenadas espaciales a índices de matriz
@@ -367,108 +395,97 @@ def submatriz(objeto_Reconstruido_Desfasado):
     return submatriz_resultado  # Retornar la submatriz extraída
 
 #Asociando la submatriz seleccionada en una variable
-submatriz_muestraDesfasada = submatriz(objeto_Reconstruido_Desfasado)
+#submatriz_muestraDesfasada = submatriz(objeto_Reconstruido_Desfasado)
 
 ' ################ FIN SECCIÓN DE CREACIÓN SUBMATRIZ PARA ANALIZAR UNA SECCIÓN DE LA MUESTRA --> TEJIDO EPITELIAL ################## '
 
 
-' ################ EMPIEZA SECCIÓN DE MEDICIÓN RELATIVA DE FASE --> USAF ################## '
-
-# Se calcula la diferencia de fase entre el holograma de interés y la referencia pre establecida
-#diferencia_FaseHologramaReferencia = (objeto_Reconstruido["Matriz_NOOndaPlana"])/(referencia_Reconstruida["Matriz_NOOndaPlana"])
-
-# Graficando resultados de la medida de diferencia de Fase
-#graph.graficar_fase(np.angle(diferencia_FaseHologramaReferencia),ancho_SensorInput,alto_SensorInput,
-#                    "Fase relativa de la muestra") 
-
-' ################ FIN SECCIÓN DE MEDICIÓN RELATIVA DE FASE --> USAF  ################## '
-
 
 ' ################ EMPIEZA SECCIÓN DE CÁLCULO DE LONGITUD DE CAMINO ÓPTICO RELATIVO ################## '
 
+
 #Calculando la longitud de camino óptico de la muestra --> TEJIDO EPITELIAL
-longitud_caminoOpticoMuestra = np.angle(submatriz_muestraDesfasada)/numero_onda_input
+#longitud_caminoOpticoMuestra = np.angle(submatriz_muestraDesfasada)/numero_onda_input
 
-#Calculando altura de la muestra NORMALIZADA --> TEJIDO EPITELIAL
-longitud_caminoOpticoMuestraNormalizada = longitud_caminoOpticoMuestra/np.max(longitud_caminoOpticoMuestra)
+# #Calculando altura de la muestra NORMALIZADA --> TEJIDO EPITELIAL
+#longitud_caminoOpticoMuestraNormalizada = longitud_caminoOpticoMuestra/np.max(longitud_caminoOpticoMuestra)
 
-#Graficando el camino óptico de la muestra --> TEJIDO EPITELIAL
-plt.figure(figsize=(6,5))
-plt.imshow(longitud_caminoOpticoMuestra, 
-            extent=[X_m_central - (ancho_rectangulo/2), X_m_central + (ancho_rectangulo/2), Y_min, Y_max], 
-            cmap='winter')
+# #Graficando el camino óptico de la muestra --> TEJIDO EPITELIAL
+#plt.figure(figsize=(6,5))
+#plt.imshow(longitud_caminoOpticoMuestra, 
+#            extent=[X_m_central - (ancho_rectangulo/2), X_m_central + (ancho_rectangulo/2), Y_min, Y_max], 
+#            cmap='winter')
 
 # Configuración de la gráfica de la submatriz
-plt.title("Longitud de camino óptico de la muestra")
-plt.colorbar(label="Longitud camino óptico [m]")
-plt.xlabel("X (m)")
-plt.ylabel("Y (m)")
-plt.show()
+#plt.title("Longitud de camino óptico de la muestra")
+#plt.colorbar(label="Longitud camino óptico [m]")
+#plt.xlabel("X (m)")
+#plt.ylabel("Y (m)")
+#plt.show()
 
 #Definiendo el índice de refracción asociado al arreglo --> USAF
-#diferencia_indiceRefraccion = 1.52 - 1 #PRIMERO: Indice de refracción del acrilato/porta muestras
+diferencia_indiceRefraccion = 1.52 - 1 #PRIMERO: Indice de refracción del acrilato/porta muestras
                                        #SEGUNDO: Indice de refracción de la REFERENCIA (aire)
 
 #Calculando el camino óptico asociado a la medida relativa de fase --> USAF
-#altura_muestra = np.angle(diferencia_FaseHologramaReferencia)/(numero_onda_input*diferencia_indiceRefraccion)
+altura_muestra = np.angle(diferencia_FaseHologramaReferencia)/(numero_onda_input*diferencia_indiceRefraccion)
 
 #Calculando altura de la muestra NORMALIZADA --> USAF
-#altura_muestraNormalizada = altura_muestra/np.max(altura_muestra)
+altura_muestraNormalizada = altura_muestra/np.max(altura_muestra)
 
 #Graficando altura de la muestra --> USAF
-#graph.graficar_altura(altura_muestra,ancho_SensorInput,alto_SensorInput,"Altura de la muestra")
+graph.graficar_altura(altura_muestra,ancho_SensorInput,alto_SensorInput,"Altura de la muestra")
 
 ' ################ FIN SECCIÓN DE CÁLCULO DE LONGITUD DE CAMINO ÓPTICO RELATIVO ################## '
 
 
 ' ################ EMPIEZA SECCIÓN DE CÁLCULO GRÁFICOS 1D ################## '
 
-# Coordenada espacial X en m que queremos analizar --> Recta en vertical de la cual se quiere conocer perfil de altura/camino óptico
-X_m = 0.0006 
-
+# # Coordenada espacial X en m que queremos analizar --> Recta en vertical de la cual se quiere conocer perfil de altura/camino óptico
+X_m = 0
 
 #GRAFICANDO RECTA EN IMAGEN DE ALTURA --> PARA IDENTIFICAR PERFIL DE GRAFICACIÓN  USAF
-# plt.imshow(altura_muestra, extent=[-ancho_SensorInput/2, ancho_SensorInput/2,
-#                             -alto_SensorInput/2, alto_SensorInput/2], 
-#                             cmap='winter')
+# # plt.imshow(altura_muestra, extent=[-ancho_SensorInput/2, ancho_SensorInput/2,
+# #                             -alto_SensorInput/2, alto_SensorInput/2], 
+# #                             cmap='winter')
+# # plt.axvline(X_m,color = 'red',linestyle = "--",label = f"X = {X_m} m")
+# # plt.title("Altura de la muestra")
+# # plt.colorbar(label="Altura [m]")
+# # plt.xlabel("X (m)")
+# # plt.ylabel("Y (m)")
+# # plt.show()
+
+# #GRAFICO PERFIL 1D de la muestra --> TEJIDO EPITELIAL
+# plt.figure(figsize=(6,5))
+# plt.imshow(longitud_caminoOpticoMuestra, 
+#             extent=[X_m_central - (ancho_rectangulo/2), X_m_central + (ancho_rectangulo/2), Y_min, Y_max], 
+#             cmap='winter')
 # plt.axvline(X_m,color = 'red',linestyle = "--",label = f"X = {X_m} m")
-# plt.title("Altura de la muestra")
-# plt.colorbar(label="Altura [m]")
+# # Configuración de la gráfica de la submatriz
+# plt.title("Longitud de camino óptico de la muestra")
+# plt.colorbar(label="Longitud camino óptico [m]")
 # plt.xlabel("X (m)")
 # plt.ylabel("Y (m)")
 # plt.show()
 
-#GRAFICO PERFIL 1D de la muestra --> TEJIDO EPITELIAL
-plt.figure(figsize=(6,5))
-plt.imshow(longitud_caminoOpticoMuestra, 
-            extent=[X_m_central - (ancho_rectangulo/2), X_m_central + (ancho_rectangulo/2), Y_min, Y_max], 
-            cmap='winter')
-plt.axvline(X_m,color = 'red',linestyle = "--",label = f"X = {X_m} m")
-# Configuración de la gráfica de la submatriz
-plt.title("Longitud de camino óptico de la muestra")
-plt.colorbar(label="Longitud camino óptico [m]")
-plt.xlabel("X (m)")
-plt.ylabel("Y (m)")
-plt.show()
 
-
-# Definiendo límites verticales de la recta
-Y_min =  0.0009 # Límite inferior Y en metros 
-Y_max = 0.0019   # Límite superior Y en metros  
+# # Definiendo límites verticales de la recta
+Y_min =  0.001 # Límite inferior Y en metros 
+Y_max = 0.0016   # Límite superior Y en metros  
 
 
 # Convertir la coordenada espacial en índice de matriz
-#col_idx = int((X_m + ancho_SensorInput / 2) * (resolucion_anchoSensorInput / ancho_SensorInput)) #USAF
+col_idx = int((X_m + ancho_SensorInput / 2) * (resolucion_anchoSensorInput / ancho_SensorInput)) #USAF
 col_idx = int((X_m + (ancho_rectangulo/2)) * ( (col_max_idx - col_min_idx) / ancho_rectangulo)) #TEJIDO EPITELIAL
 
 
 # Generar las coordenadas Y en metros 
-#y_values = np.linspace(-alto_SensorInput/2, alto_SensorInput/2, resolucion_altoSensorInput) #USAF
+y_values = np.linspace(-alto_SensorInput/2, alto_SensorInput/2, resolucion_altoSensorInput) #USAF
 y_values = np.linspace(Y_min, Y_max, row_max_idx - row_min_idx) #TEJIDO EPITELIAL
 
 # Extraer la columna de la imagen
-#column_values = altura_muestra[:, col_idx] #USAF
-column_values = longitud_caminoOpticoMuestra[:, col_idx] #TEJIDO EPITELIAL
+column_values = altura_muestra[:, col_idx] #USAF
+#column_values = longitud_caminoOpticoMuestra[:, col_idx] #TEJIDO EPITELIAL
 
 # Filtrar valores dentro del rango deseado
 mask = (y_values >= Y_min) & (y_values <= Y_max)
@@ -479,14 +496,16 @@ column_values_recortado = column_values[mask]
 plt.plot(y_values_recortado, column_values_recortado)
 plt.xlabel("Posición Y [m]")
 
-# plt.ylabel("Altura [m]") #USAF
-# plt.title(f"Perfil de Altura en X = {X_m} m (Limitado a [{Y_min}, {Y_max}])") #USAF
+plt.ylabel("Altura [m]") #USAF
+plt.title(f"Perfil de Altura en X = {X_m} m (Limitado a [{Y_min}, {Y_max}])") #USAF
 
 
-plt.ylabel("Longitud camino óptico [m]") #TEJIDO EPITELIAL
-plt.title(f"Perfil de longitud camino óptico en X = {X_m} m (Limitado a [{Y_min}, {Y_max}])") #TEJIDO EPITELIAL
+#plt.ylabel("Longitud camino óptico [m]") #TEJIDO EPITELIAL
+#plt.title(f"Perfil de longitud camino óptico en X = {X_m} m (Limitado a [{Y_min}, {Y_max}])") #TEJIDO EPITELIAL
 
 plt.show()
+
+print(column_values_recortado)
 
 ' ################ FIN SECCIÓN DE CÁLCULO GRÁFICOS 1D ################## '
 
@@ -498,8 +517,8 @@ fig = plt.figure(figsize=(10, 7))
 ax = fig.add_subplot(111, projection='3d')
 
 # Crear las coordenadas X e Y --> USAF
-# x = np.linspace(-ancho_SensorInput / 2, ancho_SensorInput / 2, resolucion_anchoSensorInput)
-# y = np.linspace(-alto_SensorInput / 2, alto_SensorInput / 2, resolucion_altoSensorInput)
+#x = np.linspace(-ancho_SensorInput / 2, ancho_SensorInput / 2, resolucion_anchoSensorInput)
+#y = np.linspace(-alto_SensorInput / 2, alto_SensorInput / 2, resolucion_altoSensorInput)
 
 # Crear las coordenadas X e Y --> TEJIDO EPITELIAL
 x = np.linspace(X_m_central - (ancho_rectangulo/2), X_m_central + (ancho_rectangulo/2), col_max_idx - col_min_idx)
@@ -509,15 +528,15 @@ y = np.linspace(Y_min, Y_max, row_max_idx - row_min_idx)
 X, Y = np.meshgrid(x, y)
 
 # Graficar la superficie en 3D
-#ax.plot_surface(X, Y, -altura_muestraNormalizada, cmap='viridis', edgecolor='none') #USAF
-ax.plot_surface(X, Y, longitud_caminoOpticoMuestraNormalizada, cmap='viridis', edgecolor='none') #TEJIDO EPITELIAL
+ax.plot_surface(X, Y, -altura_muestraNormalizada, cmap='viridis', edgecolor='none') #USAF
+#ax.plot_surface(X, Y, longitud_caminoOpticoMuestraNormalizada, cmap='viridis', edgecolor='none') #TEJIDO EPITELIAL
 
 # Etiquetas de los ejes
 ax.set_xlabel('X (m)')
 ax.set_ylabel('Y (m)')
 
-# ax.set_zlabel('Altura Normalizada') #USAF
-ax.set_zlabel('Longitud camino óptico normalizado') #TEJIDO EPITELIAL
+ax.set_zlabel('Altura Normalizada') #USAF
+#ax.set_zlabel('Longitud camino óptico normalizado') #TEJIDO EPITELIAL
 
 ax.set_title('Reconstrucción 3D de la muestra')
 
